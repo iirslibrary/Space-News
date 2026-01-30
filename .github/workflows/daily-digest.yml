@@ -1,0 +1,61 @@
+name: 🚀 IIRS Daily Space Digest + Pages Link
+on:
+  schedule:
+    - cron: '30 4 * * *'  # 8AM IST daily
+  workflow_dispatch:     # Manual button
+
+permissions:
+  contents: write        # Required to deploy to Pages
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install feedparser
+      run: pip install feedparser
+      
+    - name: Generate HTML Newsletter
+      run: python iirs_space_digest_git.py
+      
+    - name: 📋 Copy to index.html for hosting
+      run: |
+        cp IIRS_SpaceNews_Daily_*.html index.html
+        echo "✅ Copied $(ls IIRS_SpaceNews_Daily_*.html) to index.html"
+      
+    - name: 🚀 Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        publish_branch: gh-pages
+        keep_files: false  # Set to true if you want to keep past days' files
+        
+    - name: ✅ Send Link to Gmail
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.GMAIL_USER }}
+        password: ${{ secrets.GMAIL_PASS }}
+        subject: '🚀 IIRS Space Digest - ${{ github.run_number }}'
+        body: |
+          📡 Today's IIRS Space Digest is LIVE!
+          
+          🔗 READ & SHARE:
+          https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          
+          (Click link → Opens in browser on any device)
+          
+          ────────────────────────────
+          Copy this link and forward to IIRS team via office email.
+          No attachments needed - just the link!
+        to: ${{ secrets.GMAIL_USER }},${{ secrets.GMAIL_USER2 }},${{ secrets.GMAIL_USER3 }}
+        from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
+        # Attachment line removed below
