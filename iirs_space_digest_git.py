@@ -43,7 +43,8 @@ NATIONAL_FEEDS = [
     'https://indianexpress.com/section/science/feed/',
     'https://www.thehindu.com/sci-tech/science/rssfeed/',
     'https://www.thehindu.com/news/national/rssfeed/',
-    'https://www.isro.gov.in/rssnews.xml'
+    'https://www.isro.gov.in/rssnews.xml',
+    'https://www.indiatoday.in/rss/home'
 ]
 
 INTERNATIONAL_FEEDS = [
