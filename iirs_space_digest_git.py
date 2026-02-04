@@ -1,25 +1,22 @@
 # -*- coding: utf-8 -*-
 """
 IIRS Space Digest - PythonAnywhere Production Version
-Daily automated space news for IIRS employees (TODAY'S NEWS ONLY)
+Daily automated space news for IIRS employees (LAST 24 HOURS ROLLING WINDOW)
 COSMIC VOID THEME - 80% WIDTH + SINGLE SCROLL (NO TABS) + TITLE FILTER
 """
 
 import feedparser
 import re
-from datetime import date, timedelta
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
-import os
+from datetime import datetime, timedelta, timezone
+import email.utils
 import time
+import os
 
-print("🚀 Starting IIRS Daily Space Digest - SINGLE PAGE...")
+print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
 
 # 🏔️ Regional Keywords (Uttarakhand/Dehradun focus)
-REGIONAL_KEYWORDS = r'(?i)(space|satellite|remote sensing|gis|iirs|rrsc|nrsc|earth observation|glacier|landslide|cloudburst|disaster|floods|avalanche|earthquake|seismic|hyperspectral|pollution|air quality index| AQI |snowfall)'
+# REMOVED "pollution" to prevent political news overlap
+REGIONAL_KEYWORDS = r'(?i)(space|satellite|remote sensing|gis|iirs|rrsc|nrsc|earth observation|glacier|landslide|cloudburst|disaster|floods|avalanche|earthquake|seismic|hyperspectral|air quality index| AQI |snowfall)'
 
 # 🇮🇳 National Keywords (ISRO focus)
 NATIONAL_KEYWORDS = r'(?i)(isro|nrsc|nsil|chandrayaan| IIST |gaganyaan|pslv|glsv|lvm3|spadex|gsat|insat|resourcesat|cartosat|risat|launch|rocket|spacecraft|astronaut|shukrayaan|aditya|spaceport|sriharikota|indian space|vyommitra|eos|pslv-c62|axiom|nesac|nsss|sslv|nvs|hlvm3|om1)'
@@ -43,8 +40,7 @@ NATIONAL_FEEDS = [
     'https://indianexpress.com/section/science/feed/',
     'https://www.thehindu.com/sci-tech/science/rssfeed/',
     'https://www.thehindu.com/news/national/rssfeed/',
-    'https://www.isro.gov.in/rssnews.xml',
-    'https://www.indiatoday.in/rss/home'
+    'https://www.isro.gov.in/rssnews.xml'
 ]
 
 INTERNATIONAL_FEEDS = [
@@ -84,24 +80,40 @@ def sanitize_html_content(text):
     text = re.sub(r'\s+', ' ', text)
     return text[:380] + '...' if len(text) > 380 else text.strip()
 
-def is_today_only(entry):
-    today = date.today()
-    for date_field in ['published_parsed', 'updated_parsed', 'created_parsed']:
-        if date_field in entry and entry[date_field]:
-            try:
-                entry_date = date(entry[date_field].tm_year, entry[date_field].tm_mon, entry[date_field].tm_mday)
-                return entry_date == today
-            except:
-                continue
-    for date_str in [entry.get('published'), entry.get('updated'), entry.get('created')]:
-        if date_str:
-            try:
-                entry_time = time.strptime(date_str[:10], '%Y-%m-%d')
-                entry_date = date(entry_time.tm_year, entry_time.tm_mon, entry_time.tm_mday)
-                if entry_date == today:
-                    return True
-            except:
-                continue
+def is_within_last_24_hours(entry):
+    """
+    Checks if the news entry was published within the last 24 hours
+    relative to the current system time (UTC).
+    """
+    now = datetime.now(timezone.utc)
+    cutoff_time = now - timedelta(hours=24)
+    
+    # 1. Try standard 'published_parsed' (struct_time)
+    # Most reliable method for feedparser
+    pub_struct = entry.get('published_parsed') or entry.get('updated_parsed') or entry.get('created_parsed')
+    
+    if pub_struct:
+        try:
+            # Convert struct_time to aware datetime (UTC)
+            pub_time = datetime(*pub_struct[:6], tzinfo=timezone.utc)
+            return pub_time >= cutoff_time
+        except:
+            pass # Continue to fallback if conversion fails
+            
+    # 2. Fallback: Parse string dates if struct is missing
+    date_str = entry.get('published') or entry.get('updated') or entry.get('created')
+    if date_str:
+        try:
+            # Parse RFC 822 date (standard for RSS)
+            parsed_tuple = email.utils.parsedate_tz(date_str)
+            if parsed_tuple:
+                ts = email.utils.mktime_tz(parsed_tuple)
+                pub_time = datetime.fromtimestamp(ts, timezone.utc)
+                return pub_time >= cutoff_time
+        except:
+            pass
+            
+    # If no valid date is found, we assume it's NOT new to avoid spamming old news
     return False
 
 def fetch_news_from_feeds(feeds, max_articles=6):
@@ -110,8 +122,12 @@ def fetch_news_from_feeds(feeds, max_articles=6):
         try:
             feed = feedparser.parse(url)
             print(f"📱 {feed.feed.get('title', 'Unknown')} - checking...")
-            for entry in feed.entries[:10]:
-                if is_today_only(entry):
+            
+            # Check top 15 entries to find enough candidates within the 24h window
+            for entry in feed.entries[:15]:
+                
+                # REPLACED: Strict "today" check with 24-hour window check
+                if is_within_last_24_hours(entry):
                     title_lower = entry.title.lower()
                     
                     if url in REGIONAL_FEEDS:
@@ -136,54 +152,22 @@ def fetch_news_from_feeds(feeds, max_articles=6):
                         'summary': summary,
                         'image': image_url
                     })
-                    print(f"✅ TODAY: {title[:60]}...")
+                    print(f"✅ NEW (24h): {title[:60]}...")
                     if len(news) >= max_articles: break
             if len(news) >= max_articles: break
         except Exception as e:
             print(f"⚠️ Skip {url}: {e}")
     return news
 
-def fallback_if_empty(news_list, feeds, fallback_max=2):
-    if len(news_list) == 0:
-        print("⚠️ No today's news - fallback...")
-        for url in feeds[:2]:
-            try:
-                feed = feedparser.parse(url)
-                for entry in feed.entries[:5]:
-                    if not is_today_only(entry): continue
-                    title_lower = (entry.title or '').lower()
-                    if url in REGIONAL_FEEDS: keyword_pattern = REGIONAL_KEYWORDS
-                    elif url in NATIONAL_FEEDS: keyword_pattern = NATIONAL_KEYWORDS
-                    else: keyword_pattern = INTERNATIONAL_KEYWORDS
-                    
-                    if not re.search(keyword_pattern, title_lower): continue
-
-                    raw_summary = entry.get('summary', '') or entry.get('description', '')
-                    image_url = extract_first_image_url(raw_summary)
-                    summary = sanitize_html_content(raw_summary)
-                    title = re.sub(r'<[^>]+>', '', entry.title or '')
-                    news_list.append({
-                        'title': title, 'link': entry.link,
-                        'source': feed.feed.get('title', 'Space News')[:20] + '...',
-                        'summary': summary, 'image': image_url
-                    })
-                    if len(news_list) >= fallback_max: break
-                if len(news_list) >= fallback_max: break
-            except: continue
-        if len(news_list) == 0:
-            news_list.append({'title': 'No space news today', 'link': '#', 'source': 'IIRS Digest', 'summary': 'Check tomorrow for updates!', 'image': None})
-
+# No fallback needed with rolling window, but we keep structure clean
 print("🏔️ Fetching REGIONAL...")
 regional_news = fetch_news_from_feeds(REGIONAL_FEEDS, max_articles=5)
-fallback_if_empty(regional_news, REGIONAL_FEEDS)
 
 print("🇮🇳 Fetching NATIONAL...")
 national_news = fetch_news_from_feeds(NATIONAL_FEEDS, max_articles=6)
-fallback_if_empty(national_news, NATIONAL_FEEDS)
 
 print("🌌 Fetching INTERNATIONAL...")
 international_news = fetch_news_from_feeds(INTERNATIONAL_FEEDS, max_articles=8)
-fallback_if_empty(international_news, INTERNATIONAL_FEEDS)
 
 # Combine ALL news into single list with labels
 all_news = []
@@ -193,12 +177,12 @@ for news_list, category in [
     (international_news, "🌌 International Updates")
 ]:
     for item in news_list:
-        if item['title'] != 'No space news today': # Skip placeholders if others exist
-             item['category'] = category
-             all_news.append(item)
+         item['category'] = category
+         all_news.append(item)
+
 # Ensure at least one placeholder if completely empty
 if not all_news:
-    all_news.append({'title': 'No space news today', 'link': '#', 'source': 'IIRS Digest', 'summary': 'Check back tomorrow!', 'image': None, 'category': 'System'})
+    all_news.append({'title': 'No space news in last 24h', 'link': '#', 'source': 'IIRS Digest', 'summary': 'Check back tomorrow!', 'image': None, 'category': 'System'})
 
 def make_articles_html(news_list):
     html = ""
@@ -214,7 +198,7 @@ def make_articles_html(news_list):
             <div class="news-card">
                 <div class="card-content">
                     {image_html}
-                    <!-- Category label removed here -->
+                    <!-- Category label removed -->
                     <div class="card-title">
                         <a href="{item["link"]}" target="_blank">{i}. {item["title"]}</a>
                     </div>
@@ -227,7 +211,7 @@ def make_articles_html(news_list):
     return html
 
 all_articles_html = make_articles_html(all_news)
-timestamp = date.today().strftime("%d-%m-%Y")
+timestamp = datetime.now().strftime("%d-%m-%Y | %H:%M IST")
 
 html_body = f"""<!DOCTYPE html>
 <html data-theme="dark">
@@ -305,9 +289,9 @@ body::before {{
 }}
 
 .scroll-container {{
-    width: 80% !important;        /* ✅ UPDATED: Fixed 80% width */
-    max-width: none !important;   /* ✅ UPDATED: Removed cap */
-    min-width: 600px !important;  /* ✅ UPDATED: Safe minimum */
+    width: 80% !important;        
+    max-width: none !important;   
+    min-width: 600px !important;  
     background: var(--bg-secondary) !important;
     backdrop-filter: blur(30px) !important;
     border: 1px solid var(--border-light) !important;
@@ -339,7 +323,7 @@ h2 {{
 .card-content:hover {{ transform: translateY(-5px) !important; border-color: var(--cyan-accent) !important; }}
 
 .card-image {{
-    width: 100% !important; height: 350px !important; /* ✅ UPDATED: Taller images */
+    width: 100% !important; height: 350px !important;
     object-fit: cover !important;
     border-radius: 12px !important; margin-bottom: 20px !important;
     border: 1px solid var(--border-card) !important;
@@ -347,7 +331,7 @@ h2 {{
 
 .card-title a {{
     color: var(--text-white) !important; text-decoration: none !important;
-    font-size: 24px !important; /* ✅ UPDATED: Larger font */
+    font-size: 24px !important;
     font-weight: 600 !important; display: block !important;
     margin-bottom: 10px !important;
 }}
@@ -362,7 +346,7 @@ h2 {{
 
 .card-summary {{
     color: var(--text-light) !important; line-height: 1.7 !important;
-    font-size: 16px !important; /* ✅ UPDATED: Larger text */
+    font-size: 16px !important;
     margin-bottom: 20px !important;
 }}
 
@@ -435,9 +419,9 @@ h2 {{
 </html>
 """
 
-filename = f'IIRS_SpaceNews_Daily_{date.today().strftime("%Y%m%d")}.html'
+filename = f'IIRS_SpaceNews_Daily_{datetime.now().strftime("%Y%m%d")}.html'
 with open(filename, 'w', encoding='utf-8') as f:
     f.write(html_body)
 
 print(f"✅ SAVED: {filename} with {len(all_news)} items")
-print("📱 80% responsive width + SINGLE PAGE + night/light mode OK.")
+print("📱 80% responsive width + SINGLE PAGE + 24H WINDOW OK.")
