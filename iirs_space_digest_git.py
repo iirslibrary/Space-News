@@ -14,6 +14,11 @@ import os
 
 print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
 
+# 🛑 EXCLUSION KEYWORDS (Negative Filter)
+# Any news title containing these words will be REMOVED even if it matches the positive keywords.
+# Add words here like 'politics', 'budget', 'cricket', 'horoscope' etc.
+EXCLUDED_KEYWORDS = r'(?i)(rape|murder)'
+
 # 🏔️ Regional Keywords (Uttarakhand/Dehradun focus)
 # REMOVED "pollution" to prevent political news overlap
 REGIONAL_KEYWORDS = r'(?i)(space|satellite|remote sensing|gis|iirs|rrsc|nrsc|earth observation|glacier|landslide|cloudburst|disaster|floods|avalanche|earthquake|seismic|hyperspectral|air quality index| AQI |snowfall)'
@@ -123,13 +128,17 @@ def fetch_news_from_feeds(feeds, max_articles=6):
             feed = feedparser.parse(url)
             print(f"📱 {feed.feed.get('title', 'Unknown')} - checking...")
             
-            # Check top 15 entries to find enough candidates within the 24h window
             for entry in feed.entries[:15]:
-                
-                # REPLACED: Strict "today" check with 24-hour window check
                 if is_within_last_24_hours(entry):
                     title_lower = entry.title.lower()
                     
+                    # 1. Get Summary Early (so we can check it for bad words)
+                    raw_summary = entry.get('summary', '') or entry.get('description', '')
+                    summary_lower = raw_summary.lower()
+                    
+                    # Combine Title + Summary for checking
+                    full_text_check = title_lower + " " + summary_lower
+
                     if url in REGIONAL_FEEDS:
                         keyword_pattern = REGIONAL_KEYWORDS
                     elif url in NATIONAL_FEEDS:
@@ -137,14 +146,21 @@ def fetch_news_from_feeds(feeds, max_articles=6):
                     else:
                         keyword_pattern = INTERNATIONAL_KEYWORDS
 
-                    # Title-only filter for reliability
+                    # 2. Positive Filter (Check TITLE only to keep relevance high)
                     if not re.search(keyword_pattern, title_lower):
                         continue
 
-                    raw_summary = entry.get('summary', '') or entry.get('description', '')
+                    # 3. 🛑 NEGATIVE FILTER (Check BOTH Title AND Summary)
+                    # Now catches "murder" in the body text even if title is clean
+                    if re.search(EXCLUDED_KEYWORDS, full_text_check):
+                        print(f"🗑️ REMOVED (Excluded content): {entry.title[:40]}...")
+                        continue
+
+                    # Process valid item
                     image_url = extract_first_image_url(raw_summary)
                     summary = sanitize_html_content(raw_summary)
                     title = re.sub(r'<[^>]+>', '', entry.title)
+                    
                     news.append({
                         'title': title,
                         'link': entry.link,
@@ -158,6 +174,7 @@ def fetch_news_from_feeds(feeds, max_articles=6):
         except Exception as e:
             print(f"⚠️ Skip {url}: {e}")
     return news
+
 
 # No fallback needed with rolling window, but we keep structure clean
 print("🏔️ Fetching REGIONAL...")
