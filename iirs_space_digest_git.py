@@ -228,7 +228,11 @@ def make_articles_html(news_list):
     return html
 
 all_articles_html = make_articles_html(all_news)
-timestamp = datetime.now().strftime("%d-%m-%Y | %H:%M IST")
+
+# Create explicit IST timezone (+5:30)
+ist_offset = timezone(timedelta(hours=5, minutes=30))
+timestamp = datetime.now(ist_offset).strftime("%d-%m-%Y | %H:%M IST")
+
 
 html_body = f"""<!DOCTYPE html>
 <html data-theme="dark">
