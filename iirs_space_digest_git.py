@@ -17,7 +17,7 @@ print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
 # 🛑 EXCLUSION KEYWORDS (Negative Filter)
 # Any news title containing these words will be REMOVED even if it matches the positive keywords.
 # Add words here like 'politics', 'budget', 'cricket', 'horoscope' etc.
-EXCLUDED_KEYWORDS = r'(?i)(rape|murder)'
+EXCLUDED_KEYWORDS = r'(?i)(rape|murder|KYC|digilocker|arrest|crime)'
 
 # 🏔️ Regional Keywords (Uttarakhand/Dehradun focus)
 # REMOVED "pollution" to prevent political news overlap
@@ -45,7 +45,14 @@ NATIONAL_FEEDS = [
     'https://indianexpress.com/section/science/feed/',
     'https://www.thehindu.com/sci-tech/science/rssfeed/',
     'https://www.thehindu.com/news/national/rssfeed/',
-    'https://www.isro.gov.in/rssnews.xml'
+    'https://www.isro.gov.in/rssnews.xml',
+    'https://government.economictimes.indiatimes.com/rss/digital-india',
+    'https://government.economictimes.indiatimes.com/rss/policy',
+    'https://government.economictimes.indiatimes.com/rss/governance',
+    'https://government.economictimes.indiatimes.com/rss/smart-infra',
+    'https://government.economictimes.indiatimes.com/rss/Defence',
+    'https://government.economictimes.indiatimes.com/rss/economy'
+
 ]
 
 INTERNATIONAL_FEEDS = [
