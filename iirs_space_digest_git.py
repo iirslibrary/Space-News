@@ -51,7 +51,10 @@ NATIONAL_FEEDS = [
     'https://government.economictimes.indiatimes.com/rss/governance',
     'https://government.economictimes.indiatimes.com/rss/smart-infra',
     'https://government.economictimes.indiatimes.com/rss/Defence',
-    'https://government.economictimes.indiatimes.com/rss/economy'
+    'https://government.economictimes.indiatimes.com/rss/economy',
+    'https://news.google.com/rss',                  # Top stories (India by default)
+'https://news.google.com/rss/topics/...',       # Topics (Science/Tech)
+'https://news.google.com/rss/search?q=ISRO'    # Keyword search
 
 ]
 
