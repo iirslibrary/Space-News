@@ -40,7 +40,13 @@ REGIONAL_FEEDS = [
     'https://www.hindustantimes.com/cities/delhi-news/rssfeed/',
 ]
 
+from datetime import date, timedelta
+yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
+google_isro = f'https://news.google.com/rss/search?q=ISRO+OR+NRSC+OR+IIRS+after:{yesterday}&hl=en-IN&gl=IN&-site:indianexpress.com&-site:thehindu.com&-site:timesofindia.indiatimes.com&-site:isro.gov.in&-site:economictimes.indiatimes.com'
+
+
 NATIONAL_FEEDS = [
+    # Direct RSS feeds (full content, reliable)
     'https://timesofindia.indiatimes.com/rssfeeds/1201659.cms',
     'https://indianexpress.com/section/science/feed/',
     'https://www.thehindu.com/sci-tech/science/rssfeed/',
@@ -52,11 +58,12 @@ NATIONAL_FEEDS = [
     'https://government.economictimes.indiatimes.com/rss/smart-infra',
     'https://government.economictimes.indiatimes.com/rss/Defence',
     'https://government.economictimes.indiatimes.com/rss/economy',
-    'https://news.google.com/rss',                  # Top stories (India by default)
-'https://news.google.com/rss/topics/...',       # Topics (Science/Tech)
-'https://news.google.com/rss/search?q=ISRO'    # Keyword search
-
+    
+    # Google News LAST: Catches ISRO misses, excludes above sites
+    google_isro
 ]
+
+
 
 INTERNATIONAL_FEEDS = [
     'https://www.esa.int/rss/rss-topnews.xml',
