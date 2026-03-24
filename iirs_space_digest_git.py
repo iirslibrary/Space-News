@@ -17,7 +17,7 @@ print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
 # 🛑 EXCLUSION KEYWORDS (Negative Filter)
 # Any news title containing these words will be REMOVED even if it matches the positive keywords.
 # Add words here like 'politics', 'budget', 'cricket', 'horoscope' etc.
-EXCLUDED_KEYWORDS = r'(?i)(rape|murder|KYC|digilocker|arrest|crime|FIR|strikes|Rajya Sabha|Muslims)'
+EXCLUDED_KEYWORDS = r'(?i)(rape|murder|KYC|digilocker|arrest|crime|FIR|strikes|Rajya Sabha|Muslims|metro)'
 
 # 🏔️ Regional Keywords (Uttarakhand/Dehradun focus)
 # REMOVED "pollution" to prevent political news overlap
