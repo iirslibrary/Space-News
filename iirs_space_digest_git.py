@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 import email.utils
 import time
 import os
+from urllib.parse import urljoin
 
 print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
 
@@ -58,7 +59,7 @@ NATIONAL_FEEDS = [
     'https://government.economictimes.indiatimes.com/rss/smart-infra',
     'https://government.economictimes.indiatimes.com/rss/Defence',
     'https://government.economictimes.indiatimes.com/rss/economy',
-    
+
     # Google News LAST: Catches ISRO misses, excludes above sites
     google_isro
 ]
@@ -79,21 +80,201 @@ INTERNATIONAL_FEEDS = [
     'https://interestingengineering.com/feed',
 ]
 
-def extract_first_image_url(html_content):
-    if not html_content:
-        return None
-    img_patterns = [
-        r'<img[^>]+src=["\']([^"\']+\.(?:jpg|jpeg|png|gif|webp))["\'][^>]*>',
-        r'<media:content[^>]+url=["\']([^"\']+)["\'][^>]*>',
-        r'<enclosure[^>]+url=["\']([^"\']+)["\'][^>]*>'
-    ]
-    for pattern in img_patterns:
-        match = re.search(pattern, html_content, re.IGNORECASE)
-        if match:
-            img_url = match.group(1)
-            if img_url and img_url.startswith('http') and len(img_url) > 20:
-                return img_url
+
+
+#Sub functions for using the extraction of image##
+
+BAD_IMAGE_HINTS = [
+    "logo", "icon", "favicon", "sprite", "banner", "ads", "advert",
+    "google-news", "gnews", "default", "placeholder", "avatar",
+    "feedburner", "newsletter", "branding", "youtube", "facebook",
+    "twitter", "instagram", "linkedin", "whatsapp", "telegram",
+    "share", "social", "theme-assets"
+]
+
+BAD_IMAGE_EXTENSIONS = [".svg", ".ico"]
+
+def is_valid_image_url(url):
+    if not url or not url.startswith("http"):
+        return False
+
+    lower_url = url.lower()
+
+    # Reject bad extensions
+    if any(lower_url.endswith(ext) for ext in BAD_IMAGE_EXTENSIONS):
+        return False
+
+    # Reject known non-article asset hints
+    if any(hint in lower_url for hint in BAD_IMAGE_HINTS):
+        return False
+
+    # Reject common static/theme asset paths unless they look like article uploads
+    if "/wp-content/themes/" in lower_url:
+        return False
+
+    return True
+
+
+def extract_image_from_raw_html(url):
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Accept-Language": "en-US,en;q=0.9"
+        }
+        response = requests.get(url, headers=headers, timeout=20)
+        response.raise_for_status()
+        html = response.text
+
+        patterns = [
+            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<img[^>]+data-lazy-src=["\']([^"\']+)["\']',
+            r'<img[^>]+data-src=["\']([^"\']+)["\']',
+            r'<img[^>]+data-srcset=["\']([^"\']+)["\']',
+            r'<img[^>]+src=["\']([^"\']+)["\']'
+        ]
+
+        for pattern in patterns:
+            matches = re.findall(pattern, html, flags=re.I)
+            for match in matches:
+                img = match.strip().split()[0]
+
+                if img.startswith("//"):
+                    img = "https:" + img
+                elif img.startswith("/"):
+                    from urllib.parse import urljoin
+                    img = urljoin(url, img)
+
+                if is_valid_image_url(img):
+                    return img
+    except:
+        pass
+
     return None
+
+def extract_image_from_jsonld_or_scripts(url):
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0",
+            "Accept-Language": "en-US,en;q=0.9"
+        }
+        response = requests.get(url, headers=headers, timeout=20)
+        response.raise_for_status()
+        html = response.text
+
+        patterns = [
+            r'"image"\s*:\s*"([^"]+)"',
+            r'"thumbnailUrl"\s*:\s*"([^"]+)"',
+            r'"contentUrl"\s*:\s*"([^"]+)"',
+            r'"url"\s*:\s*"([^"]+\.(?:jpg|jpeg|png|webp))"'
+        ]
+
+        for pattern in patterns:
+            matches = re.findall(pattern, html, flags=re.I)
+            for img in matches:
+                img = img.replace("\\/", "/")
+                if img.startswith("//"):
+                    img = "https:" + img
+                elif img.startswith("/"):
+                    from urllib.parse import urljoin
+                    img = urljoin(url, img)
+
+                if is_valid_image_url(img):
+                    return img
+    except:
+        pass
+
+    return None
+
+  
+
+
+##end
+
+#For Fetching news images from enws article source##
+
+def resolve_google_news_url(url):
+    if not url or "news.google.com" not in url:
+        return url
+
+    try:
+        decoded = gnewsdecoder(url)
+        if isinstance(decoded, dict) and decoded.get("status"):
+            decoded_url = decoded.get("decoded_url")
+            if decoded_url and decoded_url.startswith("http"):
+                return decoded_url
+    except:
+        pass
+
+    return url
+
+def extract_image_with_newspaper(url):
+    if not url or not url.startswith("http"):
+        return None
+
+    try:
+        article = Article(url)
+        article.download()
+        article.parse()
+
+        if article.top_image and article.top_image.startswith("http"):
+            return article.top_image
+
+        if article.images:
+            for img in article.images:
+                if isinstance(img, str) and img.startswith("http"):
+                    return img
+    except:
+        pass
+
+    return None
+
+def extract_first_image_url(entry, article_url=None):
+    try:
+        for item in entry.get("media_content", []):
+            url = item.get("url")
+            if url and url.startswith("http"):
+                return url
+    except:
+        pass
+
+    try:
+        for item in entry.get("media_thumbnail", []):
+            url = item.get("url")
+            if url and url.startswith("http"):
+                return url
+    except:
+        pass
+
+    try:
+        for link in entry.get("links", []):
+            href = link.get("href", "")
+            link_type = link.get("type", "")
+            rel = link.get("rel", "")
+            if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
+                return href
+    except:
+        pass
+
+    if article_url:
+        image = extract_image_with_newspaper(article_url)
+        if image:
+            return image
+
+        image = extract_image_from_raw_html(article_url)
+        if image:
+            return image
+
+        image = extract_image_from_jsonld_or_scripts(article_url)
+        if image:
+            return image
+
+    return None
+
+
+
+##end 
+
 
 def sanitize_html_content(text):
     if not text:
@@ -109,11 +290,11 @@ def is_within_last_24_hours(entry):
     """
     now = datetime.now(timezone.utc)
     cutoff_time = now - timedelta(hours=24)
-    
+
     # 1. Try standard 'published_parsed' (struct_time)
     # Most reliable method for feedparser
     pub_struct = entry.get('published_parsed') or entry.get('updated_parsed') or entry.get('created_parsed')
-    
+
     if pub_struct:
         try:
             # Convert struct_time to aware datetime (UTC)
@@ -121,7 +302,7 @@ def is_within_last_24_hours(entry):
             return pub_time >= cutoff_time
         except:
             pass # Continue to fallback if conversion fails
-            
+
     # 2. Fallback: Parse string dates if struct is missing
     date_str = entry.get('published') or entry.get('updated') or entry.get('created')
     if date_str:
@@ -134,9 +315,10 @@ def is_within_last_24_hours(entry):
                 return pub_time >= cutoff_time
         except:
             pass
-            
+
     # If no valid date is found, we assume it's NOT new to avoid spamming old news
     return False
+
 
 def fetch_news_from_feeds(feeds, max_articles=6):
     news = []
@@ -144,16 +326,13 @@ def fetch_news_from_feeds(feeds, max_articles=6):
         try:
             feed = feedparser.parse(url)
             print(f"📱 {feed.feed.get('title', 'Unknown')} - checking...")
-            
+
             for entry in feed.entries[:15]:
                 if is_within_last_24_hours(entry):
                     title_lower = entry.title.lower()
-                    
-                    # 1. Get Summary Early (so we can check it for bad words)
+
                     raw_summary = entry.get('summary', '') or entry.get('description', '')
                     summary_lower = raw_summary.lower()
-                    
-                    # Combine Title + Summary for checking
                     full_text_check = title_lower + " " + summary_lower
 
                     if url in REGIONAL_FEEDS:
@@ -163,34 +342,48 @@ def fetch_news_from_feeds(feeds, max_articles=6):
                     else:
                         keyword_pattern = INTERNATIONAL_KEYWORDS
 
-                    # 2. Positive Filter (Check TITLE only to keep relevance high)
                     if not re.search(keyword_pattern, title_lower):
                         continue
 
-                    # 3. 🛑 NEGATIVE FILTER (Check BOTH Title AND Summary)
-                    # Now catches "murder" in the body text even if title is clean
                     if re.search(EXCLUDED_KEYWORDS, full_text_check):
                         print(f"🗑️ REMOVED (Excluded content): {entry.title[:40]}...")
                         continue
 
-                    # Process valid item
-                    image_url = extract_first_image_url(raw_summary)
+                    original_link = entry.link
+                    final_link = original_link
+
+                    if original_link and "news.google.com" in original_link:
+                        final_link = resolve_google_news_url(original_link)
+
+                    image_url = extract_first_image_url(entry, final_link)
                     summary = sanitize_html_content(raw_summary)
                     title = re.sub(r'<[^>]+>', '', entry.title)
-                    
+
                     news.append({
                         'title': title,
-                        'link': entry.link,
-                        'source': feed.feed.get('title', 'Space News')[:20] + '...',
+                        'link': final_link,
+                        'source': feed.feed.get('title', 'Space News'),
                         'summary': summary,
                         'image': image_url
                     })
+
                     print(f"✅ NEW (24h): {title[:60]}...")
-                    if len(news) >= max_articles: break
-            if len(news) >= max_articles: break
+                    print(f"🔗 Original link: {original_link}")
+                    print(f"🔗 Final link: {final_link}")
+                    print(f"🖼️ Image found: {image_url}")
+
+                    if len(news) >= max_articles:
+                        break
+
+            if len(news) >= max_articles:
+                break
+
         except Exception as e:
             print(f"⚠️ Skip {url}: {e}")
+
     return news
+
+
 
 
 # No fallback needed with rolling window, but we keep structure clean
@@ -206,8 +399,8 @@ international_news = fetch_news_from_feeds(INTERNATIONAL_FEEDS, max_articles=8)
 # Combine ALL news into single list with labels
 all_news = []
 for news_list, category in [
-    (regional_news, "🏔️ Regional Updates"), 
-    (national_news, "🇮🇳 National Updates"), 
+    (regional_news, "🏔️ Regional Updates"),
+    (national_news, "🇮🇳 National Updates"),
     (international_news, "🌌 International Updates")
 ]:
     for item in news_list:
@@ -327,9 +520,9 @@ body::before {{
 }}
 
 .scroll-container {{
-    width: 80% !important;        
-    max-width: none !important;   
-    min-width: 600px !important;  
+    width: 80% !important;
+    max-width: none !important;
+    min-width: 600px !important;
     background: var(--bg-secondary) !important;
     backdrop-filter: blur(30px) !important;
     border: 1px solid var(--border-light) !important;
@@ -434,7 +627,7 @@ h2 {{
 <script>
     const btn = document.getElementById('themeToggle');
     const html = document.documentElement;
-    
+
     // Check local storage
     if (localStorage.getItem('theme') === 'light') {{
         html.setAttribute('data-theme', 'light');
