@@ -60,6 +60,6 @@ jobs:
 
           ────────────────────────────
           Copy this link and forward to IIRS team via office email.
-        to: ${{ secrets.GMAIL_USER }},${{ secrets.GMAIL_USER2 }},${{ secrets.GMAIL_USER3 }},${{ secrets.GMAIL_USER4 }}
+        to: ${{ secrets.GMAIL_USER }}
         from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
         attachments: iirs_daily_space_digest_*.docx
