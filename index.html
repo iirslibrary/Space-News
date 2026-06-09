@@ -75,9 +75,9 @@ body::before {
 
 .page-header {
     display: grid !important;
-    grid-template-columns: 70px 1fr 70px !important;
+    grid-template-columns: 90px 1fr 90px !important;
     align-items: center !important;
-    column-gap: 10px !important;
+    column-gap: 12px !important;
     margin-bottom: 8px !important;
 }
 
@@ -85,7 +85,14 @@ body::before {
     width: 70px !important;
     height: auto !important;
     display: block !important;
+}
+
+.left-logo {
     justify-self: start !important;
+}
+
+.right-logo {
+    justify-self: end !important;
 }
 
 .header-title-wrap {
@@ -100,12 +107,6 @@ body::before {
     margin: 0 !important;
     font-weight: 700 !important;
     letter-spacing: 1px !important;
-}
-
-.header-spacer {
-    width: 54px !important;
-    height: 1px !important;
-    justify-self: end !important;
 }
 
 .scroll-container {
@@ -201,15 +202,15 @@ h2 {
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
 <div class="scroll-container">
     <div class="page-header">
-        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo">
-        <div class="header-title-wrap">
-            <h2>🌌 अंतरिक्ष समाचार संग्रह | Space News Collection</h2>
-        </div>
-        <div class="header-spacer"></div>
+    <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo left-logo">
+    <div class="header-title-wrap">
+        <h2>🌌 अंतरिक्ष समाचार संग्रह | Space News Collection</h2>
     </div>
+    <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo right-logo">
+</div>
 
-    <p style="text-align:center; color:var(--text-secondary); margin-top:-10px; margin-bottom:40px;">
-        09-06-2026 | 13:38 IST | 16 Updates Found
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+    दिनांक: ०९-०६-२०२६ • Date: 09-06-2026 • Time: 14:43 IST • 16 Updates
     </p>
 
     
@@ -287,9 +288,21 @@ h2 {
         
             <div class="news-card">
                 <div class="card-content">
+                    <img src="https://static.toiimg.com/photo/118390705.cms" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <div class="card-title">
+                        <a href="https://timesofindia.indiatimes.com/education/news/should-upsc-be-conducted-by-isro-shekhar-sumans-satire-on-neet-paper-airlift-plan-watch/articleshow/131605723.cms" target="_blank" rel="noopener noreferrer">7. 'Should UPSC be conducted by Isro?' Shekhar Suman's satire on NEET paper airlift plan; watch - The Times of India</a>
+                    </div>
+                    <div class="card-source">"ISRO OR NRSC OR IIRS after:2026-06-08" - Google News</div>
+                    <div class="card-summary">'Should UPSC be conducted by Isro?' Shekhar Suman's satire on NEET paper airlift plan; watch&nbsp;&nbsp;The Times of India</div>
+                    <a href="https://timesofindia.indiatimes.com/education/news/should-upsc-be-conducted-by-isro-shekhar-sumans-satire-on-neet-paper-airlift-plan-watch/articleshow/131605723.cms" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
                     <img src="https://imgs.etvbharat.com/etvbharat/prod-images/08-06-2026/1200-675-26873224-281-26873224-1780931130961.jpg" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
                     <div class="card-title">
-                        <a href="https://www.etvbharat.com/en/technology/isro-develops-ai-powered-system-to-detect-deadly-rip-currents-along-andhra-pradesh-coast-enn26060803953" target="_blank" rel="noopener noreferrer">7. ISRO Develops AI-Powered System To Detect Deadly Rip Currents Along Andhra Pradesh Coast - ETV Bharat</a>
+                        <a href="https://www.etvbharat.com/en/technology/isro-develops-ai-powered-system-to-detect-deadly-rip-currents-along-andhra-pradesh-coast-enn26060803953" target="_blank" rel="noopener noreferrer">8. ISRO Develops AI-Powered System To Detect Deadly Rip Currents Along Andhra Pradesh Coast - ETV Bharat</a>
                     </div>
                     <div class="card-source">"ISRO OR NRSC OR IIRS after:2026-06-08" - Google News</div>
                     <div class="card-summary">ISRO Develops AI-Powered System To Detect Deadly Rip Currents Along Andhra Pradesh Coast&nbsp;&nbsp;ETV Bharat</div>
@@ -299,19 +312,7 @@ h2 {
         
             <div class="news-card">
                 <div class="card-content">
-                    <img src="https://thenewsmill.com/tnm-og/470692.jpg" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
-                    <div class="card-title">
-                        <a href="https://thenewsmill.com/2026/01/isro-to-launch-pslv-c62-mission-on-january-12-from-sriharikota/" target="_blank" rel="noopener noreferrer">8. ISRO to launch PSLV-C62 mission on January 12 from Sriharikota - The News Mill</a>
-                    </div>
-                    <div class="card-source">"ISRO OR NRSC OR IIRS after:2026-06-08" - Google News</div>
-                    <div class="card-summary">ISRO to launch PSLV-C62 mission on January 12 from Sriharikota&nbsp;&nbsp;The News Mill</div>
-                    <a href="https://thenewsmill.com/2026/01/isro-to-launch-pslv-c62-mission-on-january-12-from-sriharikota/" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
-                </div>
-            </div>
-        
-            <div class="news-card">
-                <div class="card-content">
-                    <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/missions/hubble/galaxies/spiral/Hubble_M88_potm2605a.jpg?w=1024" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <img src="https://images-assets.nasa.gov/image/art002e012476/art002e012476~large.jpg?w=1920&h=1440&fit=clip&crop=faces%2Cfocalpoint" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
                     <div class="card-title">
                         <a href="https://www.nasa.gov/centers-and-facilities/johnson/how-nasa-science-and-artemis-are-shaping-the-2026-fifa-world-cup/" target="_blank" rel="noopener noreferrer">9. How NASA Science and Artemis Are Shaping the 2026 FIFA World Cup</a>
                     </div>
