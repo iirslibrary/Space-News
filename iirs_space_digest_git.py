@@ -775,8 +775,7 @@ def add_page_number(run):
 def add_footer_to_section(section):
     footer = section.footer
     paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
-
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     paragraph.paragraph_format.space_before = Pt(6)
 
     if paragraph.runs:
@@ -785,22 +784,15 @@ def add_footer_to_section(section):
 
     add_top_border(paragraph, color="D9D9D9", size="6", space="4")
 
-    tab_stops = paragraph.paragraph_format.tab_stops
-    tab_stops.add_tab_stop(Inches(3.25), WD_TAB_ALIGNMENT.CENTER)
-    tab_stops.add_tab_stop(Inches(6.5), WD_TAB_ALIGNMENT.RIGHT)
+    run1 = paragraph.add_run("पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं")
+    run1.font.name = "Mangal"
+    run1.font.size = Pt(9)
 
-    paragraph.add_run("\t")
+    run1.add_break()
 
-    center_run = paragraph.add_run("Compiled by Library and Information Resource Division, IIRS")
-    center_run.font.name = "Times New Roman"
-    center_run.font.size = Pt(9)
-
-    paragraph.add_run("\t")
-
-    page_run = paragraph.add_run()
-    page_run.font.name = "Times New Roman"
-    page_run.font.size = Pt(9)
-    add_page_number(page_run)
+    run2 = paragraph.add_run("Compiled by Library and Information Resource Division, IIRS")
+    run2.font.name = "Times New Roman"
+    run2.font.size = Pt(9)
 
 def apply_footer_to_all_sections(doc):
     for section in doc.sections:
@@ -1310,6 +1302,12 @@ h2 {{
     .card-image {{ height: 200px !important; }}
 }}
 
+.footer-text {{
+    text-align: center;
+    line-height: 1.5;
+    font-size: 13px;
+}}
+
 </style>
 </head>
 <body>
@@ -1329,9 +1327,10 @@ h2 {{
 
     {all_articles_html}
 
-    <div class="footer">
-        Compiled by Library and Information Resource Division, IIRS
-    </div>
+    <div class="footer-text">
+    <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+    <div>Compiled by Library and Information Resource Division, IIRS</div>
+</div>
 </div>
 
 
