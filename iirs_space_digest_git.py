@@ -1302,11 +1302,32 @@ h2 {{
     .card-image {{ height: 200px !important; }}
 }}
 
-.footer-text {{
+.footer {{
+    margin-top: 34px;
+    padding: 22px 20px 16px;
     text-align: center;
-    line-height: 1.5;
-    font-size: 13px;
+    position: relative;
+    border-top: 1px solid rgba(120, 140, 150, 0.35);
+    background: transparent;
 }}
+
+.footer-text {{
+    line-height: 1.45;
+    color: #2f2f2f;
+}}
+
+.footer-text div:first-child {{
+    font-size: 13px;
+    color: #4d4d4d;
+    margin-bottom: 2px;
+}}
+
+.footer-text div:last-child {{
+    font-size: 13px;
+    color: #333;
+    letter-spacing: 0.12px;
+}}
+
 
 </style>
 </head>
@@ -1327,10 +1348,12 @@ h2 {{
 
     {all_articles_html}
 
+    <footer class="footer">
     <div class="footer-text">
-    <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
-    <div>Compiled by Library and Information Resource Division, IIRS</div>
-</div>
+        <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+        <div>Compiled by Library and Information Resource Division, IIRS</div>
+    </div>
+</footer>
 </div>
 
 
