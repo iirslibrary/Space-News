@@ -1288,7 +1288,7 @@ h2 {{
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
 <div class="scroll-container">
     <div class="page-header">
-        <img src="./assets/isro-logo-png_seeklogo-304812.png" alt="ISRO Logo" class="top-logo">
+        <img src="./assets/ISRO-color.svg" alt="ISRO Logo" class="top-logo">
         <div class="header-title-wrap">
             <h2>🌌 Space News Collection</h2>
         </div>
