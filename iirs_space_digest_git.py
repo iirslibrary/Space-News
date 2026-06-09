@@ -1169,7 +1169,7 @@ body::before {{
 }}
 
 .top-logo {{
-    width: 54px !important;
+    width: 70px !important;
     height: auto !important;
     display: block !important;
     justify-self: start !important;
