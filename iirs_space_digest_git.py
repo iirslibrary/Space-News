@@ -913,7 +913,7 @@ def add_article_body_single_column(doc, paragraphs):
 
         run = p.add_run(para)
         run.font.name = 'Times New Roman'
-        run.font.size = Pt(10.5)
+        run.font.size = Pt(12)
 
 def add_first_page_isro_logo(section, logo_path):
     section.different_first_page_header_footer = True
@@ -957,7 +957,7 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     header_box.add_run("\t")
 
-    run1 = header_box.add_run("Space News Collection")
+    run1 = header_box.add_run("अंतरिक्ष समाचार संग्रह | Space News Collection")
     run1.bold = True
     run1.font.name = "Times New Roman"
     run1.font.size = Pt(12)
@@ -1288,9 +1288,9 @@ h2 {{
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
 <div class="scroll-container">
     <div class="page-header">
-        <img src="./assets/ISRO-color.svg" alt="ISRO Logo" class="top-logo">
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo">
         <div class="header-title-wrap">
-            <h2>🌌 Space News Collection</h2>
+            <h2>🌌 अंतरिक्ष समाचार संग्रह | Space News Collection</h2>
         </div>
         <div class="header-spacer"></div>
     </div>
@@ -1343,7 +1343,28 @@ print(f"✅ SAVED: {html_filename} with {len(all_news)} items")
 # DOCX Output
 # =========================
 
-digest_date_str = datetime.now(ist_offset).strftime('%A, %d/%m/%Y')
+now_ist = datetime.now(ist_offset)
+
+hindi_days = {
+    "Monday": "सोमवार",
+    "Tuesday": "मंगलवार",
+    "Wednesday": "बुधवार",
+    "Thursday": "गुरुवार",
+    "Friday": "शुक्रवार",
+    "Saturday": "शनिवार",
+    "Sunday": "रविवार"
+}
+
+digit_map = str.maketrans("0123456789", "०१२३४५६७८९")
+
+eng_day = now_ist.strftime('%A')
+date_part = now_ist.strftime('%d/%m/%Y')
+
+hindi_day = hindi_days.get(eng_day, "")
+hindi_date_part = date_part.translate(digit_map)
+
+digest_date_str = f"{hindi_day}, {hindi_date_part} | {eng_day}, {date_part}"
+
 docx_filename = f"Space_News_Collection_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
 
 generate_docx(
