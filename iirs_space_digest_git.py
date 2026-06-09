@@ -640,10 +640,41 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 # HTML Generator
 # =========================
 
+# def make_articles_html(news_list):
+#     html_out = ""
+
+#     for i, item in enumerate(news_list, 1):
+#         image_html = ''
+#         if item.get("image"):
+#             image_html = (
+#                 f'<img src="{item["image"]}" alt="Space news image" '
+#                 f'class="card-image" loading="lazy" '
+#                 f'onerror="this.style.display=\'none\'">'
+#             )
+
+#         html_out += f'''
+#             <div class="news-card">
+#                 <div class="card-content">
+#                     {image_html}
+#                     <div class="card-title">
+#                         <a href="{item["link"]}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
+#                     </div>
+#                     <div class="card-source">{item["source"]}</div>
+#                     <div class="card-summary">{item["summary"]}</div>
+#                     <a href="{item["link"]}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
+#                 </div>
+#             </div>
+#         '''
+
+#     return html_out
+
 def make_articles_html(news_list):
     html_out = ""
 
     for i, item in enumerate(news_list, 1):
+        article_url = resolve_final_article_url(normalize_text(item.get("link", "")))
+        safe_url = html.escape(article_url, quote=True)
+
         image_html = ''
         if item.get("image"):
             image_html = (
@@ -657,14 +688,34 @@ def make_articles_html(news_list):
                 <div class="card-content">
                     {image_html}
                     <div class="card-title">
-                        <a href="{item["link"]}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
+                        <a href="{article_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
                     </div>
                     <div class="card-source">{item["source"]}</div>
                     <div class="card-summary">{item["summary"]}</div>
-                    <a href="{item["link"]}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
+
+                    <div class="card-actions">
+                        <a href="{article_url}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
+
+                        <label class="flag-item">
+                            <input type="checkbox" class="flag-checkbox" value="{safe_url}">
+                            Flag this article
+                        </label>
+                    </div>
                 </div>
             </div>
         '''
+
+    html_out += '''
+        <div class="bottom-actions">
+            <button type="button" class="flag-submit-btn" onclick="submitFlags()">
+                Submit Flagged Articles
+            </button>
+
+            <button type="button" class="publish-btn" onclick="publishCurrentList()">
+                Publish
+            </button>
+        </div>
+    '''
 
     return html_out
 
@@ -1047,6 +1098,36 @@ def generate_docx(news_items, output_path, digest_date_str):
     doc.save(output_path)
     print(f'DOCX saved: {output_path}')
 
+import json
+
+FLAG_FILE = "flagged_urls.json"
+
+def load_flagged_urls():
+    if not os.path.exists(FLAG_FILE):
+        return set()
+
+    try:
+        with open(FLAG_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return set(data.get("flagged_urls", []))
+    except Exception:
+        return set()
+
+def filter_flagged_news(news_items):
+    flagged_urls = load_flagged_urls()
+    if not flagged_urls:
+        return news_items
+
+    filtered_news = []
+    for item in news_items:
+        raw_link = normalize_text(item.get("link", ""))
+        final_link = resolve_final_article_url(raw_link)
+
+        if final_link not in flagged_urls:
+            item["link"] = final_link
+            filtered_news.append(item)
+
+    return filtered_news
 
 # =========================
 # Main Fetch
@@ -1081,6 +1162,7 @@ if not all_news:
         'category': 'System'
     })
 
+all_news = filter_flagged_news(all_news)
 
 # =========================
 # HTML Output
@@ -1324,6 +1406,198 @@ h2 {{
     letter-spacing: 0.12px;
 }}
 
+.card-actions {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}}
+
+.flag-item {{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+}}
+
+.flag-checkbox {{
+    accent-color: #8b1e2d;
+    cursor: pointer;
+}}
+
+.flag-submit-wrap {{
+    text-align: center;
+    margin: 28px 0 10px;
+}}
+
+.flag-submit-btn {{
+    background: #8b1e2d;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}}
+
+.flag-submit-btn:hover {{
+    background: #6f1724;
+}}
+
+
+.bottom-actions {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0 10px;
+    flex-wrap: wrap;
+}}
+
+.flag-submit-btn {{
+    background: #8b1e2d;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}}
+
+.flag-submit-btn:hover {{
+    background: #6f1724;
+}}
+
+.publish-btn {{
+    background: #0b6b4a;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}}
+
+.publish-btn:hover {{
+    background: #084f37;
+}}
+
+
+##final two button layout
+
+.card-actions {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}}
+
+.flag-item {{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+}}
+
+.flag-checkbox {{
+    accent-color: #8b1e2d;
+    cursor: pointer;
+}}
+
+.bottom-actions {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0 10px;
+    flex-wrap: wrap;
+}}
+
+.flag-submit-btn {{
+    background: #8b1e2d;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}}
+
+.flag-submit-btn:hover {{
+    background: #6f1724;
+}}
+
+.publish-btn {{
+    background: #0b6b4a;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}}
+
+.publish-btn:hover {{
+    background: #084f37;
+}}
+
+
+#for toast
+
+.custom-toast {{
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    min-width: 280px;
+    max-width: 360px;
+    background: #ffffff;
+    color: #222;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    padding: 14px 16px;
+    z-index: 9999;
+    border-left: 5px solid #0b6b4a;
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}}
+
+.custom-toast.show {{
+    opacity: 1;
+    transform: translateY(0);
+}}
+
+.toast-title {{
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}}
+
+.toast-message {{
+    font-size: 13px;
+    line-height: 1.5;
+    color: #555;
+}}
+
+.custom-toast.error {{
+    border-left-color: #8b1e2d;
+}}
+
+.custom-toast.success {{
+    border-left-color: #0b6b4a;
+}}
+
 
 </style>
 </head>
@@ -1353,6 +1627,11 @@ h2 {{
 </div>
 
 
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+
 <script>
 const btn = document.getElementById('themeToggle');
 const html = document.documentElement;
@@ -1373,6 +1652,63 @@ btn.addEventListener('click', () => {{
         localStorage.setItem('theme', 'light');
     }}
 }});
+
+function showToast(title, message, type = 'success') {{
+    const toast = document.getElementById('customToast');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastMessage = document.getElementById('toastMessage');
+
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+
+    toast.classList.remove('success', 'error', 'show');
+    toast.classList.add(type);
+
+    setTimeout(() => {{
+        toast.classList.add('show');
+    }}, 10);
+
+    clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(() => {{
+        toast.classList.remove('show');
+    }}, 2600);
+}}
+
+async function submitFlags() {{
+    const checked = Array.from(document.querySelectorAll('.flag-checkbox:checked'))
+        .map(cb => cb.value);
+
+    if (!checked.length) {{
+        showToast('No selection', 'Please select at least one article to flag.', 'error');
+        return;
+    }}
+
+    console.log('Flagged URLs:', checked);
+    showToast('Flags submitted', 'Selected articles have been marked for removal.', 'success');
+}}
+
+async function publishCurrentList() {{
+    showToast('Published', 'This reviewed list has been marked as final.', 'success');
+}}
+
+async function submitFlags() {{
+    const checked = Array.from(document.querySelectorAll('.flag-checkbox:checked'))
+        .map(cb => cb.value);
+
+    if (!checked.length) {{
+        alert('Please select at least one article to flag.');
+        return;
+    }}
+
+    console.log('Flagged URLs:', checked);
+    alert('Flag list captured successfully. Next this will be sent for filtering.');
+}}
+
+async function publishCurrentList() {{
+    alert('Publish confirmed. This current fetched list will be treated as the approved list.');
+}}
+
+
 </script>
 </body>
 </html>
