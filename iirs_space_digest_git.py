@@ -915,6 +915,22 @@ def add_article_body_single_column(doc, paragraphs):
         run.font.name = 'Times New Roman'
         run.font.size = Pt(10.5)
 
+def add_first_page_isro_logo(section, logo_path):
+    section.different_first_page_header_footer = True
+    header = section.first_page_header
+
+    paragraph = header.paragraphs[0] if header.paragraphs else header.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    paragraph.paragraph_format.space_after = Pt(0)
+
+    if paragraph.runs:
+        for run in paragraph.runs:
+            run.text = ""
+
+    if logo_path and os.path.exists(logo_path):
+        run = paragraph.add_run()
+        run.add_picture(logo_path, width=Inches(0.7))
+
 def generate_docx(news_items, output_path, digest_date_str):
     doc = Document()
 
@@ -924,6 +940,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     section.left_margin = Inches(0.7)
     section.right_margin = Inches(0.7)
     set_section_columns(section, num_cols=1)
+    add_first_page_isro_logo(section, "/assets/isro-logo-png_seeklogo-304812.png")
 
     styles = doc.styles
     styles['Normal'].font.name = 'Times New Roman'
@@ -1142,6 +1159,42 @@ body::before {{
     z-index: 1000 !important;
 }}
 
+
+.page-header {{
+    display: grid !important;
+    grid-template-columns: 70px 1fr 70px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    margin-bottom: 8px !important;
+}}
+
+.top-logo {{
+    width: 54px !important;
+    height: auto !important;
+    display: block !important;
+    justify-self: start !important;
+}}
+
+.header-title-wrap {{
+    text-align: center !important;
+}}
+
+.header-title-wrap h2 {{
+    color: var(--text-white) !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--border-light) !important;
+    padding-bottom: 20px !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+}}
+
+.header-spacer {{
+    width: 54px !important;
+    height: 1px !important;
+    justify-self: end !important;
+}}
+
 .scroll-container {{
     width: 80% !important;
     max-width: none !important;
@@ -1228,14 +1281,21 @@ h2 {{
     h2 {{ font-size: 22px !important; }}
     .card-image {{ height: 200px !important; }}
 }}
+
 </style>
 </head>
 <body>
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
-
 <div class="scroll-container">
-    <h2>🌌 Space News Collection</h2>
-    <p style="text-align:center; color:var(--text-secondary); margin-top:-20px; margin-bottom:40px;">
+    <div class="page-header">
+        <img src="assets/isro-logo-png_seeklogo-304812.png" alt="ISRO Logo" class="top-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 Space News Collection</h2>
+        </div>
+        <div class="header-spacer"></div>
+    </div>
+
+    <p style="text-align:center; color:var(--text-secondary); margin-top:-10px; margin-bottom:40px;">
         {timestamp} | {len(all_news)} Updates Found
     </p>
 
@@ -1245,6 +1305,7 @@ h2 {{
         Compiled by Library and Information Resource Division, IIRS
     </div>
 </div>
+
 
 <script>
 const btn = document.getElementById('themeToggle');
