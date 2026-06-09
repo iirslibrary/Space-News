@@ -1,4 +1,4 @@
-name: 🚀 IIRS Daily Space Digest + Pages Link
+name: 🚀 Space News Collection + Pages Link
 
 on:
   schedule:
@@ -30,8 +30,8 @@ jobs:
 
     - name: 📋 Copy to index.html for hosting
       run: |
-        cp IIRS_SpaceNews_Daily_*.html index.html
-        echo "✅ Copied $(ls IIRS_SpaceNews_Daily_*.html) to index.html"
+        cp Space_News_Collection_*.html index.html
+        echo "✅ Copied $(ls Space_News_Collection_*.html) to index.html"
 
     - name: 🚀 Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
@@ -62,4 +62,4 @@ jobs:
           Copy this link and forward to IIRS team via office email.
         to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
         from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
-        attachments: iirs_daily_space_digest_*.docx
+        attachments: Space_News_Collection_*.docx
