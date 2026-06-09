@@ -949,29 +949,23 @@ def generate_docx(news_items, output_path, digest_date_str):
     add_footer_to_section(section)
 
     header_box = doc.add_paragraph()
+    header_box.alignment = WD_ALIGN_PARAGRAPH.CENTER
     header_box.paragraph_format.space_after = Pt(10)
 
-    tab_stops = header_box.paragraph_format.tab_stops
-    tab_stops.add_tab_stop(Inches(3.25), WD_TAB_ALIGNMENT.CENTER)
-    tab_stops.add_tab_stop(Inches(6.9), WD_TAB_ALIGNMENT.RIGHT)
+    title_run = header_box.add_run("अंतरिक्ष समाचार संग्रह | Space News Collection")
+    title_run.bold = True
+    title_run.font.name = "Times New Roman"
+    title_run.font.size = Pt(13)
 
-    header_box.add_run("\t")
+    title_run.add_break()
 
-    run1 = header_box.add_run("अंतरिक्ष समाचार संग्रह | Space News Collection")
-    run1.bold = True
-    run1.font.name = "Times New Roman"
-    run1.font.size = Pt(12)
-
-    header_box.add_run("\t")
-
-    run2 = header_box.add_run(digest_date_str)
-    run2.bold = True
-    run2.font.name = "Times New Roman"
-    run2.font.size = Pt(8)
+    date_run = header_box.add_run(digest_date_str)
+    date_run.bold = False
+    date_run.font.name = "Times New Roman"
+    date_run.font.size = Pt(10)
 
     add_box_border(header_box, color="808080", size="8", space="8")
-
-    doc.add_paragraph('')
+    doc.add_paragraph()
 
     for idx, item in enumerate(news_items, start=1):
         title = normalize_text(item.get('title', 'Untitled'))
