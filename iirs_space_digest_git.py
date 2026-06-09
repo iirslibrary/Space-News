@@ -36,7 +36,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 
-print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
+print("🚀 Starting Space News Collection - LAST 24 HOURS WINDOW...")
 
 
 # =========================
@@ -756,11 +756,27 @@ def set_section_columns(section, num_cols=1, space=360):
     cols.set(qn('w:num'), str(num_cols))
     cols.set(qn('w:space'), str(space))
 
+def add_page_number(run):
+    fld_char_begin = OxmlElement('w:fldChar')
+    fld_char_begin.set(qn('w:fldCharType'), 'begin')
+
+    instr_text = OxmlElement('w:instrText')
+    instr_text.set(qn('xml:space'), 'preserve')
+    instr_text.text = " PAGE "
+
+    fld_char_end = OxmlElement('w:fldChar')
+    fld_char_end.set(qn('w:fldCharType'), 'end')
+
+    run._r.append(fld_char_begin)
+    run._r.append(instr_text)
+    run._r.append(fld_char_end)
+
 
 def add_footer_to_section(section):
     footer = section.footer
     paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
     paragraph.paragraph_format.space_before = Pt(6)
 
     if paragraph.runs:
@@ -769,10 +785,22 @@ def add_footer_to_section(section):
 
     add_top_border(paragraph, color="D9D9D9", size="6", space="4")
 
-    run = paragraph.add_run("Indian Institute of Remote Sensing (ISRO), Dehradun - 248001")
-    run.font.name = "Times New Roman"
-    run.font.size = Pt(9)
+    tab_stops = paragraph.paragraph_format.tab_stops
+    tab_stops.add_tab_stop(Inches(3.25), WD_TAB_ALIGNMENT.CENTER)
+    tab_stops.add_tab_stop(Inches(6.5), WD_TAB_ALIGNMENT.RIGHT)
 
+    paragraph.add_run("\t")
+
+    center_run = paragraph.add_run("Compiled by Library and Information Resource Division, IIRS")
+    center_run.font.name = "Times New Roman"
+    center_run.font.size = Pt(9)
+
+    paragraph.add_run("\t")
+
+    page_run = paragraph.add_run()
+    page_run.font.name = "Times New Roman"
+    page_run.font.size = Pt(9)
+    add_page_number(page_run)
 
 def apply_footer_to_all_sections(doc):
     for section in doc.sections:
@@ -847,30 +875,61 @@ def fetch_full_article_text(url, fallback_summary="", title=""):
     return fallback_summary
 
 
-def add_article_body_in_two_columns(doc, paragraphs):
+# def add_article_body_in_two_columns(doc, paragraphs):
+#     if not paragraphs:
+#         paragraphs = ['Summary not available.']
+
+#     col_section = doc.add_section(WD_SECTION.CONTINUOUS)
+#     set_section_columns(col_section, num_cols=2, space=360)
+#     add_footer_to_section(col_section)
+
+#     for para in paragraphs:
+#         p = doc.add_paragraph()
+#         p.paragraph_format.space_after = Pt(4)
+#         p.paragraph_format.line_spacing = 1.1
+#         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+#         para = re.sub(r'\s+', ' ', para).strip()
+
+#         run = p.add_run(para)
+#         run.font.name = 'Times New Roman'
+#         run.font.size = Pt(10.5)
+
+#     back_to_one = doc.add_section(WD_SECTION.CONTINUOUS)
+#     set_section_columns(back_to_one, num_cols=1, space=360)
+#     add_footer_to_section(back_to_one)
+
+def add_article_body_single_column(doc, paragraphs):
     if not paragraphs:
         paragraphs = ['Summary not available.']
 
-    col_section = doc.add_section(WD_SECTION.CONTINUOUS)
-    set_section_columns(col_section, num_cols=2, space=360)
-    add_footer_to_section(col_section)
-
     for para in paragraphs:
         p = doc.add_paragraph()
-        p.paragraph_format.space_after = Pt(4)
-        p.paragraph_format.line_spacing = 1.1
+        p.paragraph_format.space_after = Pt(6)
+        p.paragraph_format.line_spacing = 1.15
         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
         para = re.sub(r'\s+', ' ', para).strip()
 
         run = p.add_run(para)
         run.font.name = 'Times New Roman'
-        run.font.size = Pt(10.5)
+        run.font.size = Pt(12)
 
-    back_to_one = doc.add_section(WD_SECTION.CONTINUOUS)
-    set_section_columns(back_to_one, num_cols=1, space=360)
-    add_footer_to_section(back_to_one)
+def add_first_page_isro_logo(section, logo_path):
+    section.different_first_page_header_footer = True
+    header = section.first_page_header
 
+    paragraph = header.paragraphs[0] if header.paragraphs else header.add_paragraph()
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    paragraph.paragraph_format.space_after = Pt(0)
+
+    if paragraph.runs:
+        for run in paragraph.runs:
+            run.text = ""
+
+    if logo_path and os.path.exists(logo_path):
+        run = paragraph.add_run()
+        run.add_picture(logo_path, width=Inches(0.73))
 
 def generate_docx(news_items, output_path, digest_date_str):
     doc = Document()
@@ -881,6 +940,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     section.left_margin = Inches(0.7)
     section.right_margin = Inches(0.7)
     set_section_columns(section, num_cols=1)
+    add_first_page_isro_logo(section, "./assets/isro-logo-png_seeklogo-304812.png")
 
     styles = doc.styles
     styles['Normal'].font.name = 'Times New Roman'
@@ -897,7 +957,7 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     header_box.add_run("\t")
 
-    run1 = header_box.add_run("IIRS Daily Space Digest")
+    run1 = header_box.add_run("अंतरिक्ष समाचार संग्रह | Space News Collection")
     run1.bold = True
     run1.font.name = "Times New Roman"
     run1.font.size = Pt(12)
@@ -915,7 +975,7 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     for idx, item in enumerate(news_items, start=1):
         title = normalize_text(item.get('title', 'Untitled'))
-        source = clean_source_name(item.get('source', ''))
+        #source = clean_source_name(item.get('source', ''))
         link = resolve_final_article_url(normalize_text(item.get('link', '')))
         summary = normalize_text(item.get('summary', ''))
         image_url = item.get('image')
@@ -927,17 +987,17 @@ def generate_docx(news_items, output_path, digest_date_str):
         run.font.name = 'Times New Roman'
         run.font.size = Pt(13)
 
-        meta_parts = []
-        if source:
-            meta_parts.append(source)
+        # meta_parts = []
+        # if source:
+        #     meta_parts.append(source)
 
-        if meta_parts:
-            meta = doc.add_paragraph()
-            meta.paragraph_format.space_after = Pt(3)
-            meta_run = meta.add_run(' | '.join(meta_parts))
-            meta_run.italic = True
-            meta_run.font.name = 'Times New Roman'
-            meta_run.font.size = Pt(10)
+        # if meta_parts:
+        #     meta = doc.add_paragraph()
+        #     meta.paragraph_format.space_after = Pt(3)
+        #     meta_run = meta.add_run(' | '.join(meta_parts))
+        #     meta_run.italic = True
+        #     meta_run.font.name = 'Times New Roman'
+        #     meta_run.font.size = Pt(10)
 
         if link and link != '#':
             link_p = doc.add_paragraph()
@@ -969,7 +1029,8 @@ def generate_docx(news_items, output_path, digest_date_str):
             fallback_clean = clean_body_text(summary, title=title)
             body_paragraphs = split_into_paragraphs(fallback_clean)
 
-        add_article_body_in_two_columns(doc, body_paragraphs)
+        #add_article_body_in_two_columns(doc, body_paragraphs)
+        add_article_body_single_column(doc ,body_paragraphs)
 
         if idx != len(news_items):
             sep = doc.add_paragraph()
@@ -1098,6 +1159,42 @@ body::before {{
     z-index: 1000 !important;
 }}
 
+
+.page-header {{
+    display: grid !important;
+    grid-template-columns: 70px 1fr 70px !important;
+    align-items: center !important;
+    column-gap: 10px !important;
+    margin-bottom: 8px !important;
+}}
+
+.top-logo {{
+    width: 70px !important;
+    height: auto !important;
+    display: block !important;
+    justify-self: start !important;
+}}
+
+.header-title-wrap {{
+    text-align: center !important;
+}}
+
+.header-title-wrap h2 {{
+    color: var(--text-white) !important;
+    text-align: center !important;
+    border-bottom: 2px solid var(--border-light) !important;
+    padding-bottom: 20px !important;
+    margin: 0 !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+}}
+
+.header-spacer {{
+    width: 54px !important;
+    height: 1px !important;
+    justify-self: end !important;
+}}
+
 .scroll-container {{
     width: 80% !important;
     max-width: none !important;
@@ -1184,24 +1281,31 @@ h2 {{
     h2 {{ font-size: 22px !important; }}
     .card-image {{ height: 200px !important; }}
 }}
+
 </style>
 </head>
 <body>
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
-
 <div class="scroll-container">
-    <h2>🌌 IIRS Daily Space Digest</h2>
-    <p style="text-align:center; color:var(--text-secondary); margin-top:-20px; margin-bottom:40px;">
+    <div class="page-header">
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार संग्रह | Space News Collection</h2>
+        </div>
+        <div class="header-spacer"></div>
+    </div>
+
+    <p style="text-align:center; color:var(--text-secondary); margin-top:-10px; margin-bottom:40px;">
         {timestamp} | {len(all_news)} Updates Found
     </p>
 
     {all_articles_html}
 
     <div class="footer">
-        IIRS Library | Indian Institute of Remote Sensing | Dehradun<br>
-        <small>Automated Digest System</small>
+        Compiled by Library and Information Resource Division, IIRS
     </div>
 </div>
+
 
 <script>
 const btn = document.getElementById('themeToggle');
@@ -1228,7 +1332,7 @@ btn.addEventListener('click', () => {{
 </html>
 """
 
-html_filename = f'IIRS_SpaceNews_Daily_{datetime.now().strftime("%Y%m%d")}.html'
+html_filename = f'Space_News_Collection_{datetime.now().strftime("%Y%m%d")}.html'
 with open(html_filename, 'w', encoding='utf-8') as f:
     f.write(html_body)
 
@@ -1239,8 +1343,29 @@ print(f"✅ SAVED: {html_filename} with {len(all_news)} items")
 # DOCX Output
 # =========================
 
-digest_date_str = datetime.now(ist_offset).strftime('%A, %d/%m/%Y')
-docx_filename = f"iirs_daily_space_digest_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
+now_ist = datetime.now(ist_offset)
+
+hindi_days = {
+    "Monday": "सोमवार",
+    "Tuesday": "मंगलवार",
+    "Wednesday": "बुधवार",
+    "Thursday": "गुरुवार",
+    "Friday": "शुक्रवार",
+    "Saturday": "शनिवार",
+    "Sunday": "रविवार"
+}
+
+digit_map = str.maketrans("0123456789", "०१२३४५६७८९")
+
+eng_day = now_ist.strftime('%A')
+date_part = now_ist.strftime('%d/%m/%Y')
+
+hindi_day = hindi_days.get(eng_day, "")
+hindi_date_part = date_part.translate(digit_map)
+
+digest_date_str = f"{hindi_day}, {hindi_date_part} | {eng_day}, {date_part}"
+
+docx_filename = f"Space_News_Collection_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
 
 generate_docx(
     news_items=all_news,
