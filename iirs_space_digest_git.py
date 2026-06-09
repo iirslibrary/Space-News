@@ -1271,7 +1271,7 @@ btn.addEventListener('click', () => {{
 </html>
 """
 
-html_filename = f'IIRS_SpaceNews_Daily_{datetime.now().strftime("%Y%m%d")}.html'
+html_filename = f'Space_News_Collection_{datetime.now().strftime("%Y%m%d")}.html'
 with open(html_filename, 'w', encoding='utf-8') as f:
     f.write(html_body)
 
@@ -1283,7 +1283,7 @@ print(f"✅ SAVED: {html_filename} with {len(all_news)} items")
 # =========================
 
 digest_date_str = datetime.now(ist_offset).strftime('%A, %d/%m/%Y')
-docx_filename = f"iirs_daily_space_digest_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
+docx_filename = f"Space_News_Collection_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
 
 generate_docx(
     news_items=all_news,
