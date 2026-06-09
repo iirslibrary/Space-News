@@ -929,7 +929,7 @@ def add_first_page_isro_logo(section, logo_path):
 
     if logo_path and os.path.exists(logo_path):
         run = paragraph.add_run()
-        run.add_picture(logo_path, width=Inches(0.7))
+        run.add_picture(logo_path, width=Inches(0.73))
 
 def generate_docx(news_items, output_path, digest_date_str):
     doc = Document()
