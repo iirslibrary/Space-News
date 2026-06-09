@@ -847,18 +847,38 @@ def fetch_full_article_text(url, fallback_summary="", title=""):
     return fallback_summary
 
 
-def add_article_body_in_two_columns(doc, paragraphs):
+# def add_article_body_in_two_columns(doc, paragraphs):
+#     if not paragraphs:
+#         paragraphs = ['Summary not available.']
+
+#     col_section = doc.add_section(WD_SECTION.CONTINUOUS)
+#     set_section_columns(col_section, num_cols=2, space=360)
+#     add_footer_to_section(col_section)
+
+#     for para in paragraphs:
+#         p = doc.add_paragraph()
+#         p.paragraph_format.space_after = Pt(4)
+#         p.paragraph_format.line_spacing = 1.1
+#         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+
+#         para = re.sub(r'\s+', ' ', para).strip()
+
+#         run = p.add_run(para)
+#         run.font.name = 'Times New Roman'
+#         run.font.size = Pt(10.5)
+
+#     back_to_one = doc.add_section(WD_SECTION.CONTINUOUS)
+#     set_section_columns(back_to_one, num_cols=1, space=360)
+#     add_footer_to_section(back_to_one)
+
+def add_article_body_single_column(doc, paragraphs):
     if not paragraphs:
         paragraphs = ['Summary not available.']
 
-    col_section = doc.add_section(WD_SECTION.CONTINUOUS)
-    set_section_columns(col_section, num_cols=2, space=360)
-    add_footer_to_section(col_section)
-
     for para in paragraphs:
         p = doc.add_paragraph()
-        p.paragraph_format.space_after = Pt(4)
-        p.paragraph_format.line_spacing = 1.1
+        p.paragraph_format.space_after = Pt(6)
+        p.paragraph_format.line_spacing = 1.15
         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
 
         para = re.sub(r'\s+', ' ', para).strip()
@@ -866,11 +886,6 @@ def add_article_body_in_two_columns(doc, paragraphs):
         run = p.add_run(para)
         run.font.name = 'Times New Roman'
         run.font.size = Pt(10.5)
-
-    back_to_one = doc.add_section(WD_SECTION.CONTINUOUS)
-    set_section_columns(back_to_one, num_cols=1, space=360)
-    add_footer_to_section(back_to_one)
-
 
 def generate_docx(news_items, output_path, digest_date_str):
     doc = Document()
@@ -969,7 +984,8 @@ def generate_docx(news_items, output_path, digest_date_str):
             fallback_clean = clean_body_text(summary, title=title)
             body_paragraphs = split_into_paragraphs(fallback_clean)
 
-        add_article_body_in_two_columns(doc, body_paragraphs)
+        #add_article_body_in_two_columns(doc, body_paragraphs)
+        add_article_body_single_column(doc ,body_paragraphs)
 
         if idx != len(news_items):
             sep = doc.add_paragraph()
