@@ -939,8 +939,8 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     add_footer_to_section(section)
 
-    isro_logo_path = "./assets/isro-logo-png_seeklogo-304812.png"
     iirs_logo_path = "./assets/iirs.png"
+    isro_logo_path = "./assets/isro-logo-png_seeklogo-304812.png"
 
     logo_table = doc.add_table(rows=1, cols=3)
     logo_table.autofit = False
@@ -952,28 +952,24 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     left_p = cells[0].paragraphs[0]
     left_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    if os.path.exists(isro_logo_path):
-        try:
-            left_run = left_p.add_run()
-            left_run.add_picture(isro_logo_path, width=Inches(0.55))
-        except Exception as e:
-            print(f"ISRO logo error: {e}")
-    else:
-        print(f"ISRO logo not found: {isro_logo_path}")
+    if os.path.exists(iirs_logo_path):
+      try:
+          left_run = left_p.add_run()
+          left_run.add_picture(iirs_logo_path, width=Inches(0.55))
+      except Exception as e:
+          print(f"IIRS logo error: {e}")
 
     middle_p = cells[1].paragraphs[0]
     middle_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     right_p = cells[2].paragraphs[0]
     right_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    if os.path.exists(iirs_logo_path):
-        try:
-            right_run = right_p.add_run()
-            right_run.add_picture(iirs_logo_path, width=Inches(0.55))
-        except Exception as e:
-            print(f"IIRS logo error: {e}")
-    else:
-        print(f"IIRS logo not found: {iirs_logo_path}")
+    if os.path.exists(isro_logo_path):
+      try:
+          right_run = right_p.add_run()
+          right_run.add_picture(isro_logo_path, width=Inches(0.55))
+      except Exception as e:
+          print(f"ISRO logo error: {e}")
 
     doc.add_paragraph()
 
