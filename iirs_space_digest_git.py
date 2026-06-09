@@ -930,7 +930,7 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     for idx, item in enumerate(news_items, start=1):
         title = normalize_text(item.get('title', 'Untitled'))
-        source = clean_source_name(item.get('source', ''))
+        #source = clean_source_name(item.get('source', ''))
         link = resolve_final_article_url(normalize_text(item.get('link', '')))
         summary = normalize_text(item.get('summary', ''))
         image_url = item.get('image')
@@ -942,17 +942,17 @@ def generate_docx(news_items, output_path, digest_date_str):
         run.font.name = 'Times New Roman'
         run.font.size = Pt(13)
 
-        meta_parts = []
-        if source:
-            meta_parts.append(source)
+        # meta_parts = []
+        # if source:
+        #     meta_parts.append(source)
 
-        if meta_parts:
-            meta = doc.add_paragraph()
-            meta.paragraph_format.space_after = Pt(3)
-            meta_run = meta.add_run(' | '.join(meta_parts))
-            meta_run.italic = True
-            meta_run.font.name = 'Times New Roman'
-            meta_run.font.size = Pt(10)
+        # if meta_parts:
+        #     meta = doc.add_paragraph()
+        #     meta.paragraph_format.space_after = Pt(3)
+        #     meta_run = meta.add_run(' | '.join(meta_parts))
+        #     meta_run.italic = True
+        #     meta_run.font.name = 'Times New Roman'
+        #     meta_run.font.size = Pt(10)
 
         if link and link != '#':
             link_p = doc.add_paragraph()
