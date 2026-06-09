@@ -36,7 +36,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 
-print("🚀 Starting IIRS Daily Space Digest - LAST 24 HOURS WINDOW...")
+print("🚀 Starting Space News Collection - LAST 24 HOURS WINDOW...")
 
 
 # =========================
@@ -756,11 +756,27 @@ def set_section_columns(section, num_cols=1, space=360):
     cols.set(qn('w:num'), str(num_cols))
     cols.set(qn('w:space'), str(space))
 
+def add_page_number(run):
+    fld_char_begin = OxmlElement('w:fldChar')
+    fld_char_begin.set(qn('w:fldCharType'), 'begin')
+
+    instr_text = OxmlElement('w:instrText')
+    instr_text.set(qn('xml:space'), 'preserve')
+    instr_text.text = " PAGE "
+
+    fld_char_end = OxmlElement('w:fldChar')
+    fld_char_end.set(qn('w:fldCharType'), 'end')
+
+    run._r.append(fld_char_begin)
+    run._r.append(instr_text)
+    run._r.append(fld_char_end)
+
 
 def add_footer_to_section(section):
     footer = section.footer
     paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
     paragraph.paragraph_format.space_before = Pt(6)
 
     if paragraph.runs:
@@ -769,10 +785,22 @@ def add_footer_to_section(section):
 
     add_top_border(paragraph, color="D9D9D9", size="6", space="4")
 
-    run = paragraph.add_run("Indian Institute of Remote Sensing (ISRO), Dehradun - 248001")
-    run.font.name = "Times New Roman"
-    run.font.size = Pt(9)
+    tab_stops = paragraph.paragraph_format.tab_stops
+    tab_stops.add_tab_stop(Inches(3.25), WD_TAB_ALIGNMENT.CENTER)
+    tab_stops.add_tab_stop(Inches(6.5), WD_TAB_ALIGNMENT.RIGHT)
 
+    paragraph.add_run("\t")
+
+    center_run = paragraph.add_run("Compiled by Library and Information Resource Division, IIRS")
+    center_run.font.name = "Times New Roman"
+    center_run.font.size = Pt(9)
+
+    paragraph.add_run("\t")
+
+    page_run = paragraph.add_run()
+    page_run.font.name = "Times New Roman"
+    page_run.font.size = Pt(9)
+    add_page_number(page_run)
 
 def apply_footer_to_all_sections(doc):
     for section in doc.sections:
@@ -912,7 +940,7 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     header_box.add_run("\t")
 
-    run1 = header_box.add_run("IIRS Daily Space Digest")
+    run1 = header_box.add_run("Space News Collection")
     run1.bold = True
     run1.font.name = "Times New Roman"
     run1.font.size = Pt(12)
@@ -1206,7 +1234,7 @@ h2 {{
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
 
 <div class="scroll-container">
-    <h2>🌌 IIRS Daily Space Digest</h2>
+    <h2>🌌 Space News Collection</h2>
     <p style="text-align:center; color:var(--text-secondary); margin-top:-20px; margin-bottom:40px;">
         {timestamp} | {len(all_news)} Updates Found
     </p>
@@ -1214,8 +1242,7 @@ h2 {{
     {all_articles_html}
 
     <div class="footer">
-        IIRS Library | Indian Institute of Remote Sensing | Dehradun<br>
-        <small>Automated Digest System</small>
+        Compiled by Library and Information Resource Division, IIRS
     </div>
 </div>
 
