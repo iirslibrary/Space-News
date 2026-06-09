@@ -36,7 +36,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 
-print("🚀 Starting Space News Collection - LAST 24 HOURS WINDOW...")
+print("🚀 Starting Space News - LAST 24 HOURS WINDOW...")
 
 
 # =========================
@@ -982,7 +982,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     header_box.paragraph_format.space_before = Pt(3)
     header_box.paragraph_format.space_after = Pt(10)
 
-    title_run = header_box.add_run("अंतरिक्ष समाचार संग्रह | Space News Collection")
+    title_run = header_box.add_run("अंतरिक्ष समाचार | Space News")
     title_run.bold = True
     title_run.font.name = "Times New Roman"
     title_run.font.size = Pt(13)
@@ -1335,11 +1335,11 @@ h2 {{
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
 <div class="scroll-container">
     <div class="page-header">
-    <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo left-logo">
+    <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
     <div class="header-title-wrap">
         <h2>🌌 अंतरिक्ष समाचार संग्रह | Space News Collection</h2>
     </div>
-    <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo right-logo">
+    <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
 </div>
 
     <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
