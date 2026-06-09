@@ -940,7 +940,6 @@ def generate_docx(news_items, output_path, digest_date_str):
     section.left_margin = Inches(0.7)
     section.right_margin = Inches(0.7)
     set_section_columns(section, num_cols=1)
-    add_first_page_isro_logo(section, "./assets/isro-logo-png_seeklogo-304812.png")
 
     styles = doc.styles
     styles['Normal'].font.name = 'Times New Roman'
@@ -948,8 +947,47 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     add_footer_to_section(section)
 
+    isro_logo_path = "./assets/isro-logo-png_seeklogo-304812.png"
+    iirs_logo_path = "./assets/iirs.png"
+
+    logo_table = doc.add_table(rows=1, cols=3)
+    logo_table.autofit = False
+
+    cells = logo_table.rows[0].cells
+    cells[0].width = Inches(1.2)
+    cells[1].width = Inches(4.8)
+    cells[2].width = Inches(1.2)
+
+    left_p = cells[0].paragraphs[0]
+    left_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    if os.path.exists(isro_logo_path):
+        try:
+            left_run = left_p.add_run()
+            left_run.add_picture(isro_logo_path, width=Inches(0.55))
+        except Exception as e:
+            print(f"ISRO logo error: {e}")
+    else:
+        print(f"ISRO logo not found: {isro_logo_path}")
+
+    middle_p = cells[1].paragraphs[0]
+    middle_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+    right_p = cells[2].paragraphs[0]
+    right_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    if os.path.exists(iirs_logo_path):
+        try:
+            right_run = right_p.add_run()
+            right_run.add_picture(iirs_logo_path, width=Inches(0.55))
+        except Exception as e:
+            print(f"IIRS logo error: {e}")
+    else:
+        print(f"IIRS logo not found: {iirs_logo_path}")
+
+    doc.add_paragraph()
+
     header_box = doc.add_paragraph()
     header_box.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    header_box.paragraph_format.space_before = Pt(3)
     header_box.paragraph_format.space_after = Pt(10)
 
     title_run = header_box.add_run("अंतरिक्ष समाचार संग्रह | Space News Collection")
@@ -969,7 +1007,6 @@ def generate_docx(news_items, output_path, digest_date_str):
 
     for idx, item in enumerate(news_items, start=1):
         title = normalize_text(item.get('title', 'Untitled'))
-        #source = clean_source_name(item.get('source', ''))
         link = resolve_final_article_url(normalize_text(item.get('link', '')))
         summary = normalize_text(item.get('summary', ''))
         image_url = item.get('image')
@@ -980,18 +1017,6 @@ def generate_docx(news_items, output_path, digest_date_str):
         run.bold = True
         run.font.name = 'Times New Roman'
         run.font.size = Pt(13)
-
-        # meta_parts = []
-        # if source:
-        #     meta_parts.append(source)
-
-        # if meta_parts:
-        #     meta = doc.add_paragraph()
-        #     meta.paragraph_format.space_after = Pt(3)
-        #     meta_run = meta.add_run(' | '.join(meta_parts))
-        #     meta_run.italic = True
-        #     meta_run.font.name = 'Times New Roman'
-        #     meta_run.font.size = Pt(10)
 
         if link and link != '#':
             link_p = doc.add_paragraph()
@@ -1023,8 +1048,7 @@ def generate_docx(news_items, output_path, digest_date_str):
             fallback_clean = clean_body_text(summary, title=title)
             body_paragraphs = split_into_paragraphs(fallback_clean)
 
-        #add_article_body_in_two_columns(doc, body_paragraphs)
-        add_article_body_single_column(doc ,body_paragraphs)
+        add_article_body_single_column(doc, body_paragraphs)
 
         if idx != len(news_items):
             sep = doc.add_paragraph()
