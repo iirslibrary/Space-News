@@ -940,7 +940,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     section.left_margin = Inches(0.7)
     section.right_margin = Inches(0.7)
     set_section_columns(section, num_cols=1)
-    add_first_page_isro_logo(section, "/assets/isro-logo-png_seeklogo-304812.png")
+    add_first_page_isro_logo(section, "./assets/isro-logo-png_seeklogo-304812.png")
 
     styles = doc.styles
     styles['Normal'].font.name = 'Times New Roman'
@@ -1288,7 +1288,7 @@ h2 {{
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
 <div class="scroll-container">
     <div class="page-header">
-        <img src="assets/isro-logo-png_seeklogo-304812.png" alt="ISRO Logo" class="top-logo">
+        <img src="./assets/isro-logo-png_seeklogo-304812.png" alt="ISRO Logo" class="top-logo">
         <div class="header-title-wrap">
             <h2>🌌 Space News Collection</h2>
         </div>
