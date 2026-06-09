@@ -49,9 +49,9 @@ jobs:
         secure: true
         username: ${{ secrets.GMAIL_USER }}
         password: ${{ secrets.GMAIL_PASS }}
-        subject: '🚀 IIRS Space Digest - ${{ github.run_number }}'
+        subject: '🚀 Space News Collection - ${{ github.run_number }}'
         body: |
-          📡 Today's IIRS Space Digest is LIVE!
+          📡 Today's Space News Collection is LIVE!
 
           🔗 READ & SHARE:
           https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
