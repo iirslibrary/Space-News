@@ -1676,11 +1676,18 @@ async function submitFlags() {{
             throw new Error(result.error || "Failed to submit flagged articles.");
         }}
 
-        showToast("Flagged articles submitted successfully. Workflow triggered.", "success");
-
         checkedBoxes.forEach(cb => {{
             cb.checked = false;
         }});
+
+        showToast(
+            "Flagged articles submitted. This page will reload shortly with updated results.",
+            "success"
+        );
+
+        setTimeout(() => {{
+            window.location.reload();
+        }}, 30000);
 
     }} catch (error) {{
         console.error("Submit flags error:", error);
