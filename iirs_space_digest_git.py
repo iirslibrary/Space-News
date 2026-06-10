@@ -1649,40 +1649,50 @@ function showToast(title, message, type = 'success') {{
     }}, 2600);
 }}
 
-async function submitFlags() {{
-    const checked = Array.from(document.querySelectorAll('.flag-checkbox:checked'))
-        .map(cb => cb.value);
 
-    if (!checked.length) {{
-        showToast('No Articles Selected', 'Please select at least one article to flag before submitting.', 'error');
+async function submitFlags() {{
+    const checkedBoxes = document.querySelectorAll('.flag-checkbox:checked');
+    const flaggedUrls = Array.from(checkedBoxes).map(cb => cb.value);
+
+    if (flaggedUrls.length === 0) {{
+        showToast("Please select at least one article to flag.", "error");
         return;
     }}
 
     try {{
-        const response = await fetch('YOUR_BACKEND_ENDPOINT_HERE', {{
-            method: 'POST',
+        showToast("Submitting flagged articles...", "success");
+
+        const response = await fetch("https://space-news-vercel-api.vercel.app/api/submit-flags", {{
+            method: "POST",
             headers: {{
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             }},
-            body: JSON.stringify({{
-                flagged_urls: checked
-            }})
+            body: JSON.stringify({{ flaggedUrls }})
         }});
 
+        const result = await response.json();
+
         if (!response.ok) {{
-            throw new Error('Failed to submit flags');
+            throw new Error(result.error || "Failed to submit flagged articles.");
         }}
 
-        showToast('Flags Submitted', 'Selected articles have been sent for removal and rebuild.', 'success');
+        showToast("Flagged articles submitted successfully. Workflow triggered.", "success");
+
+        checkedBoxes.forEach(cb => {{
+            cb.checked = false;
+        }});
+
     }} catch (error) {{
-        console.error(error);
-        showToast('Submission Failed', 'Could not send flagged articles. Please try again.', 'error');
+        console.error("Submit flags error:", error);
+        showToast("Error: " + error.message, "error");
     }}
 }}
+
 
 async function publishCurrentList() {{
     showToast('Digest Published', 'This reviewed list has been marked as the approved version.', 'success');
 }}
+
 </script>
 </body>
 </html>
