@@ -918,30 +918,6 @@ def fetch_full_article_text(url, fallback_summary="", title=""):
     return fallback_summary
 
 
-# def add_article_body_in_two_columns(doc, paragraphs):
-#     if not paragraphs:
-#         paragraphs = ['Summary not available.']
-
-#     col_section = doc.add_section(WD_SECTION.CONTINUOUS)
-#     set_section_columns(col_section, num_cols=2, space=360)
-#     add_footer_to_section(col_section)
-
-#     for para in paragraphs:
-#         p = doc.add_paragraph()
-#         p.paragraph_format.space_after = Pt(4)
-#         p.paragraph_format.line_spacing = 1.1
-#         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-
-#         para = re.sub(r'\s+', ' ', para).strip()
-
-#         run = p.add_run(para)
-#         run.font.name = 'Times New Roman'
-#         run.font.size = Pt(10.5)
-
-#     back_to_one = doc.add_section(WD_SECTION.CONTINUOUS)
-#     set_section_columns(back_to_one, num_cols=1, space=360)
-#     add_footer_to_section(back_to_one)
-
 def add_article_body_single_column(doc, paragraphs):
     if not paragraphs:
         paragraphs = ['Summary not available.']
@@ -1487,9 +1463,6 @@ h2 {{
     background: #084f37;
 }}
 
-
-##final two button layout
-
 .card-actions {{
     display: flex;
     align-items: center;
@@ -1552,12 +1525,14 @@ h2 {{
 }}
 
 
-#for toast
+/* Toast popup */
+
+/* Toast popup */
 
 .custom-toast {{
     position: fixed;
     top: 24px;
-    right: 24px;
+    left: 50%;
     min-width: 280px;
     max-width: 360px;
     background: #ffffff;
@@ -1567,27 +1542,17 @@ h2 {{
     padding: 14px 16px;
     z-index: 9999;
     border-left: 5px solid #0b6b4a;
+    display: none;
     opacity: 0;
-    transform: translateY(-10px);
     pointer-events: none;
+    transform: translateX(-50%) translateY(-10px);
     transition: opacity 0.25s ease, transform 0.25s ease;
 }}
 
 .custom-toast.show {{
+    display: block;
     opacity: 1;
-    transform: translateY(0);
-}}
-
-.toast-title {{
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}}
-
-.toast-message {{
-    font-size: 13px;
-    line-height: 1.5;
-    color: #555;
+    transform: translateX(-50%) translateY(0);
 }}
 
 .custom-toast.error {{
@@ -1598,6 +1563,17 @@ h2 {{
     border-left-color: #0b6b4a;
 }}
 
+#toastTitle {{
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}}
+
+#toastMessage {{
+    font-size: 13px;
+    line-height: 1.5;
+    color: #555;
+}}
 
 </style>
 </head>
@@ -1664,11 +1640,10 @@ function showToast(title, message, type = 'success') {{
     toast.classList.remove('success', 'error', 'show');
     toast.classList.add(type);
 
-    setTimeout(() => {{
-        toast.classList.add('show');
-    }}, 10);
-
     clearTimeout(window.toastTimer);
+
+    toast.classList.add('show');
+
     window.toastTimer = setTimeout(() => {{
         toast.classList.remove('show');
     }}, 2600);
@@ -1679,36 +1654,35 @@ async function submitFlags() {{
         .map(cb => cb.value);
 
     if (!checked.length) {{
-        showToast('No selection', 'Please select at least one article to flag.', 'error');
+        showToast('No Articles Selected', 'Please select at least one article to flag before submitting.', 'error');
         return;
     }}
 
-    console.log('Flagged URLs:', checked);
-    showToast('Flags submitted', 'Selected articles have been marked for removal.', 'success');
-}}
+    try {{
+        const response = await fetch('YOUR_BACKEND_ENDPOINT_HERE', {{
+            method: 'POST',
+            headers: {{
+                'Content-Type': 'application/json'
+            }},
+            body: JSON.stringify({{
+                flagged_urls: checked
+            }})
+        }});
 
-async function publishCurrentList() {{
-    showToast('Published', 'This reviewed list has been marked as final.', 'success');
-}}
+        if (!response.ok) {{
+            throw new Error('Failed to submit flags');
+        }}
 
-async function submitFlags() {{
-    const checked = Array.from(document.querySelectorAll('.flag-checkbox:checked'))
-        .map(cb => cb.value);
-
-    if (!checked.length) {{
-        alert('Please select at least one article to flag.');
-        return;
+        showToast('Flags Submitted', 'Selected articles have been sent for removal and rebuild.', 'success');
+    }} catch (error) {{
+        console.error(error);
+        showToast('Submission Failed', 'Could not send flagged articles. Please try again.', 'error');
     }}
-
-    console.log('Flagged URLs:', checked);
-    alert('Flag list captured successfully. Next this will be sent for filtering.');
 }}
 
 async function publishCurrentList() {{
-    alert('Publish confirmed. This current fetched list will be treated as the approved list.');
+    showToast('Digest Published', 'This reviewed list has been marked as the approved version.', 'success');
 }}
-
-
 </script>
 </body>
 </html>
