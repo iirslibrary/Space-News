@@ -1612,24 +1612,36 @@ h2 {{
 const btn = document.getElementById('themeToggle');
 const html = document.documentElement;
 
-if (localStorage.getItem('theme') === 'light') {{
-    html.setAttribute('data-theme', 'light');
-    btn.textContent = '🌙';
+try {{
+    if (localStorage.getItem('theme') === 'light') {{
+        html.setAttribute('data-theme', 'light');
+        btn.textContent = '🌙';
+    }}
+}} catch (e) {{
+    console.warn('Theme storage unavailable:', e);
 }}
 
 btn.addEventListener('click', () => {{
     if (html.getAttribute('data-theme') === 'light') {{
         html.removeAttribute('data-theme');
         btn.textContent = '☀️';
-        localStorage.setItem('theme', 'dark');
+        try {{
+            localStorage.setItem('theme', 'dark');
+        }} catch (e) {{
+            console.warn('Theme storage unavailable:', e);
+        }}
     }} else {{
         html.setAttribute('data-theme', 'light');
         btn.textContent = '🌙';
-        localStorage.setItem('theme', 'light');
+        try {{
+            localStorage.setItem('theme', 'light');
+        }} catch (e) {{
+            console.warn('Theme storage unavailable:', e);
+        }}
     }}
 }});
 
-function showToast(title, message, type = 'success') {{
+function showToast(title, message = '', type = 'success') {{
     const toast = document.getElementById('customToast');
     const toastTitle = document.getElementById('toastTitle');
     const toastMessage = document.getElementById('toastMessage');
@@ -1649,18 +1661,17 @@ function showToast(title, message, type = 'success') {{
     }}, 2600);
 }}
 
-
 async function submitFlags() {{
     const checkedBoxes = document.querySelectorAll('.flag-checkbox:checked');
     const flaggedUrls = Array.from(checkedBoxes).map(cb => cb.value);
 
     if (flaggedUrls.length === 0) {{
-        showToast("Please select at least one article to flag.", "error");
+        showToast("No selection", "Please select at least one article to flag.", "error");
         return;
     }}
 
     try {{
-        showToast("Submitting flagged articles...", "success");
+        showToast("Submitting", "Submitting flagged articles...", "success");
 
         const response = await fetch("https://space-news-vercel-api.vercel.app/api/submit-flags", {{
             method: "POST",
@@ -1670,10 +1681,17 @@ async function submitFlags() {{
             body: JSON.stringify({{ flaggedUrls }})
         }});
 
-        const result = await response.json();
+        const rawText = await response.text();
+        let result = {{}};
+
+        try {{
+            result = rawText ? JSON.parse(rawText) : {{}};
+        }} catch (e) {{
+            result = {{ error: rawText || "Unknown server response" }};
+        }}
 
         if (!response.ok) {{
-            throw new Error(result.error || "Failed to submit flagged articles.");
+            throw new Error(result.error || `Request failed with status ${{response.status}}`);
         }}
 
         checkedBoxes.forEach(cb => {{
@@ -1681,6 +1699,7 @@ async function submitFlags() {{
         }});
 
         showToast(
+            "Submitted",
             "Flagged articles submitted. This page will reload shortly with updated results.",
             "success"
         );
@@ -1691,15 +1710,17 @@ async function submitFlags() {{
 
     }} catch (error) {{
         console.error("Submit flags error:", error);
-        showToast("Error: " + error.message, "error");
+        showToast("Submit failed", error.message || "Failed to submit flagged articles.", "error");
     }}
 }}
 
-
 async function publishCurrentList() {{
-    showToast('Digest Published', 'This reviewed list has been marked as the approved version.', 'success');
+    showToast(
+        "Digest Published",
+        "This reviewed list has been marked as the approved version.",
+        "success"
+    );
 }}
-
 </script>
 </body>
 </html>
