@@ -1840,7 +1840,7 @@ async function publishCurrentList() {{
 </html>
 """
 
-html_filename = f'Space_News_Collection_{datetime.now().strftime("%Y%m%d")}.html'
+html_filename = f'Space_News_{datetime.now().strftime("%Y%m%d")}.html'
 with open(html_filename, 'w', encoding='utf-8') as f:
     f.write(html_body)
 
