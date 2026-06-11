@@ -2,7 +2,7 @@ name: 🚀 Space News + Pages Link
 
 on:
   schedule:
-    - cron: '30 4 * * *'  # 8AM IST daily
+    - cron: '30 4 * * *'  # 8:00 AM IST daily
   workflow_dispatch:
 
 permissions:
@@ -13,65 +13,86 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests
 
-    - name: Generate HTML + DOCX Newsletter
-      run: python iirs_space_digest_git.py
+      - name: 📰 Generate HTML + DOCX newsletter
+        run: python iirs_space_digest_git.py
 
-    - name: 📋 Copy to index.html for hosting
-      run: |
-        cp Space_News_*.html index.html
-        echo "✅ Copied $(ls Space_News_*.html) to index.html"
+      - name: 📂 Show generated files
+        run: |
+          ls -lah
+          echo "---- Matching HTML files ----"
+          ls -lah Space_News_*.html || true
+          echo "---- Matching DOCX files ----"
+          ls -lah Space_News_*.docx || true
 
-    - name: 💾 Commit snapshot, flagged URLs, and outputs
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add -A
-        git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs"
-        git push
+      - name: 📋 Copy latest HTML to index.html for hosting
+        shell: bash
+        run: |
+          shopt -s nullglob
+          html_files=(Space_News_*.html)
 
-    - name: 🚀 Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        publish_branch: gh-pages
-        keep_files: false
+          if [ ${#html_files[@]} -eq 0 ]; then
+            echo "❌ No Space_News_*.html file found"
+            exit 1
+          fi
 
-    - name: ✅ Send Link + DOCX to Gmail
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
-        username: ${{ secrets.GMAIL_USER }}
-        password: ${{ secrets.GMAIL_PASS }}
-        subject: '🚀 Space News | ${{ github.event_name }} | Run #${{ github.run_number }}'
-        body: |
-          📡 Today's Space News is LIVE!
+          latest_html=$(ls -t "${html_files[@]}" | head -n 1)
+          cp "$latest_html" index.html
 
-          Run type: ${{ github.event_name }}
-          Run number: ${{ github.run_number }}
-          
-          🔗 READ & SHARE:
-          https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          echo "✅ Copied $latest_html to index.html"
+          echo "---- index.html details ----"
+          ls -lah index.html
 
-          Attached: DOCX digest for office circulation.
+      - name: 💾 Commit snapshot, flagged URLs, and outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs"
+          git push
 
-          ────────────────────────────
-          Copy this link and forward to IIRS team via office email.
-        to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
-        from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
-        attachments: Space_News_*.docx
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
+          keep_files: false
+
+      - name: ✅ Send link + DOCX to Gmail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_PASS }}
+          subject: '🚀 Space News | ${{ github.event_name }} | Run #${{ github.run_number }}'
+          body: |
+            📡 Today's Space News is LIVE!
+
+            Run type: ${{ github.event_name }}
+            Run number: ${{ github.run_number }}
+
+            🔗 READ & SHARE:
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+
+            Attached: DOCX digest for office circulation.
+
+            ────────────────────────────
+            Copy this link and forward to IIRS team via office email.
+          to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
+          from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
+          attachments: Space_News_*.docx
