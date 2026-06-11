@@ -1113,28 +1113,21 @@ def filter_flagged_news(news_items):
     if not flagged_urls:
         return news_items
 
-    normalized_flagged = set()
-    for url in flagged_urls:
-        clean_url = normalize_text(url)
-        resolved_url = resolve_final_article_url(clean_url)
-        normalized_flagged.add(normalize_url_for_compare(clean_url))
-        normalized_flagged.add(normalize_url_for_compare(resolved_url))
+    normalized_flagged = {
+        normalize_url_for_compare(url) for url in flagged_urls if url
+    }
 
     filtered_news = []
-
     for item in news_items:
         raw_link = normalize_text(item.get("link", ""))
         final_link = resolve_final_article_url(raw_link)
+        normalized_final_link = normalize_url_for_compare(final_link)
 
-        normalized_raw = normalize_url_for_compare(raw_link)
-        normalized_final = normalize_url_for_compare(final_link)
-
-        if normalized_raw in normalized_flagged or normalized_final in normalized_flagged:
-            print(f"🚫 Removed flagged article: {item.get('title', '')}")
-            continue
-
-        item["link"] = final_link
-        filtered_news.append(item)
+        if normalized_final_link not in normalized_flagged:
+            item["link"] = final_link
+            filtered_news.append(item)
+        else:
+            print(f"🚫 Removed flagged article: {final_link}")
 
     return filtered_news
 
