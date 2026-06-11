@@ -22,6 +22,7 @@ import feedparser
 from io import BytesIO
 from datetime import datetime, date, timedelta, timezone
 from urllib.parse import urlparse, parse_qs, unquote, urljoin
+from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode
 
 from bs4 import BeautifulSoup
 from newspaper import Article, Config
@@ -34,6 +35,9 @@ from docx.enum.section import WD_SECTION
 from docx.opc.constants import RELATIONSHIP_TYPE
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+
+from pathlib import Path
+import json
 
 
 print("🚀 Starting Space News - LAST 24 HOURS WINDOW...")
@@ -635,39 +639,6 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 
     return news
 
-
-# =========================
-# HTML Generator
-# =========================
-
-# def make_articles_html(news_list):
-#     html_out = ""
-
-#     for i, item in enumerate(news_list, 1):
-#         image_html = ''
-#         if item.get("image"):
-#             image_html = (
-#                 f'<img src="{item["image"]}" alt="Space news image" '
-#                 f'class="card-image" loading="lazy" '
-#                 f'onerror="this.style.display=\'none\'">'
-#             )
-
-#         html_out += f'''
-#             <div class="news-card">
-#                 <div class="card-content">
-#                     {image_html}
-#                     <div class="card-title">
-#                         <a href="{item["link"]}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
-#                     </div>
-#                     <div class="card-source">{item["source"]}</div>
-#                     <div class="card-summary">{item["summary"]}</div>
-#                     <a href="{item["link"]}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
-#                 </div>
-#             </div>
-#         '''
-
-#     return html_out
-
 def make_articles_html(news_list):
     html_out = ""
 
@@ -1074,7 +1045,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     doc.save(output_path)
     print(f'DOCX saved: {output_path}')
 
-import json
+
 
 FLAG_FILE = "flagged_urls.json"
 
@@ -1089,56 +1060,199 @@ def load_flagged_urls():
     except Exception:
         return set()
 
+
+
+def normalize_url_for_compare(url):
+    if not url:
+        return ""
+
+    url = normalize_text(url).strip()
+
+    if not url:
+        return ""
+
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+
+    try:
+        parsed = urlsplit(url)
+
+        scheme = "https"
+        netloc = parsed.netloc.lower().strip()
+
+        if netloc.startswith("www."):
+            netloc = netloc[4:]
+
+        if netloc.endswith(":80"):
+            netloc = netloc[:-3]
+        elif netloc.endswith(":443"):
+            netloc = netloc[:-4]
+
+        path = parsed.path or "/"
+        while "//" in path:
+            path = path.replace("//", "/")
+
+        if path != "/" and path.endswith("/"):
+            path = path[:-1]
+
+        query_params = parse_qsl(parsed.query, keep_blank_values=False)
+        filtered_params = [
+            (k, v) for k, v in query_params
+            if not k.lower().startswith("utm_") and k.lower() not in {
+                "fbclid", "gclid", "mc_cid", "mc_eid", "igshid"
+            }
+        ]
+        query = urlencode(filtered_params, doseq=True)
+
+        return urlunsplit((scheme, netloc, path, query, ""))
+    except Exception:
+        return url.strip()
+
 def filter_flagged_news(news_items):
     flagged_urls = load_flagged_urls()
     if not flagged_urls:
         return news_items
 
+    normalized_flagged = {
+        normalize_url_for_compare(url) for url in flagged_urls if url
+    }
+
     filtered_news = []
     for item in news_items:
         raw_link = normalize_text(item.get("link", ""))
         final_link = resolve_final_article_url(raw_link)
+        normalized_final_link = normalize_url_for_compare(final_link)
 
-        if final_link not in flagged_urls:
+        if normalized_final_link not in normalized_flagged:
             item["link"] = final_link
             filtered_news.append(item)
+        else:
+            print(f"🚫 Removed flagged article: {final_link}")
 
     return filtered_news
+
+
+# CODE for SNAPSHOT LOADING and CREATION and DELETION
+SNAPSHOT_DIR = Path("snapshots")
+SNAPSHOT_DIR.mkdir(exist_ok=True)
+
+TODAY = datetime.now().date()
+TODAY_STR = TODAY.strftime("%Y-%m-%d")
+TODAY_SNAPSHOT_FILE = SNAPSHOT_DIR / f"{TODAY_STR}.json"
+
+
+def cleanup_old_snapshots(keep_days=7):
+    cutoff_date = TODAY - timedelta(days=keep_days - 1)
+
+    for file in SNAPSHOT_DIR.glob("*.json"):
+        try:
+            file_date = datetime.strptime(file.stem, "%Y-%m-%d").date()
+            if file_date < cutoff_date:
+                file.unlink()
+                print(f"🗑️ Deleted old snapshot: {file.name}")
+        except ValueError:
+            print(f"⚠️ Skipping non-date snapshot file: {file.name}")
+
+
+def load_today_snapshot():
+    if TODAY_SNAPSHOT_FILE.exists():
+        try:
+            with TODAY_SNAPSHOT_FILE.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+            print(f"📂 Loaded today's snapshot: {TODAY_SNAPSHOT_FILE}")
+            return data
+        except Exception as e:
+            print(f"⚠️ Failed to load snapshot {TODAY_SNAPSHOT_FILE}: {e}")
+            return None
+    return None
+
+
+def save_today_snapshot(all_news):
+    try:
+        with TODAY_SNAPSHOT_FILE.open("w", encoding="utf-8") as f:
+            json.dump(all_news, f, indent=2, ensure_ascii=False)
+        print(f"💾 Saved today's snapshot: {TODAY_SNAPSHOT_FILE}")
+    except Exception as e:
+        print(f"⚠️ Failed to save snapshot {TODAY_SNAPSHOT_FILE}: {e}")
+
+
+
+
 
 # =========================
 # Main Fetch
 # =========================
 
-print("🏔️ Fetching REGIONAL...")
-regional_news = fetch_news_from_feeds(REGIONAL_FEEDS, max_articles=5)
+cleanup_old_snapshots(keep_days=7)
+all_news = load_today_snapshot()
 
-print("🇮🇳 Fetching NATIONAL...")
-national_news = fetch_news_from_feeds(NATIONAL_FEEDS, max_articles=6)
+if all_news is None:
+    print("🏔️ Fetching REGIONAL...")
+    regional_news = fetch_news_from_feeds(REGIONAL_FEEDS, max_articles=5)
 
-print("🌌 Fetching INTERNATIONAL...")
-international_news = fetch_news_from_feeds(INTERNATIONAL_FEEDS, max_articles=8)
+    print("🇮🇳 Fetching NATIONAL...")
+    national_news = fetch_news_from_feeds(NATIONAL_FEEDS, max_articles=6)
 
-all_news = []
-for news_list, category in [
-    (regional_news, "🏔️ Regional Updates"),
-    (national_news, "🇮🇳 National Updates"),
-    (international_news, "🌌 International Updates")
-]:
-    for item in news_list:
-        item['category'] = category
-        all_news.append(item)
+    print("🌌 Fetching INTERNATIONAL...")
+    international_news = fetch_news_from_feeds(INTERNATIONAL_FEEDS, max_articles=8)
 
-if not all_news:
-    all_news.append({
-        'title': 'No space news in last 24h',
-        'link': '#',
-        'source': 'IIRS Digest',
-        'summary': 'Check back tomorrow!',
-        'image': None,
-        'category': 'System'
-    })
+    all_news = []
+    for news_list, category in [
+        (regional_news, "🏔️ Regional Updates"),
+        (national_news, "🇮🇳 National Updates"),
+        (international_news, "🌌 International Updates")
+    ]:
+        for item in news_list:
+            item['category'] = category
+            all_news.append(item)
+
+    if not all_news:
+        all_news.append({
+            'title': 'No space news in last 24h',
+            'link': '#',
+            'source': 'IIRS Digest',
+            'summary': 'Check back tomorrow!',
+            'image': None,
+            'category': 'System'
+        })
+
+    save_today_snapshot(all_news)
 
 all_news = filter_flagged_news(all_news)
+
+
+# print("🏔️ Fetching REGIONAL...")
+# regional_news = fetch_news_from_feeds(REGIONAL_FEEDS, max_articles=5)
+
+# print("🇮🇳 Fetching NATIONAL...")
+# national_news = fetch_news_from_feeds(NATIONAL_FEEDS, max_articles=6)
+
+# print("🌌 Fetching INTERNATIONAL...")
+# international_news = fetch_news_from_feeds(INTERNATIONAL_FEEDS, max_articles=8)
+
+# all_news = []
+# for news_list, category in [
+#     (regional_news, "🏔️ Regional Updates"),
+#     (national_news, "🇮🇳 National Updates"),
+#     (international_news, "🌌 International Updates")
+# ]:
+#     for item in news_list:
+#         item['category'] = category
+#         all_news.append(item)
+
+# if not all_news:
+#     all_news.append({
+#         'title': 'No space news in last 24h',
+#         'link': '#',
+#         'source': 'IIRS Digest',
+#         'summary': 'Check back tomorrow!',
+#         'image': None,
+#         'category': 'System'
+#     })
+
+# all_news = filter_flagged_news(all_news)
+
+
 
 # =========================
 # HTML Output
@@ -1759,7 +1873,7 @@ hindi_date_part = date_part.translate(digit_map)
 
 digest_date_str = f"{hindi_day}, {hindi_date_part} | {eng_day}, {date_part}"
 
-docx_filename = f"Space_News_Collection_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
+docx_filename = f"Space_News_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
 
 generate_docx(
     news_items=all_news,
