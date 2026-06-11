@@ -976,7 +976,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     header_box.paragraph_format.space_before = Pt(3)
     header_box.paragraph_format.space_after = Pt(10)
 
-    title_run = header_box.add_run("अंतरिक्ष समाचार | Space News")
+    title_run = header_box.add_run("🌌 अंतरिक्ष समाचार | Space News")
     title_run.bold = True
     title_run.font.name = "Times New Roman"
     title_run.font.size = Pt(13)
