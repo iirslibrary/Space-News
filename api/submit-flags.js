@@ -88,6 +88,7 @@ export default async function handler(req, res) {
     if (!updateResp.ok) {
       return res.status(500).json({
         error: 'Failed to update flagged_urls.json',
+        githubStatus: updateResp.status,
         details: updateText,
       });
     }
