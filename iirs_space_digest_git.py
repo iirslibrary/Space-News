@@ -1663,7 +1663,7 @@ h2 {{
     <div class="page-header">
     <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
     <div class="header-title-wrap">
-        <h2>🌌 अंतरिक्ष समाचार संग्रह | Space News Collection</h2>
+        <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
     </div>
     <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
 </div>
