@@ -32,7 +32,7 @@ jobs:
     - name: 📋 Copy to index.html for hosting
       run: |
         cp Space_News_*.html index.html
-        echo "✅ Copied $(ls Space_News_Collection_*.html) to index.html"
+        echo "✅ Copied $(ls Space_News_*.html) to index.html"
 
     - name: 💾 Commit snapshot, flagged URLs, and outputs
       run: |
