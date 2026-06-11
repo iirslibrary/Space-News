@@ -31,7 +31,7 @@ jobs:
 
     - name: 📋 Copy to index.html for hosting
       run: |
-        cp Space_News_Collection_*.html index.html
+        cp Space_News_*.html index.html
         echo "✅ Copied $(ls Space_News_Collection_*.html) to index.html"
 
     - name: 💾 Commit snapshot, flagged URLs, and outputs
@@ -74,4 +74,4 @@ jobs:
           Copy this link and forward to IIRS team via office email.
         to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
         from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
-        attachments: Space_News_Collection_*.docx
+        attachments: Space_News_*.docx
