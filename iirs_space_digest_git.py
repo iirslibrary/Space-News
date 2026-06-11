@@ -1753,7 +1753,7 @@ async function submitFlags() {{
     try {{
         showToast("Submitting", "Submitting flagged articles...", "success");
 
-        const response = await fetch("https://space-news-vercel-api.vercel.app/api/submit-flags", {{
+        const response = await fetch("https://space-news.vercel.app/api/submit-flags", {{
             method: "POST",
             headers: {{
                 "Content-Type": "application/json"
