@@ -1843,7 +1843,7 @@ async function publishCurrentList() {{
             "success"
         );
 
-        const response = await fetch("https://space-news-sage.vercel.app/api/publish-digest", {{
+        const response = await fetch("https://space-news-sage.vercel.app/api/submit-flags", {{
             method: "POST",
             headers: {{
                 "Content-Type": "application/json"
