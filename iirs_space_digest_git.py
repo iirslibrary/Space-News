@@ -1849,7 +1849,7 @@ async function publishCurrentList() {{
                 "Content-Type": "application/json"
             }},
             body: JSON.stringify({{
-                finalize: true
+                action: "publish"
             }})
         }});
 
@@ -1881,6 +1881,7 @@ async function publishCurrentList() {{
         showToast("Publish failed", error.message || "Failed to publish digest.", "error");
     }}
 }}
+
 </script>
 </body>
 </html>
