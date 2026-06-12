@@ -1835,12 +1835,6 @@ async function publishCurrentList() {{
     );
 }}
 
-
-
-
-
-
-<script>
 async function publishCurrentList() {{
     try {{
         showToast(
@@ -1888,13 +1882,6 @@ async function publishCurrentList() {{
     }}
 }}
 </script>
-
-
-
-
-
-</script>
-
 </body>
 </html>
 """
