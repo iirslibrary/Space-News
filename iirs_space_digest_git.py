@@ -1056,8 +1056,16 @@ def load_flagged_urls():
     try:
         with open(FLAG_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-        return set(data.get("flagged_urls", []))
-    except Exception:
+
+        if isinstance(data, list):
+            return {url for url in data if url}
+
+        if isinstance(data, dict):
+            return {url for url in data.get("flagged_urls", []) if url}
+
+        return set()
+    except Exception as e:
+        print(f"⚠️ Failed to load flagged URLs: {e}")
         return set()
 
 
