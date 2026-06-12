@@ -664,14 +664,17 @@ def make_articles_html(news_list):
                     <div class="card-source">{item["source"]}</div>
                     <div class="card-summary">{item["summary"]}</div>
 
+                    f"""
                     <div class="card-actions">
-                        <a href="{article_url}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
-
-                        <label class="flag-item">
-                            <input type="checkbox" class="flag-checkbox" value="{safe_url}">
-                            Flag this article
-                        </label>
+                    <a class="read-more" href="{url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                    {"" if is_finalized else f'''
+                    <label class="flag-item">
+                    <input type="checkbox" class="flag-checkbox" value="{url}">
+                    Flag this article
+                    </label>
+                    '''}
                     </div>
+                    """
                 </div>
             </div>
         '''
