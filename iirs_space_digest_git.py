@@ -639,7 +639,7 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 
     return news
 
-def make_articles_html(news_list,is_finalized=False):
+def make_articles_html(news_list, is_finalized=False):
     html_out = ""
 
     for i, item in enumerate(news_list, 1):
@@ -649,42 +649,50 @@ def make_articles_html(news_list,is_finalized=False):
         image_html = ''
         if item.get("image"):
             image_html = (
-                f'<img src="{item["image"]}" alt="Space news image" '
+                f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" '
                 f'class="card-image" loading="lazy" '
                 f'onerror="this.style.display=\'none\'">'
             )
+
+        flag_html = ""
+        if not is_finalized:
+            flag_html = f'''
+                    <label class="flag-item">
+                        <input type="checkbox" class="flag-checkbox" value="{safe_url}">
+                        Flag this article
+                    </label>
+            '''
 
         html_out += f'''
             <div class="news-card">
                 <div class="card-content">
                     {image_html}
                     <div class="card-title">
-                        <a href="{article_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
+                        <a href="{safe_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
                     </div>
                     <div class="card-source">{item["source"]}</div>
                     <div class="card-summary">{item["summary"]}</div>
 
-                    f"""
-<div class="card-actions">
-    <a class="read-more" href="{article_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
-    {'' if is_finalized else '<label class="flag-item"><input type="checkbox" class="flag-checkbox" value="' + item["link"] + '">Flag this article</label>'}
-</div>
-"""
+                    <div class="card-actions">
+                        <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        {flag_html}
+                    </div>
                 </div>
             </div>
         '''
 
-    html_out += '''
-        <div class="bottom-actions">
-            <button type="button" class="flag-submit-btn" onclick="submitFlags()">
-                Submit Flagged Articles
-            </button>
+    if not is_finalized:
+        html_out += '''
+            <div class="bottom-actions">
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">
+                    Submit Flagged Articles
+                </button>
 
-            <button type="button" class="publish-btn" onclick="publishCurrentList()">
-                Publish
-            </button>
-        </div>
-    '''
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">
+                    Publish
+                </button>
+            </div>
+        '''
 
     return html_out
 
