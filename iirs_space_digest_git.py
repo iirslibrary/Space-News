@@ -1825,6 +1825,65 @@ async function publishCurrentList() {{
         "success"
     );
 }}
+
+
+
+
+
+
+<script>
+async function publishCurrentList() {{
+    try {{
+        showToast(
+            "Publishing",
+            "Finalizing this reviewed news list for circulation...",
+            "success"
+        );
+
+        const response = await fetch("https://space-news-sage.vercel.app/api/publish-digest", {{
+            method: "POST",
+            headers: {{
+                "Content-Type": "application/json"
+            }},
+            body: JSON.stringify({{
+                finalize: true
+            }})
+        }});
+
+        const rawText = await response.text();
+        let result = {{}};
+
+        try {{
+            result = rawText ? JSON.parse(rawText) : {{}};
+        }} catch (e) {{
+            result = {{ error: rawText || "Unknown server response" }};
+        }}
+
+        if (!response.ok) {{
+            throw new Error(result.error || `Request failed with status ${{response.status}}`);
+        }}
+
+        showToast(
+            "Published",
+            "This digest has been finalized for circulation. Reloading page...",
+            "success"
+        );
+
+        setTimeout(() => {{
+            window.location.reload();
+        }}, 2000);
+
+    }} catch (error) {{
+        console.error("Publish error:", error);
+        showToast("Publish failed", error.message || "Failed to publish digest.", "error");
+    }}
+}}
+</script>
+
+
+
+
+
 </script>
 
 </body>
