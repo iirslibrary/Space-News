@@ -1110,18 +1110,23 @@ def normalize_url_for_compare(url):
 
 def filter_flagged_news(news_items):
     flagged_urls = load_flagged_urls()
+    print("FLAGGED URLS RAW:", flagged_urls)
+
     if not flagged_urls:
         return news_items
 
     normalized_flagged = {
         normalize_url_for_compare(url) for url in flagged_urls if url
     }
+    print("FLAGGED URLS NORMALIZED:", normalized_flagged)
 
     filtered_news = []
     for item in news_items:
         raw_link = normalize_text(item.get("link", ""))
         final_link = resolve_final_article_url(raw_link)
         normalized_final_link = normalize_url_for_compare(final_link)
+
+        print("CHECKING:", raw_link, "=>", final_link, "=>", normalized_final_link)
 
         if normalized_final_link not in normalized_flagged:
             item["link"] = final_link
