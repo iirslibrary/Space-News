@@ -1026,42 +1026,42 @@ def generate_docx(news_items, output_path, digest_date_str):
             link_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             add_hyperlink(link_p, "Read more", link)
 
-                image_stream = try_download_image(image_url)
-                if image_stream:
-                    inserted = False
+            image_stream = try_download_image(image_url)
+            if image_stream:
+                inserted = False
+                try:
+                    image_stream.seek(0)
+                    img = Image.open(image_stream)
+                    img.load()
+
+                    if img.mode in ("RGBA", "P"):
+                        img = img.convert("RGB")
+
+                    clean_stream = io.BytesIO()
+                    img.save(clean_stream, format="PNG")
+                    clean_stream.seek(0)
+
+                    img_p = doc.add_paragraph()
+                    img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    img_run = img_p.add_run()
+                    img_run.add_picture(clean_stream, width=Inches(4.8))
+                    img_p.paragraph_format.space_after = Pt(6)
+                    inserted = True
+
+                except Exception as e:
+                    print(f"Clean image conversion failed for {image_url}: {e}")
+
+                if not inserted:
                     try:
                         image_stream.seek(0)
-                        img = Image.open(image_stream)
-                        img.load()
-
-                        if img.mode in ("RGBA", "P"):
-                            img = img.convert("RGB")
-
-                        clean_stream = io.BytesIO()
-                        img.save(clean_stream, format="PNG")
-                        clean_stream.seek(0)
-
                         img_p = doc.add_paragraph()
                         img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                         img_run = img_p.add_run()
-                        img_run.add_picture(clean_stream, width=Inches(4.8))
+                        img_run.add_picture(image_stream, width=Inches(4.8))
                         img_p.paragraph_format.space_after = Pt(6)
                         inserted = True
-
                     except Exception as e:
-                        print(f"Clean image conversion failed for {image_url}: {e}")
-
-                    if not inserted:
-                        try:
-                            image_stream.seek(0)
-                            img_p = doc.add_paragraph()
-                            img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                            img_run = img_p.add_run()
-                            img_run.add_picture(image_stream, width=Inches(4.8))
-                            img_p.paragraph_format.space_after = Pt(6)
-                            inserted = True
-                        except Exception as e:
-                            print(f"Original image insert failed for {image_url}: {e}")
+                        print(f"Original image insert failed for {image_url}: {e}")
 
         body_text = fetch_full_article_text(
             url=link,
