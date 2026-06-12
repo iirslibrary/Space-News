@@ -639,6 +639,9 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 
     return news
 
+
+is_finalized = False
+
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
 
