@@ -1264,40 +1264,68 @@ html_body = f"""<!DOCTYPE html>
 <style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 :root {{
     --bg-primary: #0a0a0a;
-    --bg-secondary: rgba(10, 10, 10, 0.9);
+    --bg-secondary: rgba(10, 10, 10, 0.92);
     --card-bg: rgba(255,255,255,0.05);
     --card-summary: rgba(255,255,255,0.02);
+
     --text-primary: #c0c0c0;
     --text-secondary: #a0a0a0;
     --text-light: #d0d0d0;
     --text-white: #ffffff;
+
     --border-light: rgba(255,255,255,0.08);
     --border-card: rgba(255,255,255,0.1);
     --shadow-dark: rgba(0,0,0,0.8);
     --cyan-accent: #00ffff;
-}}
-[data-theme="light"] {{
-    --bg-primary: #f8fafc !important;
-    --bg-secondary: rgba(255, 255, 255, 0.98) !important;
-    --card-bg: rgba(255,255,255,0.95) !important;
-    --card-summary: rgba(248, 250, 252, 0.8) !important;
-    --text-primary: #1e293b !important;
-    --text-secondary: #475569 !important;
-    --text-light: #334155 !important;
-    --text-white: #0f172a !important;
-    --border-light: rgba(0,0,0,0.06) !important;
-    --border-card: rgba(0,0,0,0.08) !important;
-    --shadow-dark: rgba(0,0,0,0.1) !important;
-    --cyan-accent: #00b8d4 !important;
+
+    --toast-bg: #161616;
+    --toast-text: #f1f1f1;
+    --toast-subtext: #c8c8c8;
+
+    --btn-text-dark: #000000;
 }}
 
-* {{ box-sizing: border-box !important; }}
-html {{ background: var(--bg-primary) !important; min-height: 100vh !important; }}
+html[data-theme="light"] {{
+    --bg-primary: #f8fafc;
+    --bg-secondary: rgba(255, 255, 255, 0.98);
+    --card-bg: rgba(255,255,255,0.95);
+    --card-summary: rgba(248, 250, 252, 0.8);
+
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-light: #334155;
+    --text-white: #0f172a;
+
+    --border-light: rgba(0,0,0,0.06);
+    --border-card: rgba(0,0,0,0.08);
+    --shadow-dark: rgba(0,0,0,0.1);
+    --cyan-accent: #00b8d4;
+
+    --toast-bg: #ffffff;
+    --toast-text: #222222;
+    --toast-subtext: #555555;
+
+    --btn-text-dark: #000000;
+}}
+
+* {{
+    box-sizing: border-box !important;
+}}
+
+html {{
+    background: var(--bg-primary) !important;
+    min-height: 100vh !important;
+}}
+
 body {{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
     margin: 0 !important;
     padding: 20px !important;
     background: var(--bg-primary) !important;
@@ -1306,12 +1334,16 @@ body {{
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
+    transition: background 0.25s ease, color 0.25s ease !important;
 }}
 
 body::before {{
-    content: '' !important;
+    content: "" !important;
     position: fixed !important;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image:
         radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.4), transparent),
         radial-gradient(1px 1px at 160px 30px, rgba(255,255,255,0.25), transparent);
@@ -1321,18 +1353,31 @@ body::before {{
     z-index: -1 !important;
     opacity: 0.5 !important;
 }}
-@keyframes voidDrift {{ from {{ background-position: 0 0; }} to {{ background-position: 0 600px; }} }}
 
-.theme-toggle {{
-    position: fixed !important; top: 20px !important; right: 20px !important;
-    width: 45px !important; height: 45px !important;
-    border-radius: 50% !important; border: none !important;
-    background: rgba(255,255,255,0.1) !important;
-    color: #fff !important; font-size: 20px !important;
-    cursor: pointer !important; backdrop-filter: blur(10px) !important;
-    z-index: 1000 !important;
+html[data-theme="light"] body::before {{
+    opacity: 0.08 !important;
 }}
 
+@keyframes voidDrift {{
+    from {{ background-position: 0 0; }}
+    to {{ background-position: 0 600px; }}
+}}
+
+.theme-toggle {{
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    border: 1px solid var(--border-light) !important;
+    background: var(--card-bg) !important;
+    color: var(--text-white) !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    backdrop-filter: blur(10px) !important;
+    z-index: 1000 !important;
+}}
 
 .page-header {{
     display: grid !important;
@@ -1360,14 +1405,22 @@ body::before {{
     text-align: center !important;
 }}
 
-.header-title-wrap h2 {{
+.header-title-wrap h2,
+h2 {{
     color: var(--text-white) !important;
     text-align: center !important;
     border-bottom: 2px solid var(--border-light) !important;
     padding-bottom: 20px !important;
-    margin: 0 !important;
     font-weight: 700 !important;
     letter-spacing: 1px !important;
+}}
+
+.header-title-wrap h2 {{
+    margin: 0 !important;
+}}
+
+h2 {{
+    margin-bottom: 30px !important;
 }}
 
 .scroll-container {{
@@ -1381,105 +1434,109 @@ body::before {{
     padding: 40px !important;
     box-shadow: 0 35px 70px var(--shadow-dark) !important;
     margin-top: 20px !important;
+    transition: background 0.25s ease, border-color 0.25s ease !important;
 }}
 
-h2 {{
-    color: var(--text-white) !important;
-    text-align: center !important;
-    border-bottom: 2px solid var(--border-light) !important;
-    padding-bottom: 20px !important;
-    margin-bottom: 30px !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
+.news-card {{
+    margin-bottom: 40px !important;
 }}
 
-.news-card {{ margin-bottom: 40px !important; }}
 .card-content {{
     background: var(--card-bg) !important;
     border: 1px solid var(--border-card) !important;
     border-radius: 20px !important;
     padding: 30px !important;
     box-shadow: 0 10px 30px var(--shadow-dark) !important;
-    transition: transform 0.3s ease !important;
+    transition: transform 0.3s ease, background 0.25s ease, border-color 0.25s ease !important;
 }}
-.card-content:hover {{ transform: translateY(-5px) !important; border-color: var(--cyan-accent) !important; }}
+
+.card-content:hover {{
+    transform: translateY(-5px) !important;
+    border-color: var(--cyan-accent) !important;
+}}
 
 .card-image {{
-    width: 100% !important; height: 350px !important;
+    width: 100% !important;
+    height: 350px !important;
     object-fit: cover !important;
-    border-radius: 12px !important; margin-bottom: 20px !important;
+    border-radius: 12px !important;
+    margin-bottom: 20px !important;
     border: 1px solid var(--border-card) !important;
 }}
 
 .card-title a {{
-    color: var(--text-white) !important; text-decoration: none !important;
+    color: var(--text-white) !important;
+    text-decoration: none !important;
     font-size: 24px !important;
-    font-weight: 600 !important; display: block !important;
+    font-weight: 600 !important;
+    display: block !important;
     margin-bottom: 10px !important;
 }}
-.card-title a:hover {{ text-decoration: underline !important; color: var(--cyan-accent) !important; }}
+
+.card-title a:hover {{
+    text-decoration: underline !important;
+    color: var(--cyan-accent) !important;
+}}
 
 .card-source {{
-    display: inline-block !important; padding: 5px 12px !important;
-    background: rgba(255,255,255,0.05) !important; border-radius: 15px !important;
-    font-size: 13px !important; color: var(--text-secondary) !important;
-    margin-bottom: 15px !important; border: 1px solid var(--border-light) !important;
+    display: inline-block !important;
+    padding: 5px 12px !important;
+    background: var(--card-summary) !important;
+    border-radius: 15px !important;
+    font-size: 13px !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 15px !important;
+    border: 1px solid var(--border-light) !important;
 }}
 
 .card-summary {{
-    color: var(--text-light) !important; line-height: 1.7 !important;
+    color: var(--text-light) !important;
+    line-height: 1.7 !important;
     font-size: 16px !important;
     margin-bottom: 20px !important;
 }}
 
 .read-more {{
-    display: inline-block !important; padding: 10px 20px !important;
-    background: transparent !important; border: 1px solid var(--cyan-accent) !important;
-    color: var(--cyan-accent) !important; text-decoration: none !important;
-    border-radius: 25px !important; font-weight: 600 !important; font-size: 14px !important;
+    display: inline-block !important;
+    padding: 10px 20px !important;
+    background: transparent !important;
+    border: 1px solid var(--cyan-accent) !important;
+    color: var(--cyan-accent) !important;
+    text-decoration: none !important;
+    border-radius: 25px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
     transition: all 0.3s ease !important;
 }}
-.read-more:hover {{ background: var(--cyan-accent) !important; color: #000 !important; }}
 
-.footer {{
-    text-align: center !important; margin-top: 40px !important;
-    color: var(--text-secondary) !important; font-size: 13px !important;
-    padding-bottom: 20px !important;
-}}
-
-@media (max-width: 1000px) {{
-    .scroll-container {{ width: 90% !important; min-width: 0 !important; }}
-}}
-@media (max-width: 768px) {{
-    .scroll-container {{ width: 95% !important; padding: 20px !important; }}
-    .card-content {{ padding: 20px !important; }}
-    h2 {{ font-size: 22px !important; }}
-    .card-image {{ height: 200px !important; }}
+.read-more:hover {{
+    background: var(--cyan-accent) !important;
+    color: var(--btn-text-dark) !important;
 }}
 
 .footer {{
+    text-align: center;
     margin-top: 34px;
     padding: 22px 20px 16px;
-    text-align: center;
     position: relative;
-    border-top: 1px solid rgba(120, 140, 150, 0.35);
+    border-top: 1px solid var(--border-light);
     background: transparent;
 }}
 
 .footer-text {{
     line-height: 1.45;
-    color: #2f2f2f;
+    color: var(--text-primary);
 }}
 
 .footer-text div:first-child {{
     font-size: 13px;
-    color: #4d4d4d;
+    color: var(--text-secondary);
     margin-bottom: 2px;
 }}
 
 .footer-text div:last-child {{
     font-size: 13px;
-    color: #333;
+    color: var(--text-light);
     letter-spacing: 0.12px;
 }}
 
@@ -1498,88 +1555,7 @@ h2 {{
     gap: 8px;
     margin: 0;
     font-size: 13px;
-    color: #555;
-    white-space: nowrap;
-}}
-
-.flag-checkbox {{
-    accent-color: #8b1e2d;
-    cursor: pointer;
-}}
-
-.flag-submit-wrap {{
-    text-align: center;
-    margin: 28px 0 10px;
-}}
-
-.flag-submit-btn {{
-    background: #8b1e2d;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-}}
-
-.flag-submit-btn:hover {{
-    background: #6f1724;
-}}
-
-
-.bottom-actions {{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    margin: 28px 0 10px;
-    flex-wrap: wrap;
-}}
-
-.flag-submit-btn {{
-    background: #8b1e2d;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-}}
-
-.flag-submit-btn:hover {{
-    background: #6f1724;
-}}
-
-.publish-btn {{
-    background: #0b6b4a;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-}}
-
-.publish-btn:hover {{
-    background: #084f37;
-}}
-
-.card-actions {{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-}}
-
-.flag-item {{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    font-size: 13px;
-    color: #555;
+    color: var(--text-secondary);
     white-space: nowrap;
 }}
 
@@ -1624,11 +1600,6 @@ h2 {{
 .publish-btn:hover {{
     background: #084f37;
 }}
-
-
-/* Toast popup */
-
-/* Toast popup */
 
 .custom-toast {{
     position: fixed;
@@ -1636,10 +1607,10 @@ h2 {{
     left: 50%;
     min-width: 280px;
     max-width: 360px;
-    background: #ffffff;
-    color: #222;
+    background: var(--toast-bg);
+    color: var(--toast-text);
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 10px 30px var(--shadow-dark);
     padding: 14px 16px;
     z-index: 9999;
     border-left: 5px solid #0b6b4a;
@@ -1668,15 +1639,43 @@ h2 {{
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 4px;
+    color: var(--toast-text);
 }}
 
 #toastMessage {{
     font-size: 13px;
     line-height: 1.5;
-    color: #555;
+    color: var(--toast-subtext);
 }}
 
+@media (max-width: 1000px) {{
+    .scroll-container {{
+        width: 90% !important;
+        min-width: 0 !important;
+    }}
+}}
+
+@media (max-width: 768px) {{
+    .scroll-container {{
+        width: 95% !important;
+        padding: 20px !important;
+    }}
+
+    .card-content {{
+        padding: 20px !important;
+    }}
+
+    h2 {{
+        font-size: 22px !important;
+    }}
+
+    .card-image {{
+        height: 200px !important;
+    }}
+}}
 </style>
+
+
 </head>
 <body>
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
