@@ -19,20 +19,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { flaggedUrls } = req.body || {};
-    console.log("Received flaggedUrls:", flaggedUrls);
-
-    if (!Array.isArray(flaggedUrls) || flaggedUrls.length === 0) {
-      console.log("No flagged URLs received");
-      return res.status(400).json({ error: 'No flagged URLs received' });
-    }
+    const { flaggedUrls, action } = req.body || {};
+    console.log("Received body:", req.body);
 
     const token = process.env.GITHUB_TOKEN;
     console.log("Token present:", !!token);
 
     const owner = 'iirslibrary';
     const repo = 'Space-News';
-    const path = 'flagged_urls.json';
     const branch = 'main';
 
     const headers = {
@@ -41,6 +35,98 @@ export default async function handler(req, res) {
       'Content-Type': 'application/json',
       'X-GitHub-Api-Version': '2022-11-28'
     };
+
+    if (action === "publish") {
+      console.log("Publish action received");
+
+      const finalPath = 'published_digest_state.json';
+
+      const finalContent = Buffer.from(
+        JSON.stringify(
+          {
+            is_finalized: true,
+            published_at: new Date().toISOString()
+          },
+          null,
+          2
+        )
+      ).toString('base64');
+
+      let existingSha = null;
+
+      const getFinalResp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${finalPath}?ref=${branch}`,
+        { headers }
+      );
+      console.log("GET publish state status:", getFinalResp.status);
+
+      if (getFinalResp.ok) {
+        const fileData = await getFinalResp.json();
+        existingSha = fileData.sha;
+      }
+
+      const putFinalResp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${finalPath}`,
+        {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({
+            message: 'Mark digest as finalized for circulation',
+            content: finalContent,
+            sha: existingSha,
+            branch
+          })
+        }
+      );
+
+      console.log("PUT publish state status:", putFinalResp.status);
+      const putFinalText = await putFinalResp.text();
+      console.log("PUT publish state response:", putFinalText);
+
+      if (!putFinalResp.ok) {
+        return res.status(500).json({
+          error: 'Failed to update published_digest_state.json',
+          githubStatus: putFinalResp.status,
+          details: putFinalText
+        });
+      }
+
+      const workflowResp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/.github%2Fworkflows%2Fdaily-digest.yml/dispatches`,
+        {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ ref: branch })
+        }
+      );
+
+      console.log("Workflow dispatch status after publish:", workflowResp.status);
+
+      if (workflowResp.status !== 204 && !workflowResp.ok) {
+        const workflowText = await workflowResp.text();
+        console.log("Workflow dispatch response after publish:", workflowText);
+
+        return res.status(500).json({
+          error: 'Publish state updated, but workflow dispatch failed',
+          details: workflowText
+        });
+      }
+
+      console.log("Publish action completed successfully");
+      return res.status(200).json({
+        success: true,
+        message: 'Digest finalized and workflow triggered'
+      });
+    }
+
+    console.log("Received flaggedUrls:", flaggedUrls);
+
+    if (!Array.isArray(flaggedUrls) || flaggedUrls.length === 0) {
+      console.log("No flagged URLs received");
+      return res.status(400).json({ error: 'No flagged URLs received' });
+    }
+
+    const path = 'flagged_urls.json';
 
     const getFileResp = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
@@ -109,8 +195,8 @@ export default async function handler(req, res) {
       console.log("Workflow dispatch response:", workflowText);
 
       return res.status(500).json({
-      error: 'flagged_urls.json updated, but workflow dispatch failed',
-      details: workflowText,
+        error: 'flagged_urls.json updated, but workflow dispatch failed',
+        details: workflowText,
       });
     }
 
