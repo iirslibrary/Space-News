@@ -639,7 +639,7 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 
     return news
 
-def make_articles_html(news_list):
+def make_articles_html(news_list,is_finalized=False):
     html_out = ""
 
     for i, item in enumerate(news_list, 1):
@@ -1235,7 +1235,7 @@ all_news = filter_flagged_news(all_news)
 # HTML Output
 # =========================
 
-all_articles_html = make_articles_html(all_news)
+all_articles_html = make_articles_html(all_news,is_finalized=is_finalized)
 
 ist_offset = timezone(timedelta(hours=5, minutes=30))
 
