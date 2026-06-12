@@ -1250,10 +1250,18 @@ eng_time = now_ist.strftime("%H:%M")
 hindi_date = eng_date.translate(digit_map)
 
 timestamp = f"दिनांक: {hindi_date} • Date: {eng_date} • Time: {eng_time} IST • {len(all_news)} Updates"
+build_version = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 html_body = f"""<!DOCTYPE html>
 <html data-theme="dark">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content={build_version}>
+<style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
