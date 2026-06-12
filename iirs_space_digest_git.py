@@ -649,8 +649,6 @@ except FileNotFoundError:
 
 is_finalized = published_state.get("is_finalized", False)
 
-all_articles_html = make_articles_html(all_news, is_finalized=is_finalized)
-
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
 
