@@ -1262,13 +1262,6 @@ html_body = f"""<!DOCTYPE html>
 <meta http-equiv="Expires" content="0">
 <meta name="build-version" content="{build_version}">
 <style>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
 :root {{
     --bg-primary: #0a0a0a;
     --bg-secondary: rgba(10, 10, 10, 0.92);
