@@ -639,7 +639,10 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 
     return news
 
-def make_articles_html(news_list):
+
+is_finalized = False
+
+def make_articles_html(news_list, is_finalized=False):
     html_out = ""
 
     for i, item in enumerate(news_list, 1):
@@ -649,44 +652,50 @@ def make_articles_html(news_list):
         image_html = ''
         if item.get("image"):
             image_html = (
-                f'<img src="{item["image"]}" alt="Space news image" '
+                f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" '
                 f'class="card-image" loading="lazy" '
                 f'onerror="this.style.display=\'none\'">'
             )
+
+        flag_html = ""
+        if not is_finalized:
+            flag_html = f'''
+                    <label class="flag-item">
+                        <input type="checkbox" class="flag-checkbox" value="{safe_url}">
+                        Flag this article
+                    </label>
+            '''
 
         html_out += f'''
             <div class="news-card">
                 <div class="card-content">
                     {image_html}
                     <div class="card-title">
-                        <a href="{article_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
+                        <a href="{safe_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
                     </div>
                     <div class="card-source">{item["source"]}</div>
                     <div class="card-summary">{item["summary"]}</div>
 
                     <div class="card-actions">
-                        <a href="{article_url}" target="_blank" rel="noopener noreferrer" class="read-more">Read Full Article →</a>
-
-                        <label class="flag-item">
-                            <input type="checkbox" class="flag-checkbox" value="{safe_url}">
-                            Flag this article
-                        </label>
+                        <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        {flag_html}
                     </div>
                 </div>
             </div>
         '''
 
-    html_out += '''
-        <div class="bottom-actions">
-            <button type="button" class="flag-submit-btn" onclick="submitFlags()">
-                Submit Flagged Articles
-            </button>
+    if not is_finalized:
+        html_out += '''
+            <div class="bottom-actions">
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">
+                    Submit Flagged Articles
+                </button>
 
-            <button type="button" class="publish-btn" onclick="publishCurrentList()">
-                Publish
-            </button>
-        </div>
-    '''
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">
+                    Publish
+                </button>
+            </div>
+        '''
 
     return html_out
 
@@ -1237,7 +1246,7 @@ all_news = filter_flagged_news(all_news)
 # HTML Output
 # =========================
 
-all_articles_html = make_articles_html(all_news)
+all_articles_html = make_articles_html(all_news,is_finalized=is_finalized)
 
 ist_offset = timezone(timedelta(hours=5, minutes=30))
 
@@ -1825,6 +1834,65 @@ async function publishCurrentList() {{
         "success"
     );
 }}
+
+
+
+
+
+
+<script>
+async function publishCurrentList() {{
+    try {{
+        showToast(
+            "Publishing",
+            "Finalizing this reviewed news list for circulation...",
+            "success"
+        );
+
+        const response = await fetch("https://space-news-sage.vercel.app/api/publish-digest", {{
+            method: "POST",
+            headers: {{
+                "Content-Type": "application/json"
+            }},
+            body: JSON.stringify({{
+                finalize: true
+            }})
+        }});
+
+        const rawText = await response.text();
+        let result = {{}};
+
+        try {{
+            result = rawText ? JSON.parse(rawText) : {{}};
+        }} catch (e) {{
+            result = {{ error: rawText || "Unknown server response" }};
+        }}
+
+        if (!response.ok) {{
+            throw new Error(result.error || `Request failed with status ${{response.status}}`);
+        }}
+
+        showToast(
+            "Published",
+            "This digest has been finalized for circulation. Reloading page...",
+            "success"
+        );
+
+        setTimeout(() => {{
+            window.location.reload();
+        }}, 2000);
+
+    }} catch (error) {{
+        console.error("Publish error:", error);
+        showToast("Publish failed", error.message || "Failed to publish digest.", "error");
+    }}
+}}
+</script>
+
+
+
+
+
 </script>
 
 </body>
