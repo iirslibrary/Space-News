@@ -640,7 +640,16 @@ def fetch_news_from_feeds(feeds, max_articles=6):
     return news
 
 
-is_finalized = False
+published_state = {}
+try:
+    with open("published_digest_state.json", "r", encoding="utf-8") as f:
+        published_state = json.load(f)
+except FileNotFoundError:
+    published_state = {"is_finalized": False}
+
+is_finalized = published_state.get("is_finalized", False)
+
+all_articles_html = make_articles_html(all_news, is_finalized=is_finalized)
 
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
