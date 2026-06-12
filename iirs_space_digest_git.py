@@ -1035,18 +1035,18 @@ def generate_docx(news_items, output_path, digest_date_str):
                 if img.mode in ("RGBA", "P"):
                     img = img.convert("RGB")
 
-            clean_stream = io.BytesIO()
-            img.save(clean_stream, format="PNG")
-            clean_stream.seek(0)
+                clean_stream = io.BytesIO()
+                img.save(clean_stream, format="PNG")
+                clean_stream.seek(0)
 
-            img_p = doc.add_paragraph()
-            img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            img_run = img_p.add_run()
-            img_run.add_picture(clean_stream, width=Inches(4.8))
-            img_p.paragraph_format.space_after = Pt(6)
+                img_p = doc.add_paragraph()
+                img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                img_run = img_p.add_run()
+                img_run.add_picture(clean_stream, width=Inches(4.8))
+                img_p.paragraph_format.space_after = Pt(6)
 
-        except Exception as e:
-            print(f"Article image insert failed for {image_url}: {e}")
+            except Exception as e:
+                print(f"Article image insert failed for {image_url}: {e}")
 
         body_text = fetch_full_article_text(
             url=link,
