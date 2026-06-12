@@ -1710,60 +1710,71 @@ h2 {{
 </div>
 
 <script>
-const btn = document.getElementById('themeToggle');
-const html = document.documentElement;
+document.addEventListener("DOMContentLoaded", () => {{
+    const btn = document.getElementById("themeToggle");
+    const html = document.documentElement;
 
-try {{
-    if (localStorage.getItem('theme') === 'light') {{
-        html.setAttribute('data-theme', 'light');
-        btn.textContent = '🌙';
+    if (!btn) {{
+        console.warn("themeToggle button not found");
+        return;
     }}
-}} catch (e) {{
-    console.warn('Theme storage unavailable:', e);
-}}
 
-btn.addEventListener('click', () => {{
-    if (html.getAttribute('data-theme') === 'light') {{
-        html.removeAttribute('data-theme');
-        btn.textContent = '☀️';
-        try {{
-            localStorage.setItem('theme', 'dark');
-        }} catch (e) {{
-            console.warn('Theme storage unavailable:', e);
+    try {{
+        if (localStorage.getItem("theme") === "light") {{
+            html.setAttribute("data-theme", "light");
+            btn.textContent = "🌙";
+        }} else {{
+            html.removeAttribute("data-theme");
+            btn.textContent = "☀️";
         }}
-    }} else {{
-        html.setAttribute('data-theme', 'light');
-        btn.textContent = '🌙';
-        try {{
-            localStorage.setItem('theme', 'light');
-        }} catch (e) {{
-            console.warn('Theme storage unavailable:', e);
-        }}
+    }} catch (e) {{
+        console.warn("Theme storage unavailable:", e);
     }}
+
+    btn.addEventListener("click", () => {{
+        if (html.getAttribute("data-theme") === "light") {{
+            html.removeAttribute("data-theme");
+            btn.textContent = "☀️";
+            try {{
+                localStorage.setItem("theme", "dark");
+            }} catch (e) {{
+                console.warn("Theme storage unavailable:", e);
+            }}
+        }} else {{
+            html.setAttribute("data-theme", "light");
+            btn.textContent = "🌙";
+            try {{
+                localStorage.setItem("theme", "light");
+            }} catch (e) {{
+                console.warn("Theme storage unavailable:", e);
+            }}
+        }}
+    }});
 }});
 
-function showToast(title, message = '', type = 'success') {{
-    const toast = document.getElementById('customToast');
-    const toastTitle = document.getElementById('toastTitle');
-    const toastMessage = document.getElementById('toastMessage');
+function showToast(title, message = "", type = "success") {{
+    const toast = document.getElementById("customToast");
+    const toastTitle = document.getElementById("toastTitle");
+    const toastMessage = document.getElementById("toastMessage");
+
+    if (!toast || !toastTitle || !toastMessage) return;
 
     toastTitle.textContent = title;
     toastMessage.textContent = message;
 
-    toast.classList.remove('success', 'error', 'show');
+    toast.classList.remove("success", "error", "show");
     toast.classList.add(type);
 
     clearTimeout(window.toastTimer);
-
-    toast.classList.add('show');
+    toast.classList.add("show");
 
     window.toastTimer = setTimeout(() => {{
-        toast.classList.remove('show');
+        toast.classList.remove("show");
     }}, 2600);
 }}
 
 async function submitFlags() {{
-    const checkedBoxes = document.querySelectorAll('.flag-checkbox:checked');
+    const checkedBoxes = document.querySelectorAll(".flag-checkbox:checked");
     const flaggedUrls = Array.from(checkedBoxes).map(cb => cb.value);
 
     if (flaggedUrls.length === 0) {{
@@ -1823,6 +1834,7 @@ async function publishCurrentList() {{
     );
 }}
 </script>
+
 </body>
 </html>
 """

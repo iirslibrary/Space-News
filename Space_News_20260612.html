@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="build-version" content="2026-06-12T07:23:54">
+<meta name="build-version" content="2026-06-12T07:34:08">
 <style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -436,7 +436,7 @@ h2 {
 </div>
 
     <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
-    दिनांक: १२-०६-२०२६ • Date: 12-06-2026 • Time: 12:53 IST • 13 Updates
+    दिनांक: १२-०६-२०२६ • Date: 12-06-2026 • Time: 13:04 IST • 13 Updates
     </p>
 
     
@@ -726,60 +726,71 @@ h2 {
 </div>
 
 <script>
-const btn = document.getElementById('themeToggle');
-const html = document.documentElement;
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("themeToggle");
+    const html = document.documentElement;
 
-try {
-    if (localStorage.getItem('theme') === 'light') {
-        html.setAttribute('data-theme', 'light');
-        btn.textContent = '🌙';
+    if (!btn) {
+        console.warn("themeToggle button not found");
+        return;
     }
-} catch (e) {
-    console.warn('Theme storage unavailable:', e);
-}
 
-btn.addEventListener('click', () => {
-    if (html.getAttribute('data-theme') === 'light') {
-        html.removeAttribute('data-theme');
-        btn.textContent = '☀️';
-        try {
-            localStorage.setItem('theme', 'dark');
-        } catch (e) {
-            console.warn('Theme storage unavailable:', e);
+    try {
+        if (localStorage.getItem("theme") === "light") {
+            html.setAttribute("data-theme", "light");
+            btn.textContent = "🌙";
+        } else {
+            html.removeAttribute("data-theme");
+            btn.textContent = "☀️";
         }
-    } else {
-        html.setAttribute('data-theme', 'light');
-        btn.textContent = '🌙';
-        try {
-            localStorage.setItem('theme', 'light');
-        } catch (e) {
-            console.warn('Theme storage unavailable:', e);
-        }
+    } catch (e) {
+        console.warn("Theme storage unavailable:", e);
     }
+
+    btn.addEventListener("click", () => {
+        if (html.getAttribute("data-theme") === "light") {
+            html.removeAttribute("data-theme");
+            btn.textContent = "☀️";
+            try {
+                localStorage.setItem("theme", "dark");
+            } catch (e) {
+                console.warn("Theme storage unavailable:", e);
+            }
+        } else {
+            html.setAttribute("data-theme", "light");
+            btn.textContent = "🌙";
+            try {
+                localStorage.setItem("theme", "light");
+            } catch (e) {
+                console.warn("Theme storage unavailable:", e);
+            }
+        }
+    });
 });
 
-function showToast(title, message = '', type = 'success') {
-    const toast = document.getElementById('customToast');
-    const toastTitle = document.getElementById('toastTitle');
-    const toastMessage = document.getElementById('toastMessage');
+function showToast(title, message = "", type = "success") {
+    const toast = document.getElementById("customToast");
+    const toastTitle = document.getElementById("toastTitle");
+    const toastMessage = document.getElementById("toastMessage");
+
+    if (!toast || !toastTitle || !toastMessage) return;
 
     toastTitle.textContent = title;
     toastMessage.textContent = message;
 
-    toast.classList.remove('success', 'error', 'show');
+    toast.classList.remove("success", "error", "show");
     toast.classList.add(type);
 
     clearTimeout(window.toastTimer);
-
-    toast.classList.add('show');
+    toast.classList.add("show");
 
     window.toastTimer = setTimeout(() => {
-        toast.classList.remove('show');
+        toast.classList.remove("show");
     }, 2600);
 }
 
 async function submitFlags() {
-    const checkedBoxes = document.querySelectorAll('.flag-checkbox:checked');
+    const checkedBoxes = document.querySelectorAll(".flag-checkbox:checked");
     const flaggedUrls = Array.from(checkedBoxes).map(cb => cb.value);
 
     if (flaggedUrls.length === 0) {
@@ -839,5 +850,6 @@ async function publishCurrentList() {
     );
 }
 </script>
+
 </body>
 </html>
