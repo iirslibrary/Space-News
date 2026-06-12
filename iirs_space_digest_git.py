@@ -1,4 +1,4 @@
-f# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 IIRS Space Digest - Combined Production Version
 Generates:
