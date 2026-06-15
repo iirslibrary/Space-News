@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       run_mode:
-        description: 'Type of workflow run'
+        description: 'Workflow mode'
         required: true
         default: 'publish'
         type: choice
@@ -96,6 +96,65 @@ jobs:
           echo "latest_docx=$latest_docx" >> "$GITHUB_OUTPUT"
           echo "✅ Latest DOCX: $latest_docx"
 
+      - name: 📝 Prepare email content
+        id: email_content
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "flag_review" ]; then
+            echo "subject=🚀 Space News | workflow_dispatch | For Flag | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+            {
+              echo "body<<EOF"
+              echo "📡 Today's Space News is LIVE!"
+              echo
+              echo "Run type: workflow_dispatch"
+              echo "Run number: ${{ github.run_number }}"
+              echo
+              echo "🔗 READ & SHARE:"
+              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+              echo
+              echo "Attached: DOCX digest for flagging, submitting and publishing."
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
+            echo "subject=🚀 Space News | workflow_dispatch | Published | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+            {
+              echo "body<<EOF"
+              echo "📡 Today's Space News is LIVE!"
+              echo
+              echo "Run type: workflow_dispatch"
+              echo "Run number: ${{ github.run_number }}"
+              echo
+              echo "🔗 READ & SHARE:"
+              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+              echo
+              echo "Attached: Today's DOCX digest for office circulation."
+              echo
+              echo "────────────────────────────"
+              echo "Copy this link and forward to IIRS team via office email."
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+
+          else
+            echo "subject=🚀 Space News | ${{ github.event_name }} | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+            {
+              echo "body<<EOF"
+              echo "📡 Today's Space News is LIVE!"
+              echo
+              echo "Run type: ${{ github.event_name }}"
+              echo "Run number: ${{ github.run_number }}"
+              echo
+              echo "🔗 READ & SHARE:"
+              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+              echo
+              echo "Attached: Today's DOCX digest for office circulation."
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
       - name: ✅ Send link + latest DOCX to Gmail
         uses: dawidd6/action-send-mail@v3
         with:
@@ -104,43 +163,8 @@ jobs:
           secure: true
           username: ${{ secrets.GMAIL_USER }}
           password: ${{ secrets.GMAIL_PASS }}
-          subject: >-
-            ${{ github.event_name == 'workflow_dispatch' &&
-                inputs.run_mode == 'flag_review' &&
-                format('🚀 Space News | {0} | For Flag | Run #{1}', github.event_name, github.run_number) ||
-                github.event_name == 'workflow_dispatch' &&
-                inputs.run_mode == 'publish' &&
-                format('🚀 Space News | {0} | Published | Run #{1}', github.event_name, github.run_number) ||
-                format('🚀 Space News | {0} | Scheduled | Run #{1}', github.event_name, github.run_number) }}
-          body: |
-            ${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && '📡 Today'\''s Space News is LIVE for review!
-
-            Run type: workflow_dispatch
-            Run number: ' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && github.run_number || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && '
-
-            🔗 READ & SHARE:
-            https://' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && github.repository_owner || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && '.github.io/' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && github.event.repository.name || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'flag_review' && '/
-
-            Attached: DOCX digest for flagging, submitting and publishing.' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && '📡 Today'\''s Space News is LIVE!
-
-            Run type: workflow_dispatch
-            Run number: ' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && github.run_number || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && '
-
-            🔗 READ & SHARE:
-            https://' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && github.repository_owner || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && '.github.io/' || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && github.event.repository.name || '' }}${{ github.event_name == 'workflow_dispatch' && inputs.run_mode == 'publish' && '/
-
-            Attached: Today'\''s DOCX digest for office circulation.' || '' }}${{ github.event_name == 'schedule' && '📡 Today'\''s Space News is LIVE!
-
-            Run type: schedule
-            Run number: ' || '' }}${{ github.event_name == 'schedule' && github.run_number || '' }}${{ github.event_name == 'schedule' && '
-
-            🔗 READ & SHARE:
-            https://' || '' }}${{ github.event_name == 'schedule' && github.repository_owner || '' }}${{ github.event_name == 'schedule' && '.github.io/' || '' }}${{ github.event_name == 'schedule' && github.event.repository.name || '' }}${{ github.event_name == 'schedule' && '/
-
-            Attached: Today'\''s DOCX digest for office circulation.
-
-            ────────────────────────────
-            Copy this link and forward to IIRS team via office email.' || '' }}
+          subject: ${{ steps.email_content.outputs.subject }}
+          body: ${{ steps.email_content.outputs.body }}
           to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
           from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
           attachments: ${{ steps.latest_docx.outputs.latest_docx }}
