@@ -1,10 +1,14 @@
+import { OAuth2Client } from 'google-auth-library';
+
+const googleClient = new OAuth2Client();
+
 export default async function handler(req, res) {
   const allowedOrigin = '*';
 
   const setCors = () => {
     res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   };
 
   setCors();
@@ -20,10 +24,80 @@ export default async function handler(req, res) {
   try {
     const { flaggedUrls, action } = req.body || {};
 
-    const token = process.env.GITHUB_TOKEN;
-    if (!token) {
+    const githubToken = process.env.GITHUB_TOKEN;
+    const googleClientId = process.env.GOOGLE_CLIENT_ID;
+    const allowedReviewerEmailsRaw = process.env.ALLOWED_REVIEWER_EMAILS || '';
+
+    if (!githubToken) {
       return res.status(500).json({
         error: 'Missing GITHUB_TOKEN in environment variables'
+      });
+    }
+
+    if (!googleClientId) {
+      return res.status(500).json({
+        error: 'Missing GOOGLE_CLIENT_ID in environment variables'
+      });
+    }
+
+    const allowedReviewerEmails = allowedReviewerEmailsRaw
+      .split(',')
+      .map(email => email.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (allowedReviewerEmails.length === 0) {
+      return res.status(500).json({
+        error: 'Missing ALLOWED_REVIEWER_EMAILS in environment variables'
+      });
+    }
+
+    const authHeader = req.headers.authorization || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        error: 'Missing or invalid Authorization header'
+      });
+    }
+
+    const idToken = authHeader.slice('Bearer '.length).trim();
+    if (!idToken) {
+      return res.status(401).json({
+        error: 'Missing Google ID token'
+      });
+    }
+
+    let reviewerEmail = null;
+
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: googleClientId
+      });
+
+      const payload = ticket.getPayload();
+
+      if (!payload) {
+        return res.status(401).json({
+          error: 'Invalid Google token payload'
+        });
+      }
+
+      if (!payload.email || !payload.email_verified) {
+        return res.status(403).json({
+          error: 'Google account email is missing or not verified'
+        });
+      }
+
+      reviewerEmail = String(payload.email).toLowerCase().trim();
+
+      if (!allowedReviewerEmails.includes(reviewerEmail)) {
+        return res.status(403).json({
+          error: `Unauthorized reviewer: ${reviewerEmail}`
+        });
+      }
+    } catch (authError) {
+      return res.status(401).json({
+        error: 'Google token verification failed',
+        details: authError.message
       });
     }
 
@@ -32,8 +106,8 @@ export default async function handler(req, res) {
     const branch = 'main';
     const workflowId = 'daily-digest.yml';
 
-    const headers = {
-      Authorization: `Bearer ${token}`,
+    const githubHeaders = {
+      Authorization: `Bearer ${githubToken}`,
       Accept: 'application/vnd.github+json',
       'Content-Type': 'application/json',
       'X-GitHub-Api-Version': '2022-11-28'
@@ -42,7 +116,7 @@ export default async function handler(req, res) {
     async function getFileShaAndContent(path) {
       const resp = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
-        { headers }
+        { headers: githubHeaders }
       );
 
       if (resp.status === 404) {
@@ -79,7 +153,7 @@ export default async function handler(req, res) {
         `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
         {
           method: 'PUT',
-          headers,
+          headers: githubHeaders,
           body: JSON.stringify(body)
         }
       );
@@ -97,7 +171,7 @@ export default async function handler(req, res) {
         `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
         {
           method: 'POST',
-          headers,
+          headers: githubHeaders,
           body: JSON.stringify({
             ref: branch,
             inputs: {
@@ -127,20 +201,33 @@ export default async function handler(req, res) {
 
       await putFile(
         'published_digest_state.json',
-        { published_for_date: istDate },
-        `Mark digest as published for ${istDate}`
+        {
+          published_for_date: istDate,
+          published_by: reviewerEmail
+        },
+        `Mark digest as published for ${istDate} by ${reviewerEmail}`
       );
 
       await dispatchWorkflow('publish');
 
       return res.status(200).json({
         success: true,
-        message: `Digest marked as published for ${istDate} and workflow triggered`
+        message: `Digest marked as published for ${istDate} and workflow triggered`,
+        reviewer: reviewerEmail
       });
     }
 
     if (!Array.isArray(flaggedUrls) || flaggedUrls.length === 0) {
       return res.status(400).json({ error: 'No flagged URLs received' });
+    }
+
+    const cleanedFlaggedUrls = flaggedUrls
+      .filter(url => typeof url === 'string')
+      .map(url => url.trim())
+      .filter(Boolean);
+
+    if (cleanedFlaggedUrls.length === 0) {
+      return res.status(400).json({ error: 'No valid flagged URLs received' });
     }
 
     const { content } = await getFileShaAndContent('flagged_urls.json');
@@ -157,17 +244,14 @@ export default async function handler(req, res) {
     const merged = [
       ...new Set([
         ...(Array.isArray(existing) ? existing : []),
-        ...flaggedUrls
-          .filter(url => typeof url === 'string')
-          .map(url => url.trim())
-          .filter(Boolean)
+        ...cleanedFlaggedUrls
       ])
     ];
 
     await putFile(
       'flagged_urls.json',
       merged,
-      'Update flagged URLs from review page'
+      `Update flagged URLs from review page by ${reviewerEmail}`
     );
 
     await dispatchWorkflow('flag_review');
@@ -175,7 +259,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: 'Flagged URLs saved and workflow triggered',
-      count: merged.length
+      count: merged.length,
+      reviewer: reviewerEmail
     });
 
   } catch (error) {
