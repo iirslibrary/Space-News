@@ -1301,6 +1301,9 @@ build_version = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 html_body = f"""<!DOCTYPE html>
 <html data-theme="dark">
 <head>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1324,6 +1327,10 @@ html_body = f"""<!DOCTYPE html>
     {timestamp}
     </p>
 
+<div class="auth-panel">
+    <div id="googleSignInBtn"></div>
+    <div id="signedInUser" style="display:none;"></div>
+</div>
     {all_articles_html}
 
     <footer class="footer">
