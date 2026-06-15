@@ -1,6 +1,15 @@
 window.googleIdToken = null;
 window.googleUserEmail = null;
 
+const GOOGLE_CLIENT_ID = "585110924508-lfjo1ma5u0cpqe0qihpj0d3mlb7344sp.apps.googleusercontent.com";
+
+const ALLOWED_EMAILS = [
+    "iirslibrary@gmail.com",
+    "person1@gmail.com",
+    "person2@gmail.com",
+    "person3@gmail.com"
+].map(email => email.toLowerCase().trim());
+
 function parseJwt(token) {
     try {
         const base64Url = token.split(".")[1];
@@ -18,49 +27,115 @@ function parseJwt(token) {
     }
 }
 
-function updateReviewerUI() {
-    const signedInUser = document.getElementById("signedInUser");
-    const signInBtnWrap = document.getElementById("googleSignInBtn");
+function getProtectedContainers() {
+    const explicitProtected = document.getElementById("protectedContent");
+    if (explicitProtected) return [explicitProtected];
+
+    const fallbacks = [];
+    document.querySelectorAll(".news-card, .news-list, .review-section, .articles-wrap").forEach(el => {
+        fallbacks.push(el);
+    });
+
+    return fallbacks;
+}
+
+function setProtectedVisibility(isVisible) {
+    const protectedContainers = getProtectedContainers();
+
+    protectedContainers.forEach(el => {
+        el.style.display = isVisible ? "" : "none";
+    });
+
+    document.querySelectorAll(".flag-checkbox").forEach(cb => {
+        cb.disabled = !isVisible;
+        if (!isVisible) cb.checked = false;
+    });
+}
+
+function setActionButtonsEnabled(enabled) {
     const flagBtn = document.getElementById("flagSubmitBtn");
     const publishBtn = document.getElementById("publishBtn");
 
-    if (window.googleUserEmail) {
+    [flagBtn, publishBtn].forEach(btn => {
+        if (!btn) return;
+        btn.disabled = !enabled;
+        btn.style.opacity = enabled ? "1" : "0.6";
+        btn.style.cursor = enabled ? "pointer" : "not-allowed";
+    });
+}
+
+function updateReviewerUI(message = "") {
+    const signedInUser = document.getElementById("signedInUser");
+    const signInBtnWrap = document.getElementById("googleSignInBtn");
+    const authMessage = document.getElementById("authMessage");
+
+    const isAuthorized =
+        !!window.googleUserEmail &&
+        ALLOWED_EMAILS.includes(window.googleUserEmail.toLowerCase().trim());
+
+    if (isAuthorized) {
         if (signedInUser) {
             signedInUser.style.display = "block";
-            signedInUser.textContent = `Signed in: ${window.googleUserEmail}`;
+            signedInUser.innerHTML = `
+                <div style="font-weight:600;">Signed in: ${window.googleUserEmail}</div>
+                <button id="signOutBtn" type="button" style="margin-top:10px; padding:8px 14px; cursor:pointer;">
+                    Sign out
+                </button>
+            `;
         }
+
         if (signInBtnWrap) {
             signInBtnWrap.style.display = "none";
         }
-        if (flagBtn) {
-            flagBtn.disabled = false;
-            flagBtn.style.opacity = "1";
-            flagBtn.style.cursor = "pointer";
+
+        if (authMessage) {
+            authMessage.textContent = "";
         }
-        if (publishBtn) {
-            publishBtn.disabled = false;
-            publishBtn.style.opacity = "1";
-            publishBtn.style.cursor = "pointer";
+
+        setProtectedVisibility(true);
+        setActionButtonsEnabled(true);
+
+        const signOutBtn = document.getElementById("signOutBtn");
+        if (signOutBtn) {
+            signOutBtn.addEventListener("click", signOutReviewer);
         }
-    } else {
-        if (signedInUser) {
-            signedInUser.style.display = "none";
-            signedInUser.textContent = "";
-        }
-        if (signInBtnWrap) {
-            signInBtnWrap.style.display = "block";
-        }
-        if (flagBtn) {
-            flagBtn.disabled = true;
-            flagBtn.style.opacity = "0.6";
-            flagBtn.style.cursor = "not-allowed";
-        }
-        if (publishBtn) {
-            publishBtn.disabled = true;
-            publishBtn.style.opacity = "0.6";
-            publishBtn.style.cursor = "not-allowed";
+
+        return;
+    }
+
+    if (signedInUser) {
+        signedInUser.style.display = "none";
+        signedInUser.textContent = "";
+        signedInUser.innerHTML = "";
+    }
+
+    if (signInBtnWrap) {
+        signInBtnWrap.style.display = "block";
+    }
+
+    if (authMessage) {
+        authMessage.textContent = message || "Please sign in with an authorized Google account to review, flag, or publish.";
+    }
+
+    setProtectedVisibility(false);
+    setActionButtonsEnabled(false);
+}
+
+function signOutReviewer() {
+    window.googleIdToken = null;
+    window.googleUserEmail = null;
+
+    if (window.google && google.accounts && google.accounts.id) {
+        try {
+            google.accounts.id.disableAutoSelect();
+        } catch (error) {
+            console.warn("Google disableAutoSelect failed:", error);
         }
     }
+
+    updateReviewerUI("Signed out successfully.");
+    renderGoogleButton();
+    showToast("Signed out", "You have been signed out.", "success");
 }
 
 function handleGoogleSignIn(response) {
@@ -73,18 +148,56 @@ function handleGoogleSignIn(response) {
 
     const payload = parseJwt(response.credential);
     if (!payload) {
+        window.googleIdToken = null;
+        window.googleUserEmail = null;
+        updateReviewerUI("Could not decode Google sign-in response.");
         showToast("Login failed", "Could not decode Google sign-in response.", "error");
         return;
     }
 
-    window.googleUserEmail = payload.email || null;
+    const email = String(payload.email || "").toLowerCase().trim();
+    const emailVerified = !!payload.email_verified;
+
+    if (!email || !emailVerified) {
+        window.googleIdToken = null;
+        window.googleUserEmail = null;
+        updateReviewerUI("Google account email is missing or not verified.");
+        showToast("Login failed", "Google account email is missing or not verified.", "error");
+        return;
+    }
+
+    if (!ALLOWED_EMAILS.includes(email)) {
+        window.googleIdToken = null;
+        window.googleUserEmail = null;
+        updateReviewerUI(`This account (${email}) is not authorized.`);
+        showToast("Unauthorized", `This account (${email}) is not authorized.`, "error");
+        return;
+    }
+
+    window.googleUserEmail = email;
     updateReviewerUI();
 
     showToast(
         "Signed in",
-        `Logged in as ${window.googleUserEmail || "reviewer"}. You can now flag and publish.`,
+        `Logged in as ${window.googleUserEmail}. You can now flag and publish.`,
         "success"
     );
+}
+
+function renderGoogleButton() {
+    const signInContainer = document.getElementById("googleSignInBtn");
+    if (!signInContainer) return;
+
+    signInContainer.innerHTML = "";
+
+    google.accounts.id.renderButton(signInContainer, {
+        theme: "outline",
+        size: "large",
+        text: "signin_with",
+        shape: "rectangular",
+        logo_alignment: "left",
+        width: 250
+    });
 }
 
 function initializeGoogleSignIn() {
@@ -95,70 +208,16 @@ function initializeGoogleSignIn() {
         }
 
         google.accounts.id.initialize({
-            client_id: "585110924508-lfjo1ma5u0cpqe0qihpj0d3mlb7344sp.apps.googleusercontent.com",
+            client_id: GOOGLE_CLIENT_ID,
             callback: handleGoogleSignIn,
             ux_mode: "popup"
         });
 
-        const signInContainer = document.getElementById("googleSignInBtn");
-        if (signInContainer) {
-            google.accounts.id.renderButton(signInContainer, {
-                theme: "outline",
-                size: "large",
-                text: "signin_with",
-                shape: "rectangular",
-                logo_alignment: "left",
-                width: 250
-            });
-        }
+        renderGoogleButton();
     };
 
     init();
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("themeToggle");
-    const html = document.documentElement;
-
-    if (!btn) {
-        console.warn("themeToggle button not found");
-    } else {
-        try {
-            if (localStorage.getItem("theme") === "light") {
-                html.setAttribute("data-theme", "light");
-                btn.textContent = "🌙";
-            } else {
-                html.removeAttribute("data-theme");
-                btn.textContent = "☀️";
-            }
-        } catch (e) {
-            console.warn("Theme storage unavailable:", e);
-        }
-
-        btn.addEventListener("click", () => {
-            if (html.getAttribute("data-theme") === "light") {
-                html.removeAttribute("data-theme");
-                btn.textContent = "☀️";
-                try {
-                    localStorage.setItem("theme", "dark");
-                } catch (e) {
-                    console.warn("Theme storage unavailable:", e);
-                }
-            } else {
-                html.setAttribute("data-theme", "light");
-                btn.textContent = "🌙";
-                try {
-                    localStorage.setItem("theme", "light");
-                } catch (e) {
-                    console.warn("Theme storage unavailable:", e);
-                }
-            }
-        });
-    }
-
-    updateReviewerUI();
-    initializeGoogleSignIn();
-});
 
 function showToast(title, message = "", type = "success") {
     const toast = document.getElementById("customToast");
@@ -194,8 +253,11 @@ function getAuthHeaders() {
 }
 
 function requireGoogleLogin() {
-    if (!window.googleIdToken) {
-        showToast("Sign in required", "Please sign in with Google before flagging or publishing.", "error");
+    const email = (window.googleUserEmail || "").toLowerCase().trim();
+    const authorized = !!window.googleIdToken && !!email && ALLOWED_EMAILS.includes(email);
+
+    if (!authorized) {
+        showToast("Sign in required", "Please sign in with an authorized Google account before flagging or publishing.", "error");
         return false;
     }
     return true;
@@ -300,3 +362,47 @@ async function publishCurrentList() {
         showToast("Publish failed", error.message || "Failed to publish digest.", "error");
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("themeToggle");
+    const html = document.documentElement;
+
+    if (!btn) {
+        console.warn("themeToggle button not found");
+    } else {
+        try {
+            if (localStorage.getItem("theme") === "light") {
+                html.setAttribute("data-theme", "light");
+                btn.textContent = "🌙";
+            } else {
+                html.removeAttribute("data-theme");
+                btn.textContent = "☀️";
+            }
+        } catch (e) {
+            console.warn("Theme storage unavailable:", e);
+        }
+
+        btn.addEventListener("click", () => {
+            if (html.getAttribute("data-theme") === "light") {
+                html.removeAttribute("data-theme");
+                btn.textContent = "☀️";
+                try {
+                    localStorage.setItem("theme", "dark");
+                } catch (e) {
+                    console.warn("Theme storage unavailable:", e);
+                }
+            } else {
+                html.setAttribute("data-theme", "light");
+                btn.textContent = "🌙";
+                try {
+                    localStorage.setItem("theme", "light");
+                } catch (e) {
+                    console.warn("Theme storage unavailable:", e);
+                }
+            }
+        });
+    }
+
+    updateReviewerUI("Please sign in with an authorized Google account to continue.");
+    initializeGoogleSignIn();
+});
