@@ -118,21 +118,17 @@ jobs:
             } >> "$GITHUB_OUTPUT"
 
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
-            echo "subject=🚀 Space News | workflow_dispatch | Published | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+            echo "subject=Today's Space News compiled and published by LIRD" >> "$GITHUB_OUTPUT"
 
             {
               echo "body<<EOF"
-              echo "📡 Today's Space News is LIVE!"
+              echo "Today's Space News is LIVE!"
               echo
-              echo "Run type: workflow_dispatch"
-              echo "Run number: ${{ github.run_number }}"
-              echo
-              echo "🔗 READ & SHARE:"
+              echo "READ & SHARE:"
               echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
               echo
-              echo "Attached: Today's DOCX digest for office circulation."
+              echo "Attached: DOCX digest for circulation"
               echo
-              echo "────────────────────────────"
               echo "Copy this link and forward to IIRS team via office email."
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
