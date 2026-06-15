@@ -41,11 +41,11 @@ function setCheckboxesVisible(visible) {
 }
 
 function setActionButtonsVisible(visible) {
-    const flagBtn = document.getElementById("flagSubmitBtn");
-    const publishBtn = document.getElementById("publishBtn");
+    document.querySelectorAll(".bottom-actions").forEach(actionBar => {
+        actionBar.style.display = visible ? "" : "none";
+    });
 
-    [flagBtn, publishBtn].forEach(btn => {
-        if (!btn) return;
+    document.querySelectorAll(".flag-submit-btn, .publish-btn").forEach(btn => {
         btn.style.display = visible ? "" : "none";
         btn.disabled = !visible;
     });
