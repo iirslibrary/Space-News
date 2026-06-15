@@ -92,13 +92,18 @@ export default async function handler(req, res) {
       return resp.json();
     }
 
-    async function dispatchWorkflow() {
+    async function dispatchWorkflow(runMode) {
       const resp = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
         {
           method: 'POST',
           headers,
-          body: JSON.stringify({ ref: branch })
+          body: JSON.stringify({
+            ref: branch,
+            inputs: {
+              run_mode: runMode
+            }
+          })
         }
       );
 
@@ -126,7 +131,7 @@ export default async function handler(req, res) {
         `Mark digest as published for ${istDate}`
       );
 
-      await dispatchWorkflow();
+      await dispatchWorkflow('publish');
 
       return res.status(200).json({
         success: true,
@@ -165,7 +170,7 @@ export default async function handler(req, res) {
       'Update flagged URLs from review page'
     );
 
-    await dispatchWorkflow();
+    await dispatchWorkflow('flag_review');
 
     return res.status(200).json({
       success: true,
