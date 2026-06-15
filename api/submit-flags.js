@@ -18,11 +18,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { flaggedUrls, action, digestDate } = req.body || {};
+    const { flaggedUrls, action } = req.body || {};
 
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
-      return res.status(500).json({ error: 'Missing GITHUB_TOKEN in environment variables' });
+      return res.status(500).json({
+        error: 'Missing GITHUB_TOKEN in environment variables'
+      });
     }
 
     const owner = 'iirslibrary';
@@ -59,7 +61,9 @@ export default async function handler(req, res) {
 
     async function putFile(path, objectOrArray, message) {
       const { sha } = await getFileShaAndContent(path);
-      const content = Buffer.from(JSON.stringify(objectOrArray, null, 2)).toString('base64');
+      const content = Buffer.from(
+        JSON.stringify(objectOrArray, null, 2)
+      ).toString('base64');
 
       const body = {
         message,
@@ -67,7 +71,9 @@ export default async function handler(req, res) {
         branch
       };
 
-      if (sha) body.sha = sha;
+      if (sha) {
+        body.sha = sha;
+      }
 
       const resp = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
@@ -102,24 +108,29 @@ export default async function handler(req, res) {
       }
     }
 
+    function getIstDate() {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date());
+    }
+
     if (action === 'publish') {
-      if (!digestDate || typeof digestDate !== 'string') {
-        return res.status(400).json({
-          error: 'digestDate is required for publish action'
-        });
-      }
+      const istDate = getIstDate();
 
       await putFile(
         'published_digest_state.json',
-        { published_for_date: digestDate },
-        `Mark digest as published for ${digestDate}`
+        { published_for_date: istDate },
+        `Mark digest as published for ${istDate}`
       );
 
       await dispatchWorkflow();
 
       return res.status(200).json({
         success: true,
-        message: `Digest marked as published for ${digestDate} and workflow triggered`
+        message: `Digest marked as published for ${istDate} and workflow triggered`
       });
     }
 
@@ -141,7 +152,10 @@ export default async function handler(req, res) {
     const merged = [
       ...new Set([
         ...(Array.isArray(existing) ? existing : []),
-        ...flaggedUrls.filter(url => typeof url === 'string' && url.trim())
+        ...flaggedUrls
+          .filter(url => typeof url === 'string')
+          .map(url => url.trim())
+          .filter(Boolean)
       ])
     ];
 
