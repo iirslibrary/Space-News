@@ -1861,14 +1861,6 @@ async function submitFlags() {{
 }}
 
 async function publishCurrentList() {{
-    showToast(
-        "Digest Published",
-        "This reviewed list has been marked as the approved version.",
-        "success"
-    );
-}}
-
-async function publishCurrentList() {{
     try {{
         showToast(
             "Publishing",
