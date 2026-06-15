@@ -95,7 +95,7 @@ function initializeGoogleSignIn() {
         }
 
         google.accounts.id.initialize({
-            client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+            client_id: "585110924508-lfjo1ma5u0cpqe0qihpj0d3mlb7344sp.apps.googleusercontent.com",
             callback: handleGoogleSignIn,
             ux_mode: "popup"
         });
