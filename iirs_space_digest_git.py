@@ -35,7 +35,6 @@ from docx.enum.section import WD_SECTION
 from docx.opc.constants import RELATIONSHIP_TYPE
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-
 from pathlib import Path
 import json
 
@@ -640,14 +639,19 @@ def fetch_news_from_feeds(feeds, max_articles=6):
     return news
 
 
+def get_ist_today():
+    ist = timezone(timedelta(hours=5, minutes=30))
+    return datetime.now(ist).strftime("%Y-%m-%d")
+
 published_state = {}
 try:
     with open("published_digest_state.json", "r", encoding="utf-8") as f:
         published_state = json.load(f)
 except FileNotFoundError:
-    published_state = {"is_finalized": False}
+    published_state = {}
 
-is_finalized = published_state.get("is_finalized", False)
+published_for_date = str(published_state.get("published_for_date", "")).strip()
+is_finalized = (published_for_date == get_ist_today())
 
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
