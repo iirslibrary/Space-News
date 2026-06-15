@@ -27,40 +27,27 @@ function parseJwt(token) {
     }
 }
 
-function getProtectedContainers() {
-    const explicitProtected = document.getElementById("protectedContent");
-    if (explicitProtected) return [explicitProtected];
-
-    const fallbacks = [];
-    document.querySelectorAll(".news-card, .news-list, .review-section, .articles-wrap").forEach(el => {
-        fallbacks.push(el);
-    });
-
-    return fallbacks;
-}
-
-function setProtectedVisibility(isVisible) {
-    const protectedContainers = getProtectedContainers();
-
-    protectedContainers.forEach(el => {
-        el.style.display = isVisible ? "" : "none";
-    });
-
+function setCheckboxesVisible(visible) {
     document.querySelectorAll(".flag-checkbox").forEach(cb => {
-        cb.disabled = !isVisible;
-        if (!isVisible) cb.checked = false;
+        cb.style.display = visible ? "" : "none";
+        cb.disabled = !visible;
+        if (!visible) cb.checked = false;
+
+        const label = cb.closest("label");
+        if (label) {
+            label.style.display = visible ? "" : "none";
+        }
     });
 }
 
-function setActionButtonsEnabled(enabled) {
+function setActionButtonsVisible(visible) {
     const flagBtn = document.getElementById("flagSubmitBtn");
     const publishBtn = document.getElementById("publishBtn");
 
     [flagBtn, publishBtn].forEach(btn => {
         if (!btn) return;
-        btn.disabled = !enabled;
-        btn.style.opacity = enabled ? "1" : "0.6";
-        btn.style.cursor = enabled ? "pointer" : "not-allowed";
+        btn.style.display = visible ? "" : "none";
+        btn.disabled = !visible;
     });
 }
 
@@ -92,8 +79,8 @@ function updateReviewerUI(message = "") {
             authMessage.textContent = "";
         }
 
-        setProtectedVisibility(true);
-        setActionButtonsEnabled(true);
+        setCheckboxesVisible(true);
+        setActionButtonsVisible(true);
 
         const signOutBtn = document.getElementById("signOutBtn");
         if (signOutBtn) {
@@ -114,11 +101,11 @@ function updateReviewerUI(message = "") {
     }
 
     if (authMessage) {
-        authMessage.textContent = message || "Please sign in with an authorized Google account to review, flag, or publish.";
+        authMessage.textContent = message || "Articles are public. Sign in with an authorized Google account to flag or publish.";
     }
 
-    setProtectedVisibility(false);
-    setActionButtonsEnabled(false);
+    setCheckboxesVisible(false);
+    setActionButtonsVisible(false);
 }
 
 function signOutReviewer() {
@@ -169,7 +156,7 @@ function handleGoogleSignIn(response) {
     if (!ALLOWED_EMAILS.includes(email)) {
         window.googleIdToken = null;
         window.googleUserEmail = null;
-        updateReviewerUI(`This account (${email}) is not authorized.`);
+        updateReviewerUI(`This account (${email}) is not authorized for review actions.`);
         showToast("Unauthorized", `This account (${email}) is not authorized.`, "error");
         return;
     }
@@ -179,7 +166,7 @@ function handleGoogleSignIn(response) {
 
     showToast(
         "Signed in",
-        `Logged in as ${window.googleUserEmail}. You can now flag and publish.`,
+        `Logged in as ${window.googleUserEmail}. Review controls are now enabled.`,
         "success"
     );
 }
@@ -403,6 +390,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    updateReviewerUI("Please sign in with an authorized Google account to continue.");
+    updateReviewerUI("Articles are public. Sign in with an authorized Google account to use review controls.");
     initializeGoogleSignIn();
 });
