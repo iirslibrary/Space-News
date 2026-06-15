@@ -1,33 +1,34 @@
 export default async function handler(req, res) {
-  console.log("Function invoked. Method:", req.method);
+  const allowedOrigin = '*';
 
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+  const setCors = () => {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    console.log("Handled OPTIONS request");
-    return res.status(200).end();
+  };
+
+  setCors();
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method !== 'POST') {
-    console.log("Rejected non-POST request");
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { flaggedUrls, action } = req.body || {};
-    console.log("Received body:", req.body);
+    const { flaggedUrls, action, digestDate } = req.body || {};
 
     const token = process.env.GITHUB_TOKEN;
-    console.log("Token present:", !!token);
+    if (!token) {
+      return res.status(500).json({ error: 'Missing GITHUB_TOKEN in environment variables' });
+    }
 
     const owner = 'iirslibrary';
     const repo = 'Space-News';
     const branch = 'main';
+    const workflowId = 'daily-digest.yml';
 
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -36,63 +37,58 @@ export default async function handler(req, res) {
       'X-GitHub-Api-Version': '2022-11-28'
     };
 
-    if (action === "publish") {
-      console.log("Publish action received");
-
-      const finalPath = 'published_digest_state.json';
-
-      const finalContent = Buffer.from(
-        JSON.stringify(
-          {
-            is_finalized: true,
-            published_at: new Date().toISOString()
-          },
-          null,
-          2
-        )
-      ).toString('base64');
-
-      let existingSha = null;
-
-      const getFinalResp = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/contents/${finalPath}?ref=${branch}`,
+    async function getFileShaAndContent(path) {
+      const resp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
         { headers }
       );
-      console.log("GET publish state status:", getFinalResp.status);
 
-      if (getFinalResp.ok) {
-        const fileData = await getFinalResp.json();
-        existingSha = fileData.sha;
+      if (resp.status === 404) {
+        return { sha: null, content: null };
       }
 
-      const putFinalResp = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/contents/${finalPath}`,
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`Failed to fetch ${path}: ${resp.status} ${txt}`);
+      }
+
+      const data = await resp.json();
+      const decoded = Buffer.from(data.content, 'base64').toString('utf-8');
+      return { sha: data.sha, content: decoded };
+    }
+
+    async function putFile(path, objectOrArray, message) {
+      const { sha } = await getFileShaAndContent(path);
+      const content = Buffer.from(JSON.stringify(objectOrArray, null, 2)).toString('base64');
+
+      const body = {
+        message,
+        content,
+        branch
+      };
+
+      if (sha) body.sha = sha;
+
+      const resp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
         {
           method: 'PUT',
           headers,
-          body: JSON.stringify({
-            message: 'Mark digest as finalized for circulation',
-            content: finalContent,
-            sha: existingSha,
-            branch
-          })
+          body: JSON.stringify(body)
         }
       );
 
-      console.log("PUT publish state status:", putFinalResp.status);
-      const putFinalText = await putFinalResp.text();
-      console.log("PUT publish state response:", putFinalText);
-
-      if (!putFinalResp.ok) {
-        return res.status(500).json({
-          error: 'Failed to update published_digest_state.json',
-          githubStatus: putFinalResp.status,
-          details: putFinalText
-        });
+      if (!resp.ok) {
+        const txt = await resp.text();
+        throw new Error(`Failed to update ${path}: ${resp.status} ${txt}`);
       }
 
-      const workflowResp = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/.github%2Fworkflows%2Fdaily-digest.yml/dispatches`,
+      return resp.json();
+    }
+
+    async function dispatchWorkflow() {
+      const resp = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
         {
           method: 'POST',
           headers,
@@ -100,117 +96,74 @@ export default async function handler(req, res) {
         }
       );
 
-      console.log("Workflow dispatch status after publish:", workflowResp.status);
+      if (!(resp.status === 204 || resp.ok)) {
+        const txt = await resp.text();
+        throw new Error(`Workflow dispatch failed: ${resp.status} ${txt}`);
+      }
+    }
 
-      if (workflowResp.status !== 204 && !workflowResp.ok) {
-        const workflowText = await workflowResp.text();
-        console.log("Workflow dispatch response after publish:", workflowText);
-
-        return res.status(500).json({
-          error: 'Publish state updated, but workflow dispatch failed',
-          details: workflowText
+    if (action === 'publish') {
+      if (!digestDate || typeof digestDate !== 'string') {
+        return res.status(400).json({
+          error: 'digestDate is required for publish action'
         });
       }
 
-      console.log("Publish action completed successfully");
+      await putFile(
+        'published_digest_state.json',
+        { published_for_date: digestDate },
+        `Mark digest as published for ${digestDate}`
+      );
+
+      await dispatchWorkflow();
+
       return res.status(200).json({
         success: true,
-        message: 'Digest finalized and workflow triggered'
+        message: `Digest marked as published for ${digestDate} and workflow triggered`
       });
     }
 
-    console.log("Received flaggedUrls:", flaggedUrls);
-
     if (!Array.isArray(flaggedUrls) || flaggedUrls.length === 0) {
-      console.log("No flagged URLs received");
       return res.status(400).json({ error: 'No flagged URLs received' });
     }
 
-    const path = 'flagged_urls.json';
+    const { content } = await getFileShaAndContent('flagged_urls.json');
 
-    const getFileResp = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,
-      { headers }
-    );
-    console.log("GET existing file status:", getFileResp.status);
-
-    let sha = null;
     let existing = [];
-
-    if (getFileResp.ok) {
-      const fileData = await getFileResp.json();
-      sha = fileData.sha;
-      const decoded = Buffer.from(fileData.content, 'base64').toString('utf-8');
-      existing = JSON.parse(decoded);
-      console.log("Existing flagged URLs:", existing);
-    } else {
-      const getText = await getFileResp.text();
-      console.log("GET existing file response:", getText);
+    if (content) {
+      try {
+        existing = JSON.parse(content);
+      } catch {
+        existing = [];
+      }
     }
 
-    const merged = [...new Set([...(Array.isArray(existing) ? existing : []), ...flaggedUrls])];
-    console.log("Merged flagged URLs:", merged);
+    const merged = [
+      ...new Set([
+        ...(Array.isArray(existing) ? existing : []),
+        ...flaggedUrls.filter(url => typeof url === 'string' && url.trim())
+      ])
+    ];
 
-    const content = Buffer.from(JSON.stringify(merged, null, 2)).toString('base64');
-
-    const updateResp = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
-      {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({
-          message: 'Update flagged URLs from review page',
-          content,
-          sha,
-          branch,
-        }),
-      }
+    await putFile(
+      'flagged_urls.json',
+      merged,
+      'Update flagged URLs from review page'
     );
 
-    console.log("PUT update file status:", updateResp.status);
-    const updateText = await updateResp.text();
-    console.log("PUT update file response:", updateText);
+    await dispatchWorkflow();
 
-    if (!updateResp.ok) {
-      return res.status(500).json({
-        error: 'Failed to update flagged_urls.json',
-        githubStatus: updateResp.status,
-        details: updateText,
-      });
-    }
-
-    const workflowResp = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/.github%2Fworkflows%2Fdaily-digest.yml/dispatches`,
-      {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ ref: branch }),
-      }
-    );
-
-    console.log("Workflow dispatch status:", workflowResp.status);
-
-    if (workflowResp.status !== 204 && !workflowResp.ok) {
-      const workflowText = await workflowResp.text();
-      console.log("Workflow dispatch response:", workflowText);
-
-      return res.status(500).json({
-        error: 'flagged_urls.json updated, but workflow dispatch failed',
-        details: workflowText,
-      });
-    }
-
-    console.log("Workflow dispatch accepted successfully");
     return res.status(200).json({
       success: true,
       message: 'Flagged URLs saved and workflow triggered',
-      count: merged.length,
+      count: merged.length
     });
+
   } catch (error) {
-    console.error("Server error:", error);
+    setCors();
     return res.status(500).json({
       error: 'Server error',
-      details: error.message,
+      details: error.message
     });
   }
 }
