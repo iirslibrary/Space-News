@@ -71,7 +71,23 @@ jobs:
           publish_branch: gh-pages
           keep_files: false
 
-      - name: ✅ Send link + DOCX to Gmail
+      - name: 📎 Find latest DOCX file
+        id: latest_docx
+        shell: bash
+        run: |
+          shopt -s nullglob
+          docx_files=(Space_News_*.docx)
+
+          if [ ${#docx_files[@]} -eq 0 ]; then
+            echo "❌ No Space_News_*.docx file found"
+            exit 1
+          fi
+
+          latest_docx=$(ls -t "${docx_files[@]}" | head -n 1)
+          echo "latest_docx=$latest_docx" >> "$GITHUB_OUTPUT"
+          echo "✅ Latest DOCX: $latest_docx"
+
+      - name: ✅ Send link + latest DOCX to Gmail
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -89,10 +105,10 @@ jobs:
             🔗 READ & SHARE:
             https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 
-            Attached: DOCX digest for office circulation.
+            Attached: Today's DOCX digest for office circulation.
 
             ────────────────────────────
             Copy this link and forward to IIRS team via office email.
           to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
           from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
-          attachments: Space_News_*.docx
+          attachments: ${{ steps.latest_docx.outputs.latest_docx }}
