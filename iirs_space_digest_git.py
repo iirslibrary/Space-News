@@ -1312,35 +1312,38 @@ html_body = f"""<!DOCTYPE html>
 <meta name="build-version" content="{build_version}">
 <link rel="stylesheet" href="review-styles.css?v={build_version}">
 </head>
+
 <body>
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+
 <div class="scroll-container">
     <div class="page-header">
-    <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
-    <div class="header-title-wrap">
-        <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
-    <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
-</div>
 
     <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
-    {timestamp}
+        {timestamp}
     </p>
 
-<div class="auth-panel">
-    <div id="googleSignInBtn"></div>
-    <div id="signedInUser" style="display:none;"></div>
-</div>
+    <div class="auth-panel">
+        <div id="googleSignInBtn"></div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" style="text-align:center; margin-top:12px; color:var(--text-secondary);"></div>
+    </div>
+
     {all_articles_html}
 
     <footer class="footer">
-    <div class="footer-text">
-        <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
-        <div>Compiled by Library and Information Resource Division, IIRS</div>
-    </div>
-</footer>
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
 </div>
-
 
 <div id="customToast" class="custom-toast">
     <div class="toast-title" id="toastTitle"></div>
