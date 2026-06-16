@@ -1330,10 +1330,11 @@ html_body = f"""<!DOCTYPE html>
     </p>
 
     <div class="auth-panel">
-        <div id="googleSignInBtn"></div>
-        <div id="signedInUser" style="display:none;"></div>
-        <div id="authMessage" style="text-align:center; margin-top:12px; color:var(--text-secondary);"></div>
-    </div>
+    <div class="auth-panel-title">Reviewer Access</div>
+    <div id="googleSignInBtn" class="google-btn-wrap"></div>
+    <div id="signedInUser" style="display:none;"></div>
+    <div id="authMessage" class="auth-message"></div>
+</div>
 
     {all_articles_html}
 
