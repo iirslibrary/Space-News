@@ -405,8 +405,8 @@ h2 {
 
 .auth-panel {
     max-width: 620px;
-    margin: 20px auto 28px;
-    padding: 18px 20px;
+    margin: 22px auto 28px;
+    padding: 16px 20px 14px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
@@ -415,28 +415,30 @@ h2 {
 }
 
 .auth-panel-title {
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     font-weight: 600;
     color: #f3f4f6;
-    margin-bottom: 12px;
-    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
 }
 
 .google-btn-wrap {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 44px;
+    min-height: 40px;
     margin-bottom: 10px;
 }
 
 .auth-message {
     font-size: 0.92rem;
     color: rgba(255,255,255,0.72);
-    line-height: 1.5;
+    line-height: 1.45;
+    margin-top: 2px;
 }
 
-#signedInUser {
-    margin-top: 10px;
-    color: rgba(255,255,255,0.88);
+.auth-message {
+    max-width: 480px;
+    margin: 2px auto 0;
 }
