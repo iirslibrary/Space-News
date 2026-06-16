@@ -1331,7 +1331,11 @@ html_body = f"""<!DOCTYPE html>
 
     <div class="auth-panel">
     <div class="auth-panel-title">Reviewer Access</div>
-    <div id="googleSignInBtn" class="google-btn-wrap"></div>
+
+    <div class="google-btn-row">
+        <div id="googleSignInBtn"></div>
+    </div>
+
     <div id="signedInUser" style="display:none;"></div>
     <div id="authMessage" class="auth-message"></div>
 </div>
