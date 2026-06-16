@@ -392,13 +392,13 @@ async function submitFlags() {
 
         showToast(
             "Submitted",
-            "Flagged articles submitted. This page will reload shortly with updated results.",
+            "Flagged articles submitted. This page will reload in 1 min, shortly with updated results.",
             "success"
         );
 
         setTimeout(() => {
             window.location.reload();
-        }, 50000);
+        }, 60000);
     } catch (error) {
         console.error("Submit flags error:", error);
         showToast("Submit failed", error.message || "Failed to submit flagged articles.", "error");
@@ -445,7 +445,7 @@ async function publishCurrentList() {
 
         setTimeout(() => {
             window.location.reload();
-        }, 50000);
+        }, 60000);
     } catch (error) {
         console.error("Publish error:", error);
         showToast("Publish failed", error.message || "Failed to publish digest.", "error");
