@@ -74,6 +74,7 @@ function updateReviewerUI(message = "") {
 
         if (signInBtnWrap) {
             signInBtnWrap.style.display = "none";
+            signInBtnWrap.innerHTML = "";
         }
 
         if (authMessage) {
@@ -166,7 +167,7 @@ async function signOutReviewer() {
     }
 
     updateReviewerUI("Signed out successfully.");
-    renderGoogleButton();
+    initializeGoogleSignIn();
     showToast("Signed out", "You have been signed out.", "success");
 }
 
@@ -251,7 +252,7 @@ async function handleGoogleSignIn(response) {
 
 function renderGoogleButton() {
     const signInContainer = document.getElementById("googleSignInBtn");
-    if (!signInContainer) return;
+    if (!signInContainer || !window.google || !google.accounts || !google.accounts.id) return;
 
     signInContainer.innerHTML = "";
     signInContainer.style.width = "100%";
@@ -278,6 +279,18 @@ function renderGoogleButton() {
 }
 
 function initializeGoogleSignIn() {
+    const signInContainer = document.getElementById("googleSignInBtn");
+    const email = (window.googleUserEmail || "").toLowerCase().trim();
+    const isAuthorized = !!email && ALLOWED_EMAILS.includes(email);
+
+    if (isAuthorized) {
+        if (signInContainer) {
+            signInContainer.style.display = "none";
+            signInContainer.innerHTML = "";
+        }
+        return;
+    }
+
     const init = () => {
         if (!window.google || !google.accounts || !google.accounts.id) {
             setTimeout(init, 300);
@@ -480,7 +493,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     updateReviewerUI("Checking reviewer session...");
-    initializeGoogleSignIn();
 
     const sessionUser = await checkExistingSession();
 
@@ -493,5 +505,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.googleUserEmail = null;
         window.googleUserProfile = null;
         updateReviewerUI("Articles are public. Sign in with an authorized Google account to use review controls.");
+        initializeGoogleSignIn();
     }
 });
