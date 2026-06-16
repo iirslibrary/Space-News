@@ -66,7 +66,7 @@ function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
 
 export default async function handler(req, res) {
   const allowedOrigins = [
-    'https://space-news-sage.vercel.app'
+    'https://iirslibrary.github.io'
     // Add more frontend origins here if needed
     // 'https://your-other-frontend.vercel.app'
   ];
