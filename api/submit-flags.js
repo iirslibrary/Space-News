@@ -59,7 +59,7 @@ function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
     'Path=/',
     'HttpOnly',
     'Secure',
-    'SameSite=Lax',
+    'SameSite=None',
     `Max-Age=${maxAgeSeconds}`
   ].join('; ');
 }
