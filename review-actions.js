@@ -177,6 +177,10 @@ function renderGoogleButton() {
     if (!signInContainer) return;
 
     signInContainer.innerHTML = "";
+    signInContainer.style.width = "100%";
+    signInContainer.style.display = "flex";
+    signInContainer.style.justifyContent = "center";
+    signInContainer.style.alignItems = "center";
 
     google.accounts.id.renderButton(signInContainer, {
         theme: "outline",
@@ -184,8 +188,16 @@ function renderGoogleButton() {
         text: "signin_with",
         shape: "rectangular",
         logo_alignment: "left",
-        width: 250
+        width: 260
     });
+
+    setTimeout(() => {
+        const child = signInContainer.firstElementChild;
+        if (child) {
+            child.style.margin = "0 auto";
+            child.style.display = "block";
+        }
+    }, 50);
 }
 
 function initializeGoogleSignIn() {

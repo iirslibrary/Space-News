@@ -422,22 +422,32 @@ h2 {
     line-height: 1.2;
 }
 
-.google-btn-wrap,
-#googleSignInBtn {
+.google-btn-row {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     margin: 0 auto 10px;
-    text-align: center;
 }
 
 #googleSignInBtn {
-    display: flex;
+    display: inline-flex;
     justify-content: center;
-    width: 100%;
+    align-items: center;
+    width: auto;
+    margin: 0 auto;
 }
 
-#googleSignInBtn > div {
+#googleSignInBtn > div,
+#googleSignInBtn iframe {
     margin: 0 auto !important;
+    display: block !important;
+}
+
+.auth-message {
+    max-width: 500px;
+    margin: 4px auto 0;
+    font-size: 0.92rem;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.45;
 }
