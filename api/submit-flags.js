@@ -65,10 +65,21 @@ function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
 }
 
 export default async function handler(req, res) {
-  const allowedOrigin = '*';
+  const allowedOrigins = [
+    'https://space-news-sage.vercel.app'
+    // Add more frontend origins here if needed
+    // 'https://your-other-frontend.vercel.app'
+  ];
 
   const setCors = () => {
-    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Vary', 'Origin');
+    }
+
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   };
