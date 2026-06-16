@@ -10,6 +10,16 @@ const ALLOWED_EMAILS = [
     "person3@gmail.com"
 ].map(email => email.toLowerCase().trim());
 
+google.accounts.id.renderButton(signInContainer, {
+    theme: "outline",
+    size: "large",
+    text: "signin_with",
+    shape: "rectangular",
+    logo_alignment: "left",
+    width: 280
+});
+
+
 function parseJwt(token) {
     try {
         const base64Url = token.split(".")[1];
