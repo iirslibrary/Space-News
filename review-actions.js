@@ -5,9 +5,9 @@ const GOOGLE_CLIENT_ID = "585110924508-lfjo1ma5u0cpqe0qihpj0d3mlb7344sp.apps.goo
 
 const ALLOWED_EMAILS = [
     "iirslibrary@gmail.com",
-    "person1@gmail.com",
-    "person2@gmail.com",
-    "person3@gmail.com"
+    "ashshbsht@gmail.com",
+    "maneesha.nano@gmail.com",
+    "isr314@gmail.com"
 ].map(email => email.toLowerCase().trim());
 
 
