@@ -431,3 +431,13 @@ h2 {
     margin: 0 auto 10px;
     text-align: center;
 }
+
+#googleSignInBtn {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#googleSignInBtn > div {
+    margin: 0 auto !important;
+}
