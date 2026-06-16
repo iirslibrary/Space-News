@@ -445,7 +445,7 @@ async function publishCurrentList() {
 
         setTimeout(() => {
             window.location.reload();
-        }, 2000);
+        }, 50000);
     } catch (error) {
         console.error("Publish error:", error);
         showToast("Publish failed", error.message || "Failed to publish digest.", "error");
