@@ -1,6 +1,68 @@
 import { OAuth2Client } from 'google-auth-library';
+import crypto from 'crypto';
 
 const googleClient = new OAuth2Client();
+
+function parseCookies(cookieHeader = '') {
+  return Object.fromEntries(
+    cookieHeader
+      .split(';')
+      .map(part => part.trim())
+      .filter(Boolean)
+      .map(part => {
+        const idx = part.indexOf('=');
+        return [part.slice(0, idx), part.slice(idx + 1)];
+      })
+  );
+}
+
+function signSession(payload, secret) {
+  const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const sig = crypto
+    .createHmac('sha256', secret)
+    .update(data)
+    .digest('base64url');
+  return `${data}.${sig}`;
+}
+
+function verifySession(token, secret) {
+  if (!token) return null;
+
+  const [data, sig] = token.split('.');
+  if (!data || !sig) return null;
+
+  const expectedSig = crypto
+    .createHmac('sha256', secret)
+    .update(data)
+    .digest('base64url');
+
+  if (sig !== expectedSig) return null;
+
+  try {
+    const payload = JSON.parse(
+      Buffer.from(data, 'base64url').toString('utf8')
+    );
+
+    if (!payload.exp || payload.exp < Math.floor(Date.now() / 1000)) {
+      return null;
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
+  return [
+    `space_news_session=${value}`,
+    'Path=/',
+    'HttpOnly',
+    'Secure',
+    'SameSite=Lax',
+    `Max-Age=${maxAgeSeconds}`
+  ].join('; ');
+}
 
 export default async function handler(req, res) {
   const allowedOrigin = '*';
@@ -26,6 +88,7 @@ export default async function handler(req, res) {
 
     const githubToken = process.env.GITHUB_TOKEN;
     const googleClientId = process.env.GOOGLE_CLIENT_ID;
+    const sessionSecret = process.env.SESSION_SECRET;
     const allowedReviewerEmailsRaw = process.env.ALLOWED_REVIEWER_EMAILS || '';
 
     if (!githubToken) {
@@ -40,6 +103,12 @@ export default async function handler(req, res) {
       });
     }
 
+    if (!sessionSecret) {
+      return res.status(500).json({
+        error: 'Missing SESSION_SECRET in environment variables'
+      });
+    }
+
     const allowedReviewerEmails = allowedReviewerEmailsRaw
       .split(',')
       .map(email => email.trim().toLowerCase())
@@ -51,54 +120,81 @@ export default async function handler(req, res) {
       });
     }
 
-    const authHeader = req.headers.authorization || '';
-    if (!authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        error: 'Missing or invalid Authorization header'
-      });
-    }
-
-    const idToken = authHeader.slice('Bearer '.length).trim();
-    if (!idToken) {
-      return res.status(401).json({
-        error: 'Missing Google ID token'
-      });
-    }
-
     let reviewerEmail = null;
+    let sessionUser = null;
+    let newSessionCookie = null;
 
-    try {
-      const ticket = await googleClient.verifyIdToken({
-        idToken,
-        audience: googleClientId
-      });
+    const cookies = parseCookies(req.headers.cookie || '');
+    const existingSession = verifySession(cookies.space_news_session, sessionSecret);
 
-      const payload = ticket.getPayload();
+    if (
+      existingSession &&
+      existingSession.email &&
+      allowedReviewerEmails.includes(String(existingSession.email).toLowerCase().trim())
+    ) {
+      reviewerEmail = String(existingSession.email).toLowerCase().trim();
+      sessionUser = existingSession;
+    } else {
+      const authHeader = req.headers.authorization || '';
 
-      if (!payload) {
+      if (!authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
-          error: 'Invalid Google token payload'
+          error: 'Missing or invalid Authorization header'
         });
       }
 
-      if (!payload.email || !payload.email_verified) {
-        return res.status(403).json({
-          error: 'Google account email is missing or not verified'
+      const idToken = authHeader.slice('Bearer '.length).trim();
+
+      if (!idToken) {
+        return res.status(401).json({
+          error: 'Missing Google ID token'
         });
       }
 
-      reviewerEmail = String(payload.email).toLowerCase().trim();
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken,
+          audience: googleClientId
+        });
 
-      if (!allowedReviewerEmails.includes(reviewerEmail)) {
-        return res.status(403).json({
-          error: `Unauthorized reviewer: ${reviewerEmail}`
+        const payload = ticket.getPayload();
+
+        if (!payload) {
+          return res.status(401).json({
+            error: 'Invalid Google token payload'
+          });
+        }
+
+        if (!payload.email || !payload.email_verified) {
+          return res.status(403).json({
+            error: 'Google account email is missing or not verified'
+          });
+        }
+
+        reviewerEmail = String(payload.email).toLowerCase().trim();
+
+        if (!allowedReviewerEmails.includes(reviewerEmail)) {
+          return res.status(403).json({
+            error: `Unauthorized reviewer: ${reviewerEmail}`
+          });
+        }
+
+        sessionUser = {
+          sub: payload.sub,
+          email: reviewerEmail,
+          name: payload.name || '',
+          picture: payload.picture || '',
+          exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7
+        };
+
+        const signedSession = signSession(sessionUser, sessionSecret);
+        newSessionCookie = buildSessionCookie(signedSession);
+      } catch (authError) {
+        return res.status(401).json({
+          error: 'Google token verification failed',
+          details: authError.message
         });
       }
-    } catch (authError) {
-      return res.status(401).json({
-        error: 'Google token verification failed',
-        details: authError.message
-      });
     }
 
     const owner = 'iirslibrary';
@@ -199,6 +295,10 @@ export default async function handler(req, res) {
     if (action === 'publish') {
       const istDate = getIstDate();
 
+      if (newSessionCookie) {
+        res.setHeader('Set-Cookie', [newSessionCookie]);
+      }
+
       await putFile(
         'published_digest_state.json',
         {
@@ -213,7 +313,8 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         message: `Digest marked as published for ${istDate} and workflow triggered`,
-        reviewer: reviewerEmail
+        reviewer: reviewerEmail,
+        user: sessionUser
       });
     }
 
@@ -248,6 +349,10 @@ export default async function handler(req, res) {
       ])
     ];
 
+    if (newSessionCookie) {
+      res.setHeader('Set-Cookie', [newSessionCookie]);
+    }
+
     await putFile(
       'flagged_urls.json',
       merged,
@@ -260,7 +365,8 @@ export default async function handler(req, res) {
       success: true,
       message: 'Flagged URLs saved and workflow triggered',
       count: merged.length,
-      reviewer: reviewerEmail
+      reviewer: reviewerEmail,
+      user: sessionUser
     });
 
   } catch (error) {
