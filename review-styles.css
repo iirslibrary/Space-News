@@ -407,17 +407,18 @@ h2 {
     max-width: 620px;
     margin: 22px auto 28px;
     padding: 16px 20px 14px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card-bg);
+    border: 1px solid var(--border-light);
     border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 8px 24px var(--shadow-dark);
     text-align: center;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 .auth-panel-title {
     font-size: 0.98rem;
     font-weight: 600;
-    color: #f3f4f6;
+    color: var(--text-white);
     margin-bottom: 8px;
     line-height: 1.2;
 }
@@ -448,6 +449,25 @@ h2 {
     max-width: 500px;
     margin: 4px auto 0;
     font-size: 0.92rem;
-    color: rgba(255,255,255,0.72);
+    color: var(--text-secondary);
     line-height: 1.45;
+}
+
+#signedInUser {
+    color: var(--text-primary);
+}
+
+#signedInUser button {
+    margin-top: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-white);
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+#signedInUser button:hover {
+    background: var(--card-summary);
 }
