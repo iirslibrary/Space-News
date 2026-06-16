@@ -1330,10 +1330,11 @@ html_body = f"""<!DOCTYPE html>
     </p>
 
     <div class="auth-panel">
-        <div id="googleSignInBtn"></div>
-        <div id="signedInUser" style="display:none;"></div>
-        <div id="authMessage" style="text-align:center; margin-top:12px; color:var(--text-secondary);"></div>
-    </div>
+    <div class="auth-panel-title">Reviewer Access</div>
+    <div id="googleSignInBtn" class="google-btn-wrap"></div>
+    <div id="signedInUser" style="display:none;"></div>
+    <div id="authMessage" class="auth-message"></div>
+</div>
 
     {all_articles_html}
 
@@ -1349,6 +1350,47 @@ html_body = f"""<!DOCTYPE html>
     <div class="toast-title" id="toastTitle"></div>
     <div class="toast-message" id="toastMessage"></div>
 </div>
+
+<style>
+.auth-panel {
+    max-width: 620px;
+    margin: 20px auto 28px;
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    text-align: center;
+}
+
+.auth-panel-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f3f4f6;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+}
+
+.google-btn-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 10px;
+}
+
+.auth-message {
+    font-size: 0.92rem;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.5;
+}
+
+#signedInUser {
+    margin-top: 10px;
+    color: rgba(255,255,255,0.88);
+}
+</style>
+
 
 <script src="review-actions.js?v={build_version}"></script>
 </body>
