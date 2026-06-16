@@ -398,7 +398,7 @@ async function submitFlags() {
 
         setTimeout(() => {
             window.location.reload();
-        }, 30000);
+        }, 50000);
     } catch (error) {
         console.error("Submit flags error:", error);
         showToast("Submit failed", error.message || "Failed to submit flagged articles.", "error");
