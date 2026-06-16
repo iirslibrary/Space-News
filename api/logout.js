@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const allowedOrigins = [
-    'https://space-news-sage.vercel.app'
+    'https://iirslibrary.github.io'
     // Add more frontend origins here if needed
     // 'https://your-other-frontend.vercel.app'
   ];
@@ -29,8 +29,8 @@ export default async function handler(req, res) {
   }
 
   res.setHeader('Set-Cookie', [
-    'space_news_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
-  ]);
+  'space_news_session=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+]);
 
   return res.status(200).json({
     success: true,
