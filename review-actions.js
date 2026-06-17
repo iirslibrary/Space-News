@@ -505,8 +505,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateReviewerUI("Checking publication state...");
 
     const publishedState = await checkPublishedState();
+    const today = new Date().toISOString().slice(0, 10);
 
-    if (publishedState && publishedState.published) {
+    if (publishedState && publishedState.published_for_date === today) {
         window.googleIdToken = null;
         window.googleUserEmail = null;
         window.googleUserProfile = null;
