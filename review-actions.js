@@ -146,24 +146,42 @@ async function checkExistingSession() {
 
 async function checkPublishedState() {
     try {
-        const response = await fetch(`${API_BASE}/api/published-state`, {
+        console.log("[published-state] API_BASE:", API_BASE);
+
+        const url = `${API_BASE}/api/published-state`;
+        console.log("[published-state] fetching:", url);
+
+        const response = await fetch(url, {
             method: "GET",
             credentials: "include"
         });
 
-        const rawText = await response.text();
-        let result = {};
+        console.log("[published-state] response.ok:", response.ok);
+        console.log("[published-state] response.status:", response.status);
+        console.log("[published-state] response.url:", response.url);
 
+        const rawText = await response.text();
+        console.log("[published-state] rawText:", rawText);
+
+        let result = {};
         try {
             result = rawText ? JSON.parse(rawText) : {};
-        } catch {
+        } catch (parseError) {
+            console.warn("[published-state] JSON parse failed:", parseError);
             result = {};
         }
 
-        if (!response.ok) return null;
+        console.log("[published-state] parsed result:", result);
+
+        if (!response.ok) {
+            console.warn("[published-state] non-OK response, returning null");
+            return null;
+        }
+
+        console.log("[published-state] returning result");
         return result;
     } catch (error) {
-        console.warn("Published state check failed:", error);
+        console.warn("[published-state] Published state check failed:", error);
         return null;
     }
 }
@@ -518,7 +536,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     updateReviewerUI("Checking publication state...");
 
+    console.log("API_BASE", API_BASE);
     const publishedState = await checkPublishedState();
+    console.log("publishedState", publishedState);
 
     if (publishedState && publishedState.published) {
         window.googleIdToken = null;
