@@ -144,6 +144,30 @@ async function checkExistingSession() {
     }
 }
 
+async function checkPublishedState() {
+    try {
+        const response = await fetch(`${API_BASE}/api/published-state`, {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const rawText = await response.text();
+        let result = {};
+
+        try {
+            result = rawText ? JSON.parse(rawText) : {};
+        } catch {
+            result = {};
+        }
+
+        if (!response.ok) return null;
+        return result;
+    } catch (error) {
+        console.warn("Published state check failed:", error);
+        return null;
+    }
+}
+
 async function signOutReviewer() {
     window.googleIdToken = null;
     window.googleUserEmail = null;
@@ -490,6 +514,38 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
         });
+    }
+
+    updateReviewerUI("Checking publication state...");
+
+    const publishedState = await checkPublishedState();
+
+    if (publishedState && publishedState.published) {
+        window.googleIdToken = null;
+        window.googleUserEmail = null;
+        window.googleUserProfile = null;
+
+        const signedInUser = document.getElementById("signedInUser");
+        const signInBtnWrap = document.getElementById("googleSignInBtn");
+        const authMessage = document.getElementById("authMessage");
+
+        if (signedInUser) {
+            signedInUser.style.display = "none";
+            signedInUser.innerHTML = "";
+        }
+
+        if (signInBtnWrap) {
+            signInBtnWrap.style.display = "none";
+            signInBtnWrap.innerHTML = "";
+        }
+
+        if (authMessage) {
+            authMessage.textContent = `This digest is already published for ${publishedState.published_for_date}.`;
+        }
+
+        setCheckboxesVisible(false);
+        setActionButtonsVisible(false);
+        return;
     }
 
     updateReviewerUI("Checking reviewer session...");
