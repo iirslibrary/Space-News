@@ -36,9 +36,7 @@ function setCheckboxesVisible(visible) {
         if (!visible) cb.checked = false;
 
         const label = cb.closest("label");
-        if (label) {
-            label.style.display = visible ? "" : "none";
-        }
+        if (label) label.style.display = visible ? "" : "none";
     });
 }
 
@@ -77,18 +75,13 @@ function updateReviewerUI(message = "") {
             signInBtnWrap.innerHTML = "";
         }
 
-        if (authMessage) {
-            authMessage.textContent = "";
-        }
+        if (authMessage) authMessage.textContent = "";
 
         setCheckboxesVisible(true);
         setActionButtonsVisible(true);
 
         const signOutBtn = document.getElementById("signOutBtn");
-        if (signOutBtn) {
-            signOutBtn.addEventListener("click", signOutReviewer);
-        }
-
+        if (signOutBtn) signOutBtn.addEventListener("click", signOutReviewer);
         return;
     }
 
@@ -98,9 +91,7 @@ function updateReviewerUI(message = "") {
         signedInUser.innerHTML = "";
     }
 
-    if (signInBtnWrap) {
-        signInBtnWrap.style.display = "block";
-    }
+    if (signInBtnWrap) signInBtnWrap.style.display = "block";
 
     if (authMessage) {
         authMessage.textContent =
@@ -127,15 +118,10 @@ async function checkExistingSession() {
             result = {};
         }
 
-        if (!response.ok || !result.authenticated || !result.user) {
-            return null;
-        }
+        if (!response.ok || !result.authenticated || !result.user) return null;
 
         const email = String(result.user.email || "").toLowerCase().trim();
-
-        if (!email || !ALLOWED_EMAILS.includes(email)) {
-            return null;
-        }
+        if (!email || !ALLOWED_EMAILS.includes(email)) return null;
 
         return result.user;
     } catch (error) {
@@ -146,9 +132,7 @@ async function checkExistingSession() {
 
 async function checkPublishedState() {
     try {
-        console.log("[published-state] API_BASE:", API_BASE);
-
-        const url = `${API_BASE}/api/published-state`;
+        const url = "./published_digest_state.json";
         console.log("[published-state] fetching:", url);
 
         const response = await fetch(url, {
@@ -157,27 +141,12 @@ async function checkPublishedState() {
 
         console.log("[published-state] response.ok:", response.ok);
         console.log("[published-state] response.status:", response.status);
-        console.log("[published-state] response.url:", response.url);
 
-        const rawText = await response.text();
-        console.log("[published-state] rawText:", rawText);
+        if (!response.ok) return null;
 
-        let result = {};
-        try {
-            result = rawText ? JSON.parse(rawText) : {};
-        } catch (parseError) {
-            console.warn("[published-state] JSON parse failed:", parseError);
-            result = {};
-        }
-
+        const result = await response.json();
         console.log("[published-state] parsed result:", result);
 
-        if (!response.ok) {
-            console.warn("[published-state] non-OK response, returning null");
-            return null;
-        }
-
-        console.log("[published-state] returning result");
         return result;
     } catch (error) {
         console.warn("[published-state] Published state check failed:", error);
@@ -535,9 +504,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     updateReviewerUI("Checking publication state...");
 
-    console.log("API_BASE", API_BASE);
     const publishedState = await checkPublishedState();
-    console.log("publishedState", publishedState);
 
     if (publishedState && publishedState.published) {
         window.googleIdToken = null;
@@ -549,9 +516,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const signInBtnWrap = document.getElementById("googleSignInBtn");
         const authMessage = document.getElementById("authMessage");
 
-        if (reviewerAccessBox) {
-            reviewerAccessBox.style.display = "none";
-        }
+        if (reviewerAccessBox) reviewerAccessBox.style.display = "none";
 
         if (signedInUser) {
             signedInUser.style.display = "none";
