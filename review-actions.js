@@ -152,8 +152,7 @@ async function checkPublishedState() {
         console.log("[published-state] fetching:", url);
 
         const response = await fetch(url, {
-            method: "GET",
-            credentials: "include"
+            method: "GET"
         });
 
         console.log("[published-state] response.ok:", response.ok);
