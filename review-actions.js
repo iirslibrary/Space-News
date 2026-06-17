@@ -537,19 +537,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    updateReviewerUI("Checking reviewer session...");
-
-    const sessionUser = await checkExistingSession();
-
-    if (sessionUser) {
-        window.googleUserEmail = String(sessionUser.email || "").toLowerCase().trim();
-        window.googleUserProfile = sessionUser;
-        updateReviewerUI();
-    } else {
-        window.googleIdToken = null;
-        window.googleUserEmail = null;
-        window.googleUserProfile = null;
-        updateReviewerUI("Articles are public. Sign in with an authorized Google account to use review controls.");
-        initializeGoogleSignIn();
-    }
+    updateReviewerUI("Articles are public. Sign in with an authorized Google account to use review controls.");
+    initializeGoogleSignIn();
 });
