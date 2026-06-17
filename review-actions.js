@@ -525,9 +525,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.googleUserEmail = null;
         window.googleUserProfile = null;
 
+        const reviewerAccessBox = document.getElementById("reviewerAccessBox");
         const signedInUser = document.getElementById("signedInUser");
         const signInBtnWrap = document.getElementById("googleSignInBtn");
         const authMessage = document.getElementById("authMessage");
+
+        if (reviewerAccessBox) {
+            reviewerAccessBox.style.display = "none";
+        }
 
         if (signedInUser) {
             signedInUser.style.display = "none";
