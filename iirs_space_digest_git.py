@@ -1329,7 +1329,7 @@ html_body = f"""<!DOCTYPE html>
         {timestamp}
     </p>
 
-    <div class="auth-panel">
+    <div class="auth-panel" id="reviewerAccessBox">
     <div class="auth-panel-title">Reviewer Access</div>
 
     <div class="google-btn-row">
