@@ -13,6 +13,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  function getISTToday() {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(new Date());
+
+    const map = {};
+    for (const part of parts) {
+      map[part.type] = part.value;
+    }
+
+    return `${map.year}-${map.month}-${map.day}`;
+  }
+
   try {
     const githubToken = process.env.GITHUB_TOKEN;
 
@@ -53,14 +69,8 @@ export default async function handler(req, res) {
     const decoded = Buffer.from(data.content, 'base64').toString('utf-8');
     const state = JSON.parse(decoded);
 
-    const today = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Kolkata',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).format(new Date());
-
-    const publishedForToday = state.published_for_date === today;
+    const today = getISTToday();
+    const publishedForToday = String(state.published_for_date || '').trim() === today;
 
     return res.status(200).json({
       published: publishedForToday,
