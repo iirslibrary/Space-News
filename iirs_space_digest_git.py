@@ -684,7 +684,7 @@ def make_articles_html(news_list, is_finalized=False):
                     <div class="card-title">
                         <a href="{safe_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
                     </div>
-                    <div class="card-source">{item["source"]}</div>
+                    
                     <div class="card-summary">{item["summary"]}</div>
 
                     <div class="card-actions">
