@@ -471,3 +471,61 @@ h2 {
 #signedInUser button:hover {
     background: var(--card-summary);
 }
+
+body {
+    background:
+        radial-gradient(circle at top, rgba(70, 90, 160, 0.22), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(120, 80, 200, 0.12), transparent 28%),
+        linear-gradient(to bottom, #050816 0%, #070b1a 45%, #02040a 100%);
+    color: #e8eefc;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background-repeat: repeat;
+    opacity: 0.45;
+}
+
+body::before {
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.9) 0 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(180,220,255,0.7) 0 1px, transparent 1.5px);
+    background-size: 120px 120px, 220px 220px;
+    background-position: 0 0, 50px 80px;
+    animation: driftStars 90s linear infinite;
+}
+
+body::after {
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.65) 0 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(120,180,255,0.35) 0 2px, transparent 2.5px);
+    background-size: 180px 180px, 320px 320px;
+    background-position: 40px 20px, 120px 160px;
+    animation: driftStarsSlow 140s linear infinite;
+    opacity: 0.25;
+}
+
+@keyframes driftStars {
+    from { transform: translateY(0); }
+    to { transform: translateY(-120px); }
+}
+
+@keyframes driftStarsSlow {
+    from { transform: translateY(0); }
+    to { transform: translateY(-80px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::before,
+    body::after {
+        animation: none;
+    }
+}
