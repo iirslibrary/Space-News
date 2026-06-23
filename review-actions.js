@@ -75,13 +75,18 @@ function updateReviewerUI(message = "") {
             signInBtnWrap.innerHTML = "";
         }
 
-        if (authMessage) authMessage.textContent = "";
+        if (authMessage) {
+            authMessage.textContent = "";
+        }
 
         setCheckboxesVisible(true);
         setActionButtonsVisible(true);
 
         const signOutBtn = document.getElementById("signOutBtn");
-        if (signOutBtn) signOutBtn.addEventListener("click", signOutReviewer);
+        if (signOutBtn) {
+            signOutBtn.addEventListener("click", signOutReviewer);
+        }
+
         return;
     }
 
@@ -91,7 +96,9 @@ function updateReviewerUI(message = "") {
         signedInUser.innerHTML = "";
     }
 
-    if (signInBtnWrap) signInBtnWrap.style.display = "block";
+    if (signInBtnWrap) {
+        signInBtnWrap.style.display = "block";
+    }
 
     if (authMessage) {
         authMessage.textContent =
