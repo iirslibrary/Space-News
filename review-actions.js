@@ -177,7 +177,7 @@ async function signOutReviewer() {
     }
 
     updateReviewerUI("Signed out successfully.");
-    initializeGoogleSignIn();
+    ();
     showToast("Signed out", "You have been signed out.", "success");
 }
 
@@ -288,6 +288,8 @@ function renderGoogleButton() {
     }, 50);
 }
 
+let googleInitialized = false;
+
 function initializeGoogleSignIn() {
     const signInContainer = document.getElementById("googleSignInBtn");
     const email = (window.googleUserEmail || "").toLowerCase().trim();
@@ -300,6 +302,9 @@ function initializeGoogleSignIn() {
         }
         return;
     }
+
+    if (googleInitialized) return;
+    googleInitialized = true;
 
     const init = () => {
         if (!window.google || !google.accounts || !google.accounts.id) {
