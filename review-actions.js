@@ -184,7 +184,6 @@ async function signOutReviewer() {
     }
 
     updateReviewerUI("Signed out successfully.");
-    ();
     showToast("Signed out", "You have been signed out.", "success");
 }
 
