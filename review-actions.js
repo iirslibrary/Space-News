@@ -303,9 +303,6 @@ function initializeGoogleSignIn() {
         return;
     }
 
-    if (googleInitialized) return;
-    googleInitialized = true;
-
     const init = () => {
         if (!window.google || !google.accounts || !google.accounts.id) {
             setTimeout(init, 300);
