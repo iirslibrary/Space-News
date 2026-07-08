@@ -1200,7 +1200,7 @@ TODAY_STR = TODAY.strftime("%Y-%m-%d")
 TODAY_SNAPSHOT_FILE = SNAPSHOT_DIR / f"{TODAY_STR}.json"
 
 
-def cleanup_old_snapshots(keep_days=30):
+def cleanup_old_snapshots(keep_days=60):
     cutoff_date = TODAY - timedelta(days=keep_days - 1)
 
     for file in SNAPSHOT_DIR.glob("*.json"):
@@ -1242,7 +1242,7 @@ def save_today_snapshot(all_news):
 # Main Fetch
 # =========================
 
-cleanup_old_snapshots(keep_days=30)
+cleanup_old_snapshots(keep_days=60)
 all_news = load_today_snapshot()
 
 if all_news is None:
