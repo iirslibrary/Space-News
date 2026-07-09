@@ -2,7 +2,7 @@ name: 🚀 Space News + Pages Link
 
 on:
   schedule:
-    - cron: '30 4 * * *'  # 8:00 AM IST daily
+    - cron: '30 4 * * *'
   workflow_dispatch:
     inputs:
       run_mode:
@@ -16,9 +16,11 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  digest:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -61,7 +63,6 @@ jobs:
           cp "$latest_html" index.html
 
           echo "✅ Copied $latest_html to index.html"
-          echo "---- index.html details ----"
           ls -lah index.html
 
       - name: 💾 Commit snapshot, flagged URLs, and outputs
@@ -72,13 +73,13 @@ jobs:
           git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs"
           git push
 
-      - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: ⚙️ Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 📤 Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          publish_branch: gh-pages
-          keep_files: false
+          path: .
 
       - name: 📎 Find latest DOCX file
         id: latest_docx
@@ -102,7 +103,6 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "flag_review" ]; then
             echo "subject=🚀 Space News | workflow_dispatch | For Flag | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-
             {
               echo "body<<EOF"
               echo "📡 Today's Space News is LIVE!"
@@ -116,10 +116,8 @@ jobs:
               echo "Attached: DOCX digest for flagging, submitting and publishing."
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
-
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
             echo "subject=Today's Space News compiled and published by LIRD" >> "$GITHUB_OUTPUT"
-
             {
               echo "body<<EOF"
               echo "Today's Space News is LIVE!"
@@ -132,10 +130,8 @@ jobs:
               echo "Copy this link and forward to IIRS team via office email."
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
-
           else
             echo "subject=🚀 Space News | ${{ github.event_name }} | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-
             {
               echo "body<<EOF"
               echo "📡 Today's Space News is LIVE!"
@@ -164,3 +160,18 @@ jobs:
           to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
           from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
           attachments: ${{ steps.latest_docx.outputs.latest_docx }}
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
