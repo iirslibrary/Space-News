@@ -1200,7 +1200,7 @@ TODAY_STR = TODAY.strftime("%Y-%m-%d")
 TODAY_SNAPSHOT_FILE = SNAPSHOT_DIR / f"{TODAY_STR}.json"
 
 
-def cleanup_old_files(keep_days=45):
+def cleanup_old_snapshots(keep_days=45):
     # Cutoff date: If keep_days is 45, it keeps today + previous 44 days.
     cutoff_date = TODAY - timedelta(days=keep_days - 1)
     print(f"\n--- Running {keep_days}-Day Rolling Window Cleanup ---")
