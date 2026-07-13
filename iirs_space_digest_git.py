@@ -1200,10 +1200,18 @@ TODAY_STR = TODAY.strftime("%Y-%m-%d")
 TODAY_SNAPSHOT_FILE = SNAPSHOT_DIR / f"{TODAY_STR}.json"
 
 
-def cleanup_old_snapshots(keep_days=60):
+def cleanup_old_files(keep_days=45):
+    # Cutoff date: If keep_days is 45, it keeps today + previous 44 days.
     cutoff_date = TODAY - timedelta(days=keep_days - 1)
+    print(f"\n--- Running {keep_days}-Day Rolling Window Cleanup ---")
+    print(f"Keeping files from {cutoff_date} to {TODAY}")
 
+    # 1. Clean up JSON Snapshots (Format: YYYY-MM-DD.json)
     for file in SNAPSHOT_DIR.glob("*.json"):
+        # Make sure we don't accidentally delete your state tracker!
+        if file.name == "published_digest_state.json":
+            continue
+            
         try:
             file_date = datetime.strptime(file.stem, "%Y-%m-%d").date()
             if file_date < cutoff_date:
@@ -1211,6 +1219,25 @@ def cleanup_old_snapshots(keep_days=60):
                 print(f"🗑️ Deleted old snapshot: {file.name}")
         except ValueError:
             print(f"⚠️ Skipping non-date snapshot file: {file.name}")
+
+    # 2. Clean up generated HTML and DOCX files (Format: Space_News_DD_MM_YYYY.html/docx)
+    # Adjust Path(".") if you save them in a specific directory instead of the root
+    for file in Path(".").glob("Space_News_*.*"):
+        if file.suffix not in ['.html', '.docx']:
+            continue
+            
+        try:
+            # Extract "DD_MM_YYYY" from "Space_News_DD_MM_YYYY"
+            date_str = file.stem.replace("Space_News_", "")
+            file_date = datetime.strptime(date_str, "%d_%m_%Y").date()
+            
+            if file_date < cutoff_date:
+                file.unlink()
+                print(f"🗑️ Deleted old newsletter: {file.name}")
+        except ValueError:
+            print(f"⚠️ Skipping non-date newsletter file: {file.name}")
+
+    print("--- Cleanup Complete ---\n")
 
 
 def load_today_snapshot():
