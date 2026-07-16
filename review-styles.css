@@ -539,10 +539,31 @@ h2 {
 }
 
 .card-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.card-action-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 0;
+}
+
+.card-action-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-action-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
 }
 
 .ai-relevance-box.hidden-ai {
@@ -552,6 +573,7 @@ h2 {
 .ai-relevance-box {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .ai-relevance-pill {
@@ -585,6 +607,18 @@ h2 {
   border: 1px solid rgba(239, 68, 68, 0.26);
 }
 
+@media (max-width: 768px) {
+  .card-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card-action-left,
+  .card-action-center,
+  .card-action-right {
+    justify-content: flex-start;
+  }
+}
 
 @keyframes driftStars {
     from { background-position: 0 0, 50px 80px; }
