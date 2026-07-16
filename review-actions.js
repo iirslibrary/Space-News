@@ -51,11 +51,51 @@ function setActionButtonsVisible(visible) {
     });
 }
 
+// function setAIControlsVisible(visible) {
+//     document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
+//         el.style.display = visible ? "flex" : "none";
+//     });
+// }
+
 function setAIControlsVisible(visible) {
     document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
-        el.style.display = visible ? "flex" : "none";
+        el.style.display = visible ? "block" : "none";
     });
+
+    if (!visible) {
+        document.querySelectorAll(".ai-relevance-box").forEach(el => {
+            el.classList.add("hidden-ai");
+        });
+
+        document.querySelectorAll(".ai-toggle-btn").forEach(btn => {
+            btn.textContent = "Show AI Relevance";
+        });
+    }
 }
+
+function toggleAIRelevance() {
+    const badges = document.querySelectorAll(".ai-relevance-box");
+    const button = document.querySelector(".ai-toggle-btn");
+
+    if (!badges.length) return;
+
+    const shouldShow = Array.from(badges).some(el => el.classList.contains("hidden-ai"));
+
+    badges.forEach(el => {
+        if (shouldShow) {
+            el.classList.remove("hidden-ai");
+        } else {
+            el.classList.add("hidden-ai");
+        }
+    });
+
+    if (button) {
+        button.textContent = shouldShow ? "Hide AI Relevance" : "Show AI Relevance";
+    }
+}
+
+
+
 
 function updateReviewerUI(message = "") {
     const signedInUser = document.getElementById("signedInUser");
