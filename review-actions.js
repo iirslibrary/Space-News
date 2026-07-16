@@ -51,6 +51,12 @@ function setActionButtonsVisible(visible) {
     });
 }
 
+function setAIControlsVisible(visible) {
+    document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
+        el.style.display = visible ? "flex" : "none";
+    });
+}
+
 function updateReviewerUI(message = "") {
     const signedInUser = document.getElementById("signedInUser");
     const signInBtnWrap = document.getElementById("googleSignInBtn");
@@ -81,6 +87,7 @@ function updateReviewerUI(message = "") {
 
         setCheckboxesVisible(true);
         setActionButtonsVisible(true);
+        setAIControlsVisible(true);
 
         const signOutBtn = document.getElementById("signOutBtn");
         if (signOutBtn) {
@@ -107,6 +114,7 @@ function updateReviewerUI(message = "") {
 
     setCheckboxesVisible(false);
     setActionButtonsVisible(false);
+    setAIControlsVisible(false);
 }
 
 async function checkExistingSession() {
