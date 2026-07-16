@@ -1366,7 +1366,11 @@ html_body = f"""<!DOCTYPE html>
     <div id="signedInUser" style="display:none;"></div>
     <div id="authMessage" class="auth-message"></div>
 </div>
-
+    <div class="ai-toggle-wrap" style="display:none;">
+        <button type="button" class="ai-toggle-btn">
+            Show AI Relevance
+        </button>
+    </div>
     {all_articles_html}
 
     <footer class="footer">
