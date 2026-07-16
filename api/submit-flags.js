@@ -53,6 +53,17 @@ function verifySession(token, secret) {
   }
 }
 
+// function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
+//   return [
+//     `space_news_session=${value}`,
+//     'Path=/',
+//     'HttpOnly',
+//     'Secure',
+//     'SameSite=None',
+//     `Max-Age=${maxAgeSeconds}`
+//   ].join('; ');
+// }
+
 function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
   return [
     `space_news_session=${value}`,
@@ -60,6 +71,7 @@ function buildSessionCookie(value, maxAgeSeconds = 60 * 60 * 24 * 7) {
     'HttpOnly',
     'Secure',
     'SameSite=None',
+    'Partitioned',
     `Max-Age=${maxAgeSeconds}`
   ].join('; ');
 }
