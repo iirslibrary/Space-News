@@ -1367,7 +1367,7 @@ html_body = f"""<!DOCTYPE html>
     <div id="authMessage" class="auth-message"></div>
 </div>
     <div class="ai-toggle-wrap" style="display:none;">
-        <button type="button" class="ai-toggle-btn">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
             Show AI Relevance
         </button>
     </div>
