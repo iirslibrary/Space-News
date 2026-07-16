@@ -619,7 +619,8 @@ def fetch_news_from_feeds(feeds, max_articles=6):
                     'link': final_link,
                     'source': feed.feed.get('title', 'Space News'),
                     'summary': summary,
-                    'image': image_url
+                    'image': image_url,
+                    'ai_label': None
                 })
 
                 print(f"✅ NEW (24h): {title[:60]}...")
