@@ -653,6 +653,63 @@ except FileNotFoundError:
 published_for_date = str(published_state.get("published_for_date", "")).strip()
 is_finalized = (published_for_date == get_ist_today())
 
+# def make_articles_html(news_list, is_finalized=False):
+#     html_out = ""
+
+#     for i, item in enumerate(news_list, 1):
+#         article_url = resolve_final_article_url(normalize_text(item.get("link", "")))
+#         safe_url = html.escape(article_url, quote=True)
+
+#         image_html = ''
+#         if item.get("image"):
+#             image_html = (
+#                 f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" '
+#                 f'class="card-image" loading="lazy" '
+#                 f'onerror="this.style.display=\'none\'">'
+#             )
+
+#         flag_html = ""
+#         if not is_finalized:
+#             flag_html = f'''
+#                     <label class="flag-item">
+#                         <input type="checkbox" class="flag-checkbox" value="{safe_url}">
+#                         Flag this article
+#                     </label>
+#             '''
+
+#         html_out += f'''
+#             <div class="news-card">
+#                 <div class="card-content">
+#                     {image_html}
+#                     <div class="card-title">
+#                         <a href="{safe_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
+#                     </div>
+                    
+#                     <div class="card-summary">{item["summary"]}</div>
+
+#                     <div class="card-actions">
+#                         <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+#                         {flag_html}
+#                     </div>
+#                 </div>
+#             </div>
+#         '''
+
+#     if not is_finalized:
+#         html_out += '''
+#             <div class="bottom-actions">
+#                 <button type="button" class="flag-submit-btn" onclick="submitFlags()">
+#                     Submit Flagged Articles
+#                 </button>
+
+#                 <button type="button" class="publish-btn" onclick="publishCurrentList()">
+#                     Publish
+#                 </button>
+#             </div>
+#         '''
+
+#     return html_out
+
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
 
@@ -677,6 +734,26 @@ def make_articles_html(news_list, is_finalized=False):
                     </label>
             '''
 
+        ai_label = normalize_text(item.get("ai_label", "")).strip() or "Highly relevant"
+        ai_label_lower = ai_label.lower()
+
+        ai_class = "ai-high"
+        if "medium" in ai_label_lower:
+            ai_class = "ai-medium"
+            ai_label = "Medium Relevant"
+        elif "low" in ai_label_lower:
+            ai_class = "ai-low"
+            ai_label = "Low Relevance"
+        else:
+            ai_class = "ai-high"
+            ai_label = "Highly Relevant"
+
+        ai_html = f'''
+                        <div class="ai-relevance-box hidden-ai">
+                            <span class="ai-relevance-pill {ai_class}">{html.escape(ai_label)}</span>
+                        </div>
+        '''
+
         html_out += f'''
             <div class="news-card">
                 <div class="card-content">
@@ -688,6 +765,7 @@ def make_articles_html(news_list, is_finalized=False):
                     <div class="card-summary">{item["summary"]}</div>
 
                     <div class="card-actions">
+                        {ai_html}
                         <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
                         {flag_html}
                     </div>
@@ -709,7 +787,6 @@ def make_articles_html(news_list, is_finalized=False):
         '''
 
     return html_out
-
 
 # =========================
 # DOCX Helpers
