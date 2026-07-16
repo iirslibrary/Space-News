@@ -764,10 +764,18 @@ def make_articles_html(news_list, is_finalized=False):
                     
                     <div class="card-summary">{item["summary"]}</div>
 
-                    <div class="card-actions">
-                        {ai_html}
-                        <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
-                        {flag_html}
+                                        <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+
+                        <div class="card-action-center">
+                            {ai_html}
+                        </div>
+
+                        <div class="card-action-right">
+                            {flag_html}
+                        </div>
                     </div>
                 </div>
             </div>
