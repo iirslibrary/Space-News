@@ -18,6 +18,8 @@ import time
 import email.utils
 import requests
 import feedparser
+import json
+import hashlib
 
 from io import BytesIO
 from datetime import datetime, date, timedelta, timezone
@@ -36,7 +38,7 @@ from docx.opc.constants import RELATIONSHIP_TYPE
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from pathlib import Path
-import json
+
 
 
 print("🚀 Starting Space News - LAST 24 HOURS WINDOW...")
@@ -1293,14 +1295,8 @@ def save_today_snapshot(all_news):
 
 
 # AI relevance
-
-import os
-import json
-import hashlib
-import requests
-
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-VALID_AI_LABELS = {"Highly Relevant", "Medium Relevant", "Low Relevance"}
+VALID_AI_LABELS = {"Highly Relevant", "Medium Relevant", "Not Relevant"}
 
 
 def make_article_key(item):
@@ -1327,6 +1323,7 @@ def build_ai_payload(all_news):
             "key": ai_key,
             "title": normalize_text(item.get("title", "")) or "",
             "source": normalize_text(item.get("source", "")) or "",
+            "summary": normalize_text(item.get("summary", "")) or "",
             "link": normalize_text(item.get("link", "")) or ""
         })
 
@@ -1355,7 +1352,7 @@ def classify_articles_batch(payload):
                         "key": {"type": "string"},
                         "ai_label": {
                             "type": "string",
-                            "enum": ["Highly Relevant", "Medium Relevant", "Low Relevance"]
+                            "enum": ["Highly Relevant", "Medium Relevant", "Not Relevant"]
                         }
                     },
                     "required": ["key", "ai_label"],
@@ -1367,15 +1364,48 @@ def classify_articles_batch(payload):
         "additionalProperties": False
     }
 
-    system_prompt = (
-        "You classify articles for an IIRS space-news digest. "
-        "Return only valid JSON. "
-        "Assign one label per item: Highly Relevant, Medium Relevant, or Low Relevance. "
-        "Highly Relevant means directly relevant to IIRS, ISRO, NRSC, remote sensing, GIS, earth observation, "
-        "satellite applications, launch vehicles, astronauts, Indian space policy, or major global space developments. "
-        "Medium Relevant means generally relevant to space, aerospace, science, ISS, NASA, ESA, launches, or satellite topics. "
-        "Low Relevance means weak, peripheral, or only loosely relevant to the IIRS audience."
-    )
+    system_prompt = """
+You are classifying news articles for an internal IIRS space-news digest.
+
+Assign exactly one label to each article:
+- Highly Relevant
+- Medium Relevant
+- Not Relevant
+
+Classify from the perspective of IIRS readers interested in:
+IIRS, ISRO, NRSC, remote sensing, GIS, cartography, earth observation, satellite applications, geospatial science, disaster management, environmental monitoring, Indian space missions, launch vehicles, Indian space policy, and major global space developments.
+
+Label definitions:
+
+1. Highly Relevant
+Use only for articles clearly and directly important to the IIRS audience.
+Examples:
+- IIRS, ISRO, NRSC, SAC, NESAC, or Indian space-agency updates
+- Remote sensing, GIS, geospatial science, cartography, satellite imagery, earth observation
+- Indian satellites, launch vehicles, payloads, missions, astronauts, major Indian space policy developments
+- Major international space developments with strong scientific, operational, or policy significance
+
+2. Medium Relevant
+Use for articles that are genuinely useful to the IIRS audience but are not core or top-priority.
+Examples:
+- General space, aerospace, astronomy, NASA, ESA, ISS, launches, science, satellites
+- Local or regional disaster news from Uttarakhand, Delhi, or nearby regions ONLY when there is a meaningful connection to ISRO, NRSC, remote sensing, GIS, satellite monitoring, hazard mapping, earth observation, or disaster-response applications
+
+3. Not Relevant
+Use for articles that are off-topic or not meaningfully useful for the IIRS digest audience.
+This includes:
+- Crime, murder, violence, accidents, celebrity news, unrelated politics, local civic news, business news without space/geospatial value, entertainment, sensational content
+- Local disaster, weather, or regional incident coverage that does NOT have a meaningful ISRO, NRSC, satellite, remote sensing, GIS, mapping, or earth-observation connection
+- Any article where the space or geospatial connection is weak, incidental, or just a keyword match
+
+Decision rules:
+- Be conservative.
+- Do not overuse Highly Relevant.
+- For local Uttarakhand and Delhi stories, do NOT mark them relevant unless there is a clear and meaningful ISRO/geospatial/disaster-monitoring connection.
+- If uncertain between Medium Relevant and Not Relevant, choose Not Relevant unless the article is clearly useful to the IIRS audience.
+- Judge only from the provided title, source, summary, and link context.
+- Return only structured output matching the required schema.
+""".strip()
 
     user_prompt = (
         "Classify the following article list. "
