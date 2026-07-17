@@ -1287,6 +1287,20 @@ def load_snapshot_by_date(date_str):
     print(f"⚠️ Snapshot file not found: {snapshot_file}")
     return None
 
+def save_snapshot_by_date(date_str, data):
+    snapshot_file = SNAPSHOT_DIR / f"{date_str}.json"
+    try:
+        with snapshot_file.open("w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f"💾 Saved snapshot for date: {snapshot_file}")
+    except Exception as e:
+        print(f"⚠️ Failed to save snapshot {snapshot_file}: {e}")
+
+
+def snapshot_needs_ai_labels(news_items):
+    valid_labels = {"Highly Relevant", "Medium Relevant", "Not Relevant"}
+    return any(str(item.get("ai_label", "")).strip() not in valid_labels for item in news_items)
+
 
 def load_today_snapshot():
     if TODAY_SNAPSHOT_FILE.exists():
@@ -1534,6 +1548,8 @@ snapshot_override = os.getenv("SNAPSHOT_DATE", "").strip()
 if snapshot_override:
     print(f"🕘 Snapshot override requested: {snapshot_override}")
     all_news = load_snapshot_by_date(snapshot_override)
+    if all_news is None:
+        raise FileNotFoundError(f"Requested snapshot not found: {snapshot_override}")
 else:
     all_news = load_today_snapshot()
 
@@ -1569,11 +1585,7 @@ if all_news is None:
         })
 
     all_news = enrich_articles_with_ai_relevance(all_news)
-
-    if snapshot_override:
-        print("🧪 Snapshot override mode active. Not saving into today's snapshot.")
-    else:
-        save_today_snapshot(all_news)
+    save_today_snapshot(all_news)
 
 else:
     if snapshot_override:
@@ -1581,12 +1593,16 @@ else:
     else:
         print("📂 Loaded today's snapshot.")
 
-    all_news = enrich_articles_with_ai_relevance(all_news)
+    if snapshot_needs_ai_labels(all_news):
+        print("🤖 Snapshot has missing/invalid AI labels. Enriching now...")
+        all_news = enrich_articles_with_ai_relevance(all_news)
 
-    if snapshot_override:
-        print("🧪 Snapshot override mode active. Not saving into today's snapshot.")
+        if snapshot_override:
+            save_snapshot_by_date(snapshot_override, all_news)
+        else:
+            save_today_snapshot(all_news)
     else:
-        save_today_snapshot(all_news)
+        print("✅ Snapshot already has AI labels.")
 
 all_news = filter_flagged_news(all_news)
 
