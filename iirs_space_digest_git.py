@@ -1272,6 +1272,22 @@ def cleanup_old_snapshots(keep_days=45):
     print("--- Cleanup Complete ---\n")
 
 
+# Loading old snapshot
+def load_snapshot_by_date(date_str):
+    snapshot_file = SNAPSHOT_DIR / f"{date_str}.json"
+    if snapshot_file.exists():
+        try:
+            with snapshot_file.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+            print(f"📂 Loaded snapshot by date: {snapshot_file}")
+            return data
+        except Exception as e:
+            print(f"⚠️ Failed to load snapshot {snapshot_file}: {e}")
+            return None
+    print(f"⚠️ Snapshot file not found: {snapshot_file}")
+    return None
+
+
 def load_today_snapshot():
     if TODAY_SNAPSHOT_FILE.exists():
         try:
@@ -1507,13 +1523,19 @@ def enrich_articles_with_ai_relevance(all_news):
 
     return all_news
 
-
 # =========================
 # Main Fetch
 # =========================
 
 cleanup_old_snapshots(keep_days=60)
-all_news = load_today_snapshot()
+
+snapshot_override = os.getenv("SNAPSHOT_DATE", "").strip()
+
+if snapshot_override:
+    print(f"🕘 Snapshot override requested: {snapshot_override}")
+    all_news = load_snapshot_by_date(snapshot_override)
+else:
+    all_news = load_today_snapshot()
 
 if all_news is None:
     print("🏔️ Fetching REGIONAL...")
@@ -1543,18 +1565,31 @@ if all_news is None:
             "summary": "Check back tomorrow!",
             "image": None,
             "category": "System",
-            "ai_label": "Low Relevance"
+            "ai_label": "Not Relevant"
         })
 
     all_news = enrich_articles_with_ai_relevance(all_news)
-    save_today_snapshot(all_news)
+
+    if snapshot_override:
+        print("🧪 Snapshot override mode active. Not saving into today's snapshot.")
+    else:
+        save_today_snapshot(all_news)
 
 else:
-    print("📂 Loaded today's snapshot.")
+    if snapshot_override:
+        print(f"📂 Loaded snapshot for date: {snapshot_override}")
+    else:
+        print("📂 Loaded today's snapshot.")
+
     all_news = enrich_articles_with_ai_relevance(all_news)
-    save_today_snapshot(all_news)
+
+    if snapshot_override:
+        print("🧪 Snapshot override mode active. Not saving into today's snapshot.")
+    else:
+        save_today_snapshot(all_news)
 
 all_news = filter_flagged_news(all_news)
+
 
 # =========================
 # HTML Output
