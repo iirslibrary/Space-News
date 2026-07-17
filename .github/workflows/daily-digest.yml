@@ -13,6 +13,11 @@ on:
         options:
           - flag_review
           - publish
+      snapshot_date:
+        description: 'Optional snapshot date in YYYY-MM-DD format'
+        required: false
+        default: ''
+        type: string
 
 permissions:
   contents: write
@@ -25,6 +30,7 @@ jobs:
     env:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       OPENROUTER_MODEL: openrouter/free
+      SNAPSHOT_DATE: ${{ github.event.inputs.snapshot_date }}
 
     steps:
       - name: 📥 Checkout repository
