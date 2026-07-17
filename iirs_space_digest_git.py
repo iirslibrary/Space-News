@@ -681,19 +681,21 @@ def make_articles_html(news_list, is_finalized=False):
                     </label>
             '''
 
-        ai_label = normalize_text(item.get("ai_label", "")).strip() or "Highly relevant"
-        ai_label_lower = ai_label.lower()
+        raw_ai_label = normalize_text(item.get("ai_label", "")).strip()
+        ai_label_lower = raw_ai_label.lower()
 
-        ai_class = "ai-high"
-        if "medium" in ai_label_lower:
-            ai_class = "ai-medium"
-            ai_label = "Medium Relevant"
-        elif "low" in ai_label_lower:
-            ai_class = "ai-low"
-            ai_label = "Low Relevance"
-        else:
+        if "high" in ai_label_lower:
             ai_class = "ai-high"
             ai_label = "Highly Relevant"
+        elif "medium" in ai_label_lower:
+            ai_class = "ai-medium"
+            ai_label = "Medium Relevant"
+        elif "not" in ai_label_lower or "low" in ai_label_lower:
+            ai_class = "ai-low"
+            ai_label = "Not Relevant"
+        else:
+            ai_class = "ai-low"
+            ai_label = "Not Relevant"
 
         ai_html = f'''
                         <div class="ai-relevance-box hidden-ai">
