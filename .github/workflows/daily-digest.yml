@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      OPENROUTER_MODEL: openai/gpt-4o-mini
+      OPENROUTER_MODEL: openrouter/free
 
     steps:
       - name: 📥 Checkout repository
