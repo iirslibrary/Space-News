@@ -654,62 +654,6 @@ except FileNotFoundError:
 published_for_date = str(published_state.get("published_for_date", "")).strip()
 is_finalized = (published_for_date == get_ist_today())
 
-# def make_articles_html(news_list, is_finalized=False):
-#     html_out = ""
-
-#     for i, item in enumerate(news_list, 1):
-#         article_url = resolve_final_article_url(normalize_text(item.get("link", "")))
-#         safe_url = html.escape(article_url, quote=True)
-
-#         image_html = ''
-#         if item.get("image"):
-#             image_html = (
-#                 f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" '
-#                 f'class="card-image" loading="lazy" '
-#                 f'onerror="this.style.display=\'none\'">'
-#             )
-
-#         flag_html = ""
-#         if not is_finalized:
-#             flag_html = f'''
-#                     <label class="flag-item">
-#                         <input type="checkbox" class="flag-checkbox" value="{safe_url}">
-#                         Flag this article
-#                     </label>
-#             '''
-
-#         html_out += f'''
-#             <div class="news-card">
-#                 <div class="card-content">
-#                     {image_html}
-#                     <div class="card-title">
-#                         <a href="{safe_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
-#                     </div>
-                    
-#                     <div class="card-summary">{item["summary"]}</div>
-
-#                     <div class="card-actions">
-#                         <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
-#                         {flag_html}
-#                     </div>
-#                 </div>
-#             </div>
-#         '''
-
-#     if not is_finalized:
-#         html_out += '''
-#             <div class="bottom-actions">
-#                 <button type="button" class="flag-submit-btn" onclick="submitFlags()">
-#                     Submit Flagged Articles
-#                 </button>
-
-#                 <button type="button" class="publish-btn" onclick="publishCurrentList()">
-#                     Publish
-#                 </button>
-#             </div>
-#         '''
-
-#     return html_out
 
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
@@ -1348,7 +1292,190 @@ def save_today_snapshot(all_news):
         print(f"⚠️ Failed to save snapshot {TODAY_SNAPSHOT_FILE}: {e}")
 
 
+# AI relevance
 
+import os
+import json
+import hashlib
+import requests
+
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+VALID_AI_LABELS = {"Highly Relevant", "Medium Relevant", "Low Relevance"}
+
+
+def make_article_key(item):
+    raw = " | ".join([
+        normalize_text(item.get("title", "")) or "",
+        normalize_text(item.get("source", "")) or "",
+        normalize_text(item.get("link", "")) or ""
+    ])
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()[:16]
+
+
+def build_ai_payload(all_news):
+    payload = []
+
+    for item in all_news:
+        existing_label = str(item.get("ai_label", "")).strip()
+        if existing_label in VALID_AI_LABELS:
+            continue
+
+        ai_key = make_article_key(item)
+        item["_ai_key"] = ai_key
+
+        payload.append({
+            "key": ai_key,
+            "title": normalize_text(item.get("title", "")) or "",
+            "source": normalize_text(item.get("source", "")) or "",
+            "link": normalize_text(item.get("link", "")) or ""
+        })
+
+    return payload
+
+
+def classify_articles_batch(payload):
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    model_name = os.getenv("OPENROUTER_MODEL", "openrouter/free")
+
+    if not payload:
+        return []
+
+    if not api_key:
+        print("⚠️ OPENROUTER_API_KEY not set. Defaulting all labels to Medium Relevant.")
+        return [{"key": row["key"], "ai_label": "Medium Relevant"} for row in payload]
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "results": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "key": {"type": "string"},
+                        "ai_label": {
+                            "type": "string",
+                            "enum": ["Highly Relevant", "Medium Relevant", "Low Relevance"]
+                        }
+                    },
+                    "required": ["key", "ai_label"],
+                    "additionalProperties": False
+                }
+            }
+        },
+        "required": ["results"],
+        "additionalProperties": False
+    }
+
+    system_prompt = (
+        "You classify articles for an IIRS space-news digest. "
+        "Return only valid JSON. "
+        "Assign one label per item: Highly Relevant, Medium Relevant, or Low Relevance. "
+        "Highly Relevant means directly relevant to IIRS, ISRO, NRSC, remote sensing, GIS, earth observation, "
+        "satellite applications, launch vehicles, astronauts, Indian space policy, or major global space developments. "
+        "Medium Relevant means generally relevant to space, aerospace, science, ISS, NASA, ESA, launches, or satellite topics. "
+        "Low Relevance means weak, peripheral, or only loosely relevant to the IIRS audience."
+    )
+
+    user_prompt = (
+        "Classify the following article list. "
+        "For each item, return the same key and one ai_label.\n\n"
+        f"{json.dumps(payload, ensure_ascii=False, indent=2)}"
+    )
+
+    try:
+        response = requests.post(
+            OPENROUTER_API_URL,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://iirslibrary.github.io",
+                "X-Title": "IIRS Space News Digest"
+            },
+            json={
+                "model": model_name,
+                "temperature": 0,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "article_relevance_batch",
+                        "strict": True,
+                        "schema": schema
+                    }
+                }
+            },
+            timeout=60
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        content = data["choices"][0]["message"]["content"]
+        parsed = json.loads(content)
+        results = parsed.get("results", [])
+
+        cleaned = []
+        for row in results:
+            key = str(row.get("key", "")).strip()
+            label = str(row.get("ai_label", "")).strip()
+
+            if key and label in VALID_AI_LABELS:
+                cleaned.append({
+                    "key": key,
+                    "ai_label": label
+                })
+
+        return cleaned
+
+    except Exception as e:
+        print(f"⚠️ OpenRouter batch classification failed: {e}")
+        return [{"key": row["key"], "ai_label": "Medium Relevant"} for row in payload]
+
+
+def merge_ai_labels(all_news, ai_results):
+    label_map = {
+        row["key"]: row["ai_label"]
+        for row in ai_results
+        if row.get("key") and row.get("ai_label") in VALID_AI_LABELS
+    }
+
+    for item in all_news:
+        existing_label = str(item.get("ai_label", "")).strip()
+        if existing_label in VALID_AI_LABELS:
+            item.pop("_ai_key", None)
+            continue
+
+        key = item.get("_ai_key")
+        item["ai_label"] = label_map.get(key, "Medium Relevant")
+        item.pop("_ai_key", None)
+
+    return all_news
+
+
+def enrich_articles_with_ai_relevance(all_news):
+    if not all_news:
+        return all_news
+
+    payload = build_ai_payload(all_news)
+
+    if not payload:
+        print("ℹ️ All articles already have ai_label. Skipping AI enrichment.")
+        return all_news
+
+    print(f"🤖 Classifying {len(payload)} article(s) with OpenRouter...")
+    ai_results = classify_articles_batch(payload)
+    all_news = merge_ai_labels(all_news, ai_results)
+
+    labeled_count = sum(
+        1 for item in all_news
+        if str(item.get("ai_label", "")).strip() in VALID_AI_LABELS
+    )
+    print(f"✅ AI labels added for {labeled_count} article(s).")
+
+    return all_news
 
 
 # =========================
@@ -1375,19 +1502,26 @@ if all_news is None:
         (international_news, "🌌 International Updates")
     ]:
         for item in news_list:
-            item['category'] = category
+            item["category"] = category
             all_news.append(item)
 
     if not all_news:
         all_news.append({
-            'title': 'No space news in last 24h',
-            'link': '#',
-            'source': 'IIRS Digest',
-            'summary': 'Check back tomorrow!',
-            'image': None,
-            'category': 'System'
+            "title": "No space news in last 24h",
+            "link": "#",
+            "source": "IIRS Digest",
+            "summary": "Check back tomorrow!",
+            "image": None,
+            "category": "System",
+            "ai_label": "Low Relevance"
         })
 
+    all_news = enrich_articles_with_ai_relevance(all_news)
+    save_today_snapshot(all_news)
+
+else:
+    print("📂 Loaded today's snapshot.")
+    all_news = enrich_articles_with_ai_relevance(all_news)
     save_today_snapshot(all_news)
 
 all_news = filter_flagged_news(all_news)
@@ -1396,7 +1530,7 @@ all_news = filter_flagged_news(all_news)
 # HTML Output
 # =========================
 
-all_articles_html = make_articles_html(all_news,is_finalized=is_finalized)
+all_articles_html = make_articles_html(all_news, is_finalized=is_finalized)
 
 ist_offset = timezone(timedelta(hours=5, minutes=30))
 
