@@ -104,9 +104,18 @@ INTERNATIONAL_FEEDS = [
 # Image Extraction Helpers
 # =========================
 
+# BAD_IMAGE_HINTS = [
+#     "logo", "icon", "favicon", "sprite", "banner", "ads", "advert",
+#     "google-news", "gnews", "default", "placeholder", "avatar",
+#     "feedburner", "newsletter", "branding", "youtube", "facebook",
+#     "twitter", "instagram", "linkedin", "whatsapp", "telegram",
+#     "share", "social", "theme-assets", "thumb", "thumbnail", "small"
+# ]
+
 BAD_IMAGE_HINTS = [
     "logo", "icon", "favicon", "sprite", "banner", "ads", "advert",
-    "google-news", "gnews", "default", "placeholder", "avatar",
+    "google-news", "gnews", "default", "placeholder", "avatar", 
+    "author", "user", "profile", "category", "blank", "blank-image", # <-- Added hints
     "feedburner", "newsletter", "branding", "youtube", "facebook",
     "twitter", "instagram", "linkedin", "whatsapp", "telegram",
     "share", "social", "theme-assets", "thumb", "thumbnail", "small"
@@ -254,6 +263,42 @@ def resolve_final_article_url(url):
     return url
 
 
+# def extract_image_from_raw_html(url):
+#     try:
+#         headers = {
+#             "User-Agent": "Mozilla/5.0",
+#             "Accept-Language": "en-US,en;q=0.9"
+#         }
+#         response = requests.get(url, headers=headers, timeout=20)
+#         response.raise_for_status()
+#         html_text = response.text
+
+#         patterns = [
+#             r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+#             r'<meta[^>]+property=["\']og:image:url["\'][^>]+content=["\']([^"\']+)["\']',
+#             r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
+#             r'<meta[^>]+name=["\']twitter:image:src["\'][^>]+content=["\']([^"\']+)["\']',
+#             r'<img[^>]+data-lazy-src=["\']([^"\']+)["\']',
+#             r'<img[^>]+data-src=["\']([^"\']+)["\']',
+#             r'<img[^>]+data-srcset=["\']([^"\']+)["\']',
+#             r'<img[^>]+src=["\']([^"\']+)["\']'
+#         ]
+
+#         for pattern in patterns:
+#             matches = re.findall(pattern, html_text, flags=re.I)
+#             for match in matches:
+#                 img = match.strip().split()[0]
+#                 if img.startswith("//"):
+#                     img = "https:" + img
+#                 elif img.startswith("/"):
+#                     img = urljoin(url, img)
+#                 if is_valid_image_url(img):
+#                     return img
+#     except:
+#         pass
+
+#     return None
+
 def extract_image_from_raw_html(url):
     try:
         headers = {
@@ -264,11 +309,31 @@ def extract_image_from_raw_html(url):
         response.raise_for_status()
         html_text = response.text
 
+        soup = BeautifulSoup(html_text, 'html.parser')
+        
+        # Priority 1: Meta Tags (BeautifulSoup handles attribute order seamlessly)
+        meta_tags = soup.find_all('meta')
+        target_properties = ['og:image', 'og:image:url']
+        target_names = ['twitter:image', 'twitter:image:src']
+
+        for tag in meta_tags:
+            prop = tag.get('property', '').lower()
+            name = tag.get('name', '').lower()
+            
+            if prop in target_properties or name in target_names:
+                img = tag.get('content')
+                if img:
+                    img = img.strip()
+                    if img.startswith("//"):
+                        img = "https:" + img
+                    elif img.startswith("/"):
+                        img = urljoin(url, img)
+                        
+                    if is_valid_image_url(img):
+                        return img
+
+        # Priority 2: Fallback to Regex for lazy-loaded <img> tags in the raw body text
         patterns = [
-            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
-            r'<meta[^>]+property=["\']og:image:url["\'][^>]+content=["\']([^"\']+)["\']',
-            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
-            r'<meta[^>]+name=["\']twitter:image:src["\'][^>]+content=["\']([^"\']+)["\']',
             r'<img[^>]+data-lazy-src=["\']([^"\']+)["\']',
             r'<img[^>]+data-src=["\']([^"\']+)["\']',
             r'<img[^>]+data-srcset=["\']([^"\']+)["\']',
@@ -278,14 +343,17 @@ def extract_image_from_raw_html(url):
         for pattern in patterns:
             matches = re.findall(pattern, html_text, flags=re.I)
             for match in matches:
-                img = match.strip().split()[0]
+                # If srcset, split by space and grab the first URL
+                img = match.strip().split()[0] 
+                
                 if img.startswith("//"):
                     img = "https:" + img
                 elif img.startswith("/"):
                     img = urljoin(url, img)
+                    
                 if is_valid_image_url(img):
                     return img
-    except:
+    except Exception:
         pass
 
     return None
@@ -354,28 +422,77 @@ def extract_image_with_newspaper(url):
     return None
 
 
+# def extract_first_image_url(entry, article_url=None):
+#     article_url = resolve_final_article_url(article_url) if article_url else None
+
+#     if article_url:
+#         image = extract_image_with_newspaper(article_url)
+#         if image:
+#             return image
+
+#         image = extract_image_from_raw_html(article_url)
+#         if image:
+#             return image
+
+#         image = extract_image_from_jsonld_or_scripts(article_url)
+#         if image:
+#             return image
+
+#     try:
+#         for item in entry.get("media_content", []):
+#             url = item.get("url")
+#             if is_valid_image_url(url):
+#                 return url
+#     except:
+#         pass
+
+#     try:
+#         for item in entry.get("media_thumbnail", []):
+#             url = item.get("url")
+#             if is_valid_image_url(url):
+#                 return url
+#     except:
+#         pass
+
+#     try:
+#         for link in entry.get("links", []):
+#             href = link.get("href", "")
+#             link_type = link.get("type", "")
+#             rel = link.get("rel", "")
+#             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
+#                 if is_valid_image_url(href):
+#                     return href
+#     except:
+#         pass
+
+#     return None
+
 def extract_first_image_url(entry, article_url=None):
     article_url = resolve_final_article_url(article_url) if article_url else None
 
     if article_url:
-        image = extract_image_with_newspaper(article_url)
-        if image:
-            return image
-
+        # 1. PRIORITY: Check raw HTML (Open Graph / Twitter meta tags) first
         image = extract_image_from_raw_html(article_url)
         if image:
             return image
 
+        # 2. PRIORITY: Check JSON-LD Structured Data
         image = extract_image_from_jsonld_or_scripts(article_url)
         if image:
             return image
 
+        # 3. FALLBACK: Use newspaper3k DOM heuristics only if meta tags fail
+        image = extract_image_with_newspaper(article_url)
+        if image:
+            return image
+
+    # Keep RSS feed media checks below
     try:
         for item in entry.get("media_content", []):
             url = item.get("url")
             if is_valid_image_url(url):
                 return url
-    except:
+    except Exception:
         pass
 
     try:
@@ -383,7 +500,7 @@ def extract_first_image_url(entry, article_url=None):
             url = item.get("url")
             if is_valid_image_url(url):
                 return url
-    except:
+    except Exception:
         pass
 
     try:
@@ -394,7 +511,7 @@ def extract_first_image_url(entry, article_url=None):
             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
                 if is_valid_image_url(href):
                     return href
-    except:
+    except Exception:
         pass
 
     return None
