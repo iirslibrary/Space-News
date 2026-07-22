@@ -386,28 +386,33 @@ def extract_image_with_newspaper(url):
     return None
 
 
+
 # def extract_first_image_url(entry, article_url=None):
 #     article_url = resolve_final_article_url(article_url) if article_url else None
 
 #     if article_url:
-#         image = extract_image_with_newspaper(article_url)
-#         if image:
-#             return image
-
+#         # 1. PRIORITY: Check raw HTML (Open Graph / Twitter meta tags) first
 #         image = extract_image_from_raw_html(article_url)
 #         if image:
 #             return image
 
+#         # 2. PRIORITY: Check JSON-LD Structured Data
 #         image = extract_image_from_jsonld_or_scripts(article_url)
 #         if image:
 #             return image
 
+#         # 3. FALLBACK: Use newspaper3k DOM heuristics only if meta tags fail
+#         image = extract_image_with_newspaper(article_url)
+#         if image:
+#             return image
+
+#     # Keep RSS feed media checks below
 #     try:
 #         for item in entry.get("media_content", []):
 #             url = item.get("url")
 #             if is_valid_image_url(url):
 #                 return url
-#     except:
+#     except Exception:
 #         pass
 
 #     try:
@@ -415,7 +420,7 @@ def extract_image_with_newspaper(url):
 #             url = item.get("url")
 #             if is_valid_image_url(url):
 #                 return url
-#     except:
+#     except Exception:
 #         pass
 
 #     try:
@@ -426,7 +431,7 @@ def extract_image_with_newspaper(url):
 #             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
 #                 if is_valid_image_url(href):
 #                     return href
-#     except:
+#     except Exception:
 #         pass
 
 #     return None
@@ -478,8 +483,8 @@ def extract_first_image_url(entry, article_url=None):
     except Exception:
         pass
 
+    # If nothing is found, it explicitly returns None
     return None
-
 
 def try_download_image(image_url, timeout=20):
     if not image_url:
