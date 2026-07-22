@@ -91,22 +91,6 @@ jobs:
         with:
           path: .
 
-      - name: 📎 Find latest DOCX file
-        id: latest_docx
-        shell: bash
-        run: |
-          shopt -s nullglob
-          docx_files=(Space_News_*.docx)
-
-          if [ ${#docx_files[@]} -eq 0 ]; then
-            echo "❌ No Space_News_*.docx file found"
-            exit 1
-          fi
-
-          latest_docx=$(ls -t "${docx_files[@]}" | head -n 1)
-          echo "latest_docx=$latest_docx" >> "$GITHUB_OUTPUT"
-          echo "✅ Latest DOCX: $latest_docx"
-
       - name: 📝 Prepare email content
         id: email_content
         shell: bash
@@ -122,8 +106,6 @@ jobs:
               echo
               echo "🔗 READ & SHARE:"
               echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-              echo
-              echo "Attached: DOCX digest for flagging, submitting and publishing."
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
@@ -134,8 +116,6 @@ jobs:
               echo
               echo "READ & SHARE:"
               echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-              echo
-              echo "Attached: DOCX digest for circulation"
               echo
               echo "Copy this link and forward to IIRS team via office email."
               echo "EOF"
@@ -151,13 +131,11 @@ jobs:
               echo
               echo "🔗 READ & SHARE:"
               echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-              echo
-              echo "Attached: Today's DOCX digest for office circulation."
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           fi
 
-      - name: ✅ Send link + latest DOCX to Gmail
+      - name: ✅ Send link to Gmail
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -169,7 +147,6 @@ jobs:
           body: ${{ steps.email_content.outputs.body }}
           to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
           from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
-          attachments: ${{ steps.latest_docx.outputs.latest_docx }}
 
   deploy:
     environment:
