@@ -664,8 +664,74 @@ def is_within_last_24_hours(entry):
 # Feed Fetching
 # =========================
 
+# def fetch_news_from_feeds(feeds, max_articles=6):
+#     news = []
+
+#     for url in feeds:
+#         try:
+#             feed = feedparser.parse(url)
+#             print(f"📱 {feed.feed.get('title', 'Unknown')} - checking...")
+
+#             for entry in feed.entries[:15]:
+#                 if not is_within_last_24_hours(entry):
+#                     continue
+
+#                 title_lower = entry.title.lower()
+#                 raw_summary = entry.get('summary', '') or entry.get('description', '')
+#                 summary_lower = raw_summary.lower()
+#                 full_text_check = title_lower + " " + summary_lower
+
+#                 if url in REGIONAL_FEEDS:
+#                     keyword_pattern = REGIONAL_KEYWORDS
+#                 elif url in NATIONAL_FEEDS:
+#                     keyword_pattern = NATIONAL_KEYWORDS
+#                 else:
+#                     keyword_pattern = INTERNATIONAL_KEYWORDS
+
+#                 if not re.search(keyword_pattern, title_lower):
+#                     continue
+
+#                 if re.search(EXCLUDED_KEYWORDS, full_text_check):
+#                     print(f"🗑️ REMOVED (Excluded content): {entry.title[:40]}...")
+#                     continue
+
+#                 original_link = entry.link
+#                 final_link = resolve_final_article_url(original_link)
+
+#                 image_url = extract_first_image_url(entry, final_link)
+#                 summary = sanitize_html_content(raw_summary)
+#                 title = re.sub(r'<[^>]+>', '', entry.title)
+
+#                 news.append({
+#                     'title': title,
+#                     'link': final_link,
+#                     'source': feed.feed.get('title', 'Space News'),
+#                     'summary': summary,
+#                     'image': image_url,
+#                     'ai_label': None
+#                 })
+
+#                 print(f"✅ NEW (24h): {title[:60]}...")
+#                 print(f"🔗 Original link: {original_link}")
+#                 print(f"🔗 Final link: {final_link}")
+#                 print(f"🖼️ Image found: {image_url}")
+
+#                 if len(news) >= max_articles:
+#                     break
+
+#             if len(news) >= max_articles:
+#                 break
+
+#         except Exception as e:
+#             print(f"⚠️ Skip {url}: {e}")
+
+#     return news
+
 def fetch_news_from_feeds(feeds, max_articles=6):
     news = []
+    
+    # 🌟 THE FIX: Keep a record of images we have already used
+    seen_image_urls = set()
 
     for url in feeds:
         try:
@@ -698,7 +764,18 @@ def fetch_news_from_feeds(feeds, max_articles=6):
                 original_link = entry.link
                 final_link = resolve_final_article_url(original_link)
 
+                # Fetch the image
                 image_url = extract_first_image_url(entry, final_link)
+                
+                # 🌟 THE FIX: Check if we have already used this exact image for a previous story
+                if image_url in seen_image_urls:
+                    print(f"🚫 BLOCKED: Image already used by a previous article (Sidebar Hijack). Setting to null.")
+                    image_url = None
+                
+                # If it's a valid new image, add it to our record so it can't be used again
+                if image_url:
+                    seen_image_urls.add(image_url)
+
                 summary = sanitize_html_content(raw_summary)
                 title = re.sub(r'<[^>]+>', '', entry.title)
 
@@ -712,9 +789,8 @@ def fetch_news_from_feeds(feeds, max_articles=6):
                 })
 
                 print(f"✅ NEW (24h): {title[:60]}...")
-                print(f"🔗 Original link: {original_link}")
                 print(f"🔗 Final link: {final_link}")
-                print(f"🖼️ Image found: {image_url}")
+                print(f"🖼️ Image assigned: {image_url}")
 
                 if len(news) >= max_articles:
                     break
@@ -726,7 +802,6 @@ def fetch_news_from_feeds(feeds, max_articles=6):
             print(f"⚠️ Skip {url}: {e}")
 
     return news
-
 
 def get_ist_today():
     ist = timezone(timedelta(hours=5, minutes=30))
