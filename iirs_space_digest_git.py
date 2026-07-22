@@ -263,42 +263,6 @@ def resolve_final_article_url(url):
     return url
 
 
-# def extract_image_from_raw_html(url):
-#     try:
-#         headers = {
-#             "User-Agent": "Mozilla/5.0",
-#             "Accept-Language": "en-US,en;q=0.9"
-#         }
-#         response = requests.get(url, headers=headers, timeout=20)
-#         response.raise_for_status()
-#         html_text = response.text
-
-#         patterns = [
-#             r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
-#             r'<meta[^>]+property=["\']og:image:url["\'][^>]+content=["\']([^"\']+)["\']',
-#             r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
-#             r'<meta[^>]+name=["\']twitter:image:src["\'][^>]+content=["\']([^"\']+)["\']',
-#             r'<img[^>]+data-lazy-src=["\']([^"\']+)["\']',
-#             r'<img[^>]+data-src=["\']([^"\']+)["\']',
-#             r'<img[^>]+data-srcset=["\']([^"\']+)["\']',
-#             r'<img[^>]+src=["\']([^"\']+)["\']'
-#         ]
-
-#         for pattern in patterns:
-#             matches = re.findall(pattern, html_text, flags=re.I)
-#             for match in matches:
-#                 img = match.strip().split()[0]
-#                 if img.startswith("//"):
-#                     img = "https:" + img
-#                 elif img.startswith("/"):
-#                     img = urljoin(url, img)
-#                 if is_valid_image_url(img):
-#                     return img
-#     except:
-#         pass
-
-#     return None
-
 def extract_image_from_raw_html(url):
     try:
         headers = {
