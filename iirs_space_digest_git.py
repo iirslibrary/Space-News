@@ -338,16 +338,41 @@ def extract_image_with_newspaper(url):
         pass
     return None
 
-def extract_first_image_url(entry, article_url=None):
-    article_url = resolve_final_article_url(article_url) if article_url else None
-    if article_url:
-        image = extract_image_from_raw_html(article_url)
-        if image: return image
-        image = extract_image_from_jsonld_or_scripts(article_url)
-        if image: return image
-        image = extract_image_with_newspaper(article_url)
-        if image: return image
+# def extract_first_image_url(entry, article_url=None):
+#     article_url = resolve_final_article_url(article_url) if article_url else None
+#     if article_url:
+#         image = extract_image_from_raw_html(article_url)
+#         if image: return image
+#         image = extract_image_from_jsonld_or_scripts(article_url)
+#         if image: return image
+#         image = extract_image_with_newspaper(article_url)
+#         if image: return image
 
+#     try:
+#         for item in entry.get("media_content", []):
+#             url = item.get("url")
+#             if is_valid_image_url(url): return url
+#     except Exception: pass
+
+#     try:
+#         for item in entry.get("media_thumbnail", []):
+#             url = item.get("url")
+#             if is_valid_image_url(url): return url
+#     except Exception: pass
+
+#     try:
+#         for link in entry.get("links", []):
+#             href = link.get("href", "")
+#             link_type = link.get("type", "")
+#             rel = link.get("rel", "")
+#             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
+#                 if is_valid_image_url(href): return href
+#     except Exception: pass
+
+#     return None
+
+def extract_first_image_url(entry, article_url=None):
+    # 1. PRIORITY 1: Always check the clean RSS feed data first
     try:
         for item in entry.get("media_content", []):
             url = item.get("url")
@@ -368,6 +393,16 @@ def extract_first_image_url(entry, article_url=None):
             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
                 if is_valid_image_url(href): return href
     except Exception: pass
+
+    # 2. PRIORITY 2: Fallback to web scraping only if the RSS feed has no image attached
+    article_url = resolve_final_article_url(article_url) if article_url else None
+    if article_url:
+        image = extract_image_from_raw_html(article_url)
+        if image: return image
+        image = extract_image_from_jsonld_or_scripts(article_url)
+        if image: return image
+        image = extract_image_with_newspaper(article_url)
+        if image: return image
 
     return None
 
