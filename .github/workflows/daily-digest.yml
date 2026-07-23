@@ -47,6 +47,8 @@ jobs:
           pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests
 
       - name: 📰 Generate HTML + DOCX newsletter
+        env:
+          WORKFLOW_RUN_MODE: ${{ github.event_name == 'schedule' && 'draft' || inputs.run_mode }}
         run: python iirs_space_digest_git.py
 
       - name: 📂 Show generated files
@@ -54,6 +56,8 @@ jobs:
           ls -lah
           echo "---- Matching HTML files ----"
           ls -lah Space_News_*.html || true
+          echo "---- Admin Review File ----"
+          ls -lah admin-review.html || true
           echo "---- Matching DOCX files ----"
           ls -lah Space_News_*.docx || true
 
@@ -95,24 +99,12 @@ jobs:
         id: email_content
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "flag_review" ]; then
-            echo "subject=🚀 Space News | workflow_dispatch | For Flag | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-            {
-              echo "body<<EOF"
-              echo "📡 Today's Space News is LIVE!"
-              echo
-              echo "Run type: workflow_dispatch"
-              echo "Run number: ${{ github.run_number }}"
-              echo
-              echo "🔗 READ & SHARE:"
-              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
+            # 🌟 SCENARIO 1: The team hit publish! Send the public link.
             echo "subject=Today's Space News compiled and published by LIRD" >> "$GITHUB_OUTPUT"
             {
               echo "body<<EOF"
-              echo "Today's Space News is LIVE!"
+              echo "✅ Today's Space News is LIVE and APPROVED!"
               echo
               echo "READ & SHARE:"
               echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
@@ -120,17 +112,30 @@ jobs:
               echo "Copy this link and forward to IIRS team via office email."
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
-          else
-            echo "subject=🚀 Space News | ${{ github.event_name }} | Run #${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+            
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "flag_review" ]; then
+            # 🌟 SCENARIO 2: Intermediate Flag Update. Let the team know the list was updated.
+            echo "subject=🔄 UPDATE: Bad articles removed (Still pending publish)" >> "$GITHUB_OUTPUT"
             {
               echo "body<<EOF"
-              echo "📡 Today's Space News is LIVE!"
+              echo "✅ The flagged articles have been successfully removed from the draft."
               echo
-              echo "Run type: ${{ github.event_name }}"
-              echo "Run number: ${{ github.run_number }}"
+              echo "You can review the updated list and hit Publish here:"
+              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/admin-review.html"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            
+          else
+            # 🌟 SCENARIO 3: Morning automated run. Send the secret admin link for initial review.
+            echo "subject=🚧 ACTION REQUIRED: Review Today's Space News Draft" >> "$GITHUB_OUTPUT"
+            {
+              echo "body<<EOF"
+              echo "📡 Today's Space News has been fetched and is awaiting review."
               echo
-              echo "🔗 READ & SHARE:"
-              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+              echo "🔐 ADMIN REVIEW LINK:"
+              echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/admin-review.html"
+              echo
+              echo "(The public link currently shows a 'Please Wait' screen until you hit Publish)"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
           fi
