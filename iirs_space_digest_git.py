@@ -40,9 +40,7 @@ from docx.oxml.ns import qn
 from pathlib import Path
 
 
-
 print("🚀 Starting Space News - LAST 24 HOURS WINDOW...")
-
 
 # =========================
 # Filters and Feed Lists
@@ -104,18 +102,10 @@ INTERNATIONAL_FEEDS = [
 # Image Extraction Helpers
 # =========================
 
-# BAD_IMAGE_HINTS = [
-#     "logo", "icon", "favicon", "sprite", "banner", "ads", "advert",
-#     "google-news", "gnews", "default", "placeholder", "avatar",
-#     "feedburner", "newsletter", "branding", "youtube", "facebook",
-#     "twitter", "instagram", "linkedin", "whatsapp", "telegram",
-#     "share", "social", "theme-assets", "thumb", "thumbnail", "small"
-# ]
-
 BAD_IMAGE_HINTS = [
     "logo", "icon", "favicon", "sprite", "banner", "ads", "advert",
     "google-news", "gnews", "default", "placeholder", "avatar", 
-    "author", "user", "profile", "category", "blank", "blank-image", # <-- Added hints
+    "author", "user", "profile", "category", "blank", "blank-image",
     "feedburner", "newsletter", "branding", "youtube", "facebook",
     "twitter", "instagram", "linkedin", "whatsapp", "telegram",
     "share", "social", "theme-assets", "thumb", "thumbnail", "small"
@@ -123,24 +113,17 @@ BAD_IMAGE_HINTS = [
 
 BAD_IMAGE_EXTENSIONS = [".svg", ".ico"]
 
-
 def is_valid_image_url(url):
     if not url or not url.startswith("http"):
         return False
-
     low = url.lower()
-
     if any(low.endswith(ext) for ext in BAD_IMAGE_EXTENSIONS):
         return False
-
     if any(hint in low for hint in BAD_IMAGE_HINTS):
         return False
-
     if "/wp-content/themes/" in low:
         return False
-
     return True
-
 
 def normalize_img_url(img, base_url):
     if not img:
@@ -152,14 +135,11 @@ def normalize_img_url(img, base_url):
         img = urljoin(base_url, img)
     return img
 
-
 def score_image_url(img_url):
     if not img_url:
         return -999
-
     score = 0
     low = img_url.lower()
-
     if any(x in low for x in ["og:image", "og-image"]):
         score += 30
     if any(x in low for x in ["hero", "featured", "lead", "main", "article"]):
@@ -170,14 +150,11 @@ def score_image_url(img_url):
         score -= 25
     if any(ext in low for ext in [".jpg", ".jpeg", ".png", ".webp"]):
         score += 5
-
     return score
-
 
 def resolve_google_news_url(url):
     if not url or "news.google.com" not in url:
         return url
-
     try:
         decoded = gnewsdecoder(url)
         if isinstance(decoded, dict) and decoded.get("status"):
@@ -186,14 +163,11 @@ def resolve_google_news_url(url):
                 return decoded_url
     except:
         pass
-
     return url
-
 
 def resolve_msn_original_url(url):
     if not url or 'msn.com' not in url:
         return url
-
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0',
@@ -227,13 +201,8 @@ def resolve_msn_original_url(url):
         candidates = re.findall(r'https?://[^\s"\'<>\\]+', html_text)
         for cand in candidates:
             cand = unquote(cand.strip())
-            if (
-                cand.startswith('http')
-                and 'msn.com' not in cand
-                and 'assets.msn.com' not in cand
-                and 'static.msn.com' not in cand
-                and not any(x in cand.lower() for x in ['facebook.com', 'twitter.com', 'instagram.com', 'youtube.com'])
-            ):
+            if (cand.startswith('http') and 'msn.com' not in cand and 'assets.msn.com' not in cand
+                and 'static.msn.com' not in cand and not any(x in cand.lower() for x in ['facebook.com', 'twitter.com', 'instagram.com', 'youtube.com'])):
                 return cand
 
         parsed = urlparse(url)
@@ -246,22 +215,16 @@ def resolve_msn_original_url(url):
 
     except Exception:
         pass
-
     return url
-
 
 def resolve_final_article_url(url):
     if not url:
         return url
-
     if 'news.google.com' in url:
         url = resolve_google_news_url(url)
-
     if 'msn.com' in url:
         url = resolve_msn_original_url(url)
-
     return url
-
 
 def extract_image_from_raw_html(url):
     try:
@@ -275,7 +238,6 @@ def extract_image_from_raw_html(url):
 
         soup = BeautifulSoup(html_text, 'html.parser')
         
-        # Priority 1: Meta Tags (BeautifulSoup handles attribute order seamlessly)
         meta_tags = soup.find_all('meta')
         target_properties = ['og:image', 'og:image:url']
         target_names = ['twitter:image', 'twitter:image:src']
@@ -296,7 +258,6 @@ def extract_image_from_raw_html(url):
                     if is_valid_image_url(img):
                         return img
 
-        # Priority 2: Fallback to Regex for lazy-loaded <img> tags in the raw body text
         patterns = [
             r'<img[^>]+data-lazy-src=["\']([^"\']+)["\']',
             r'<img[^>]+data-src=["\']([^"\']+)["\']',
@@ -307,7 +268,6 @@ def extract_image_from_raw_html(url):
         for pattern in patterns:
             matches = re.findall(pattern, html_text, flags=re.I)
             for match in matches:
-                # If srcset, split by space and grab the first URL
                 img = match.strip().split()[0] 
                 
                 if img.startswith("//"):
@@ -319,9 +279,7 @@ def extract_image_from_raw_html(url):
                     return img
     except Exception:
         pass
-
     return None
-
 
 def extract_image_from_jsonld_or_scripts(url):
     try:
@@ -352,19 +310,15 @@ def extract_image_from_jsonld_or_scripts(url):
                     return img
     except:
         pass
-
     return None
-
 
 def extract_image_with_newspaper(url):
     if not url or not url.startswith("http"):
         return None
-
     try:
         config = Config()
         config.browser_user_agent = 'Mozilla/5.0'
         config.request_timeout = 20
-
         article = Article(url, config=config)
         article.download()
         article.parse()
@@ -382,95 +336,29 @@ def extract_image_with_newspaper(url):
                 return images[0]
     except:
         pass
-
     return None
-
-
-
-# def extract_first_image_url(entry, article_url=None):
-#     article_url = resolve_final_article_url(article_url) if article_url else None
-
-#     if article_url:
-#         # 1. PRIORITY: Check raw HTML (Open Graph / Twitter meta tags) first
-#         image = extract_image_from_raw_html(article_url)
-#         if image:
-#             return image
-
-#         # 2. PRIORITY: Check JSON-LD Structured Data
-#         image = extract_image_from_jsonld_or_scripts(article_url)
-#         if image:
-#             return image
-
-#         # 3. FALLBACK: Use newspaper3k DOM heuristics only if meta tags fail
-#         image = extract_image_with_newspaper(article_url)
-#         if image:
-#             return image
-
-#     # Keep RSS feed media checks below
-#     try:
-#         for item in entry.get("media_content", []):
-#             url = item.get("url")
-#             if is_valid_image_url(url):
-#                 return url
-#     except Exception:
-#         pass
-
-#     try:
-#         for item in entry.get("media_thumbnail", []):
-#             url = item.get("url")
-#             if is_valid_image_url(url):
-#                 return url
-#     except Exception:
-#         pass
-
-#     try:
-#         for link in entry.get("links", []):
-#             href = link.get("href", "")
-#             link_type = link.get("type", "")
-#             rel = link.get("rel", "")
-#             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
-#                 if is_valid_image_url(href):
-#                     return href
-#     except Exception:
-#         pass
-
-#     return None
 
 def extract_first_image_url(entry, article_url=None):
     article_url = resolve_final_article_url(article_url) if article_url else None
-
     if article_url:
-        # 1. PRIORITY: Check raw HTML (Open Graph / Twitter meta tags) first
         image = extract_image_from_raw_html(article_url)
-        if image:
-            return image
-
-        # 2. PRIORITY: Check JSON-LD Structured Data
+        if image: return image
         image = extract_image_from_jsonld_or_scripts(article_url)
-        if image:
-            return image
-
-        # 3. FALLBACK: Use newspaper3k DOM heuristics only if meta tags fail
+        if image: return image
         image = extract_image_with_newspaper(article_url)
-        if image:
-            return image
+        if image: return image
 
-    # Keep RSS feed media checks below
     try:
         for item in entry.get("media_content", []):
             url = item.get("url")
-            if is_valid_image_url(url):
-                return url
-    except Exception:
-        pass
+            if is_valid_image_url(url): return url
+    except Exception: pass
 
     try:
         for item in entry.get("media_thumbnail", []):
             url = item.get("url")
-            if is_valid_image_url(url):
-                return url
-    except Exception:
-        pass
+            if is_valid_image_url(url): return url
+    except Exception: pass
 
     try:
         for link in entry.get("links", []):
@@ -478,152 +366,78 @@ def extract_first_image_url(entry, article_url=None):
             link_type = link.get("type", "")
             rel = link.get("rel", "")
             if href and href.startswith("http") and (rel == "enclosure" or str(link_type).startswith("image/")):
-                if is_valid_image_url(href):
-                    return href
-    except Exception:
-        pass
+                if is_valid_image_url(href): return href
+    except Exception: pass
 
-    # If nothing is found, it explicitly returns None
     return None
 
 def try_download_image(image_url, timeout=20):
-    if not image_url:
-        return None
-
+    if not image_url: return None
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(image_url, headers=headers, timeout=timeout)
         response.raise_for_status()
         content_type = response.headers.get("Content-Type", "").lower()
-
-        if "image" not in content_type:
-            return None
-
+        if "image" not in content_type: return None
         return BytesIO(response.content)
-    except Exception:
-        return None
-
+    except Exception: return None
 
 # =========================
 # Text Helpers
 # =========================
-
 def clean_source_name(source_name):
-    if not source_name:
-        return "Unknown Source"
+    if not source_name: return "Unknown Source"
     source_name = html.unescape(str(source_name))
     return re.sub(r'\.\.\.$', '', source_name).strip()
-
 
 def sanitize_filename(name):
     return re.sub(r'[^a-zA-Z0-9_-]+', '_', name)
 
-
 def normalize_text(text):
-    if not text:
-        return ""
-
+    if not text: return ""
     text = html.unescape(str(text))
-
-    replacements = {
-        "\u2018": "'",
-        "\u2019": "'",
-        "\u201c": '"',
-        "\u201d": '"',
-        "\u2013": "-",
-        "\u2014": "-",
-        "\u00a0": " ",
-        "\u200b": "",
-        "\ufeff": "",
-        "\\|": "|",
-        "\\'": "'",
-        '\\"': '"',
-    }
-
-    for old, new in replacements.items():
-        text = text.replace(old, new)
-
+    replacements = { "\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"', "\u2013": "-", "\u2014": "-", "\u00a0": " ", "\u200b": "", "\ufeff": "", "\\|": "|", "\\'": "'", '\\"': '"' }
+    for old, new in replacements.items(): text = text.replace(old, new)
     text = re.sub(r'[ \t]+', ' ', text)
     text = re.sub(r'\r\n?', '\n', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
-
     return text.strip()
-
 
 def clean_body_text(text, title=""):
     text = normalize_text(text)
-    if not text:
-        return ""
-
+    if not text: return ""
     lines = [ln.strip() for ln in text.splitlines()]
-
-    bad_phrases = [
-        "your browser does not support javascript",
-        "related articles",
-        "add asianet newsable as a preferred source",
-        "google news",
-        "follow us on",
-        "read more",
-        "advertisement",
-        "recommended stories",
-        "suggested articles",
-        "share this article",
-        "click here",
-    ]
-
+    bad_phrases = ["your browser does not support javascript", "related articles", "add asianet newsable as a preferred source", "google news", "follow us on", "read more", "advertisement", "recommended stories", "suggested articles", "share this article", "click here"]
     cleaned = []
     seen = set()
-
     for ln in lines:
-        if not ln:
-            continue
-
+        if not ln: continue
         low = ln.lower().strip()
-
-        if any(bp in low for bp in bad_phrases):
-            continue
-
-        if title and low == normalize_text(title).lower():
-            continue
-
-        if len(low) < 3:
-            continue
-
-        if low in seen:
-            continue
-
+        if any(bp in low for bp in bad_phrases): continue
+        if title and low == normalize_text(title).lower(): continue
+        if len(low) < 3: continue
+        if low in seen: continue
         seen.add(low)
         cleaned.append(ln)
-
     text = "\n".join(cleaned)
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r'[ \t]+', ' ', text).strip()
-
     return text
-
 
 def split_into_paragraphs(text):
     text = clean_body_text(text)
-    if not text:
-        return []
-
+    if not text: return []
     paras = re.split(r'\n{2,}', text)
     final_paras = []
-
     for para in paras:
         para = re.sub(r'\s+', ' ', para).strip()
-        if not para:
-            continue
-        if len(para) < 20:
-            continue
+        if not para: continue
+        if len(para) < 20: continue
         final_paras.append(para)
-
     return final_paras
 
-
 def sanitize_html_content(text):
-    if not text:
-        return ''
+    if not text: return ''
     text = re.sub(r'<[^>]+>', '', text)
     text = re.sub(r'\s+', ' ', text)
     return text[:380] + '...' if len(text) > 380 else text.strip()
@@ -632,20 +446,15 @@ def sanitize_html_content(text):
 # =========================
 # News Timing
 # =========================
-
 def is_within_last_24_hours(entry):
     now = datetime.now(timezone.utc)
     cutoff_time = now - timedelta(hours=24)
-
     pub_struct = entry.get('published_parsed') or entry.get('updated_parsed') or entry.get('created_parsed')
-
     if pub_struct:
         try:
             pub_time = datetime(*pub_struct[:6], tzinfo=timezone.utc)
             return pub_time >= cutoff_time
-        except:
-            pass
-
+        except: pass
     date_str = entry.get('published') or entry.get('updated') or entry.get('created')
     if date_str:
         try:
@@ -654,153 +463,56 @@ def is_within_last_24_hours(entry):
                 ts = email.utils.mktime_tz(parsed_tuple)
                 pub_time = datetime.fromtimestamp(ts, timezone.utc)
                 return pub_time >= cutoff_time
-        except:
-            pass
-
+        except: pass
     return False
 
 
 # =========================
 # Feed Fetching
 # =========================
-
-# def fetch_news_from_feeds(feeds, max_articles=6):
-#     news = []
-
-#     for url in feeds:
-#         try:
-#             feed = feedparser.parse(url)
-#             print(f"📱 {feed.feed.get('title', 'Unknown')} - checking...")
-
-#             for entry in feed.entries[:15]:
-#                 if not is_within_last_24_hours(entry):
-#                     continue
-
-#                 title_lower = entry.title.lower()
-#                 raw_summary = entry.get('summary', '') or entry.get('description', '')
-#                 summary_lower = raw_summary.lower()
-#                 full_text_check = title_lower + " " + summary_lower
-
-#                 if url in REGIONAL_FEEDS:
-#                     keyword_pattern = REGIONAL_KEYWORDS
-#                 elif url in NATIONAL_FEEDS:
-#                     keyword_pattern = NATIONAL_KEYWORDS
-#                 else:
-#                     keyword_pattern = INTERNATIONAL_KEYWORDS
-
-#                 if not re.search(keyword_pattern, title_lower):
-#                     continue
-
-#                 if re.search(EXCLUDED_KEYWORDS, full_text_check):
-#                     print(f"🗑️ REMOVED (Excluded content): {entry.title[:40]}...")
-#                     continue
-
-#                 original_link = entry.link
-#                 final_link = resolve_final_article_url(original_link)
-
-#                 image_url = extract_first_image_url(entry, final_link)
-#                 summary = sanitize_html_content(raw_summary)
-#                 title = re.sub(r'<[^>]+>', '', entry.title)
-
-#                 news.append({
-#                     'title': title,
-#                     'link': final_link,
-#                     'source': feed.feed.get('title', 'Space News'),
-#                     'summary': summary,
-#                     'image': image_url,
-#                     'ai_label': None
-#                 })
-
-#                 print(f"✅ NEW (24h): {title[:60]}...")
-#                 print(f"🔗 Original link: {original_link}")
-#                 print(f"🔗 Final link: {final_link}")
-#                 print(f"🖼️ Image found: {image_url}")
-
-#                 if len(news) >= max_articles:
-#                     break
-
-#             if len(news) >= max_articles:
-#                 break
-
-#         except Exception as e:
-#             print(f"⚠️ Skip {url}: {e}")
-
-#     return news
-
 def fetch_news_from_feeds(feeds, max_articles=6):
     news = []
-    
-    # 🌟 THE FIX: Keep a record of images we have already used
     seen_image_urls = set()
 
     for url in feeds:
         try:
             feed = feedparser.parse(url)
             print(f"📱 {feed.feed.get('title', 'Unknown')} - checking...")
-
             for entry in feed.entries[:15]:
-                if not is_within_last_24_hours(entry):
-                    continue
-
+                if not is_within_last_24_hours(entry): continue
                 title_lower = entry.title.lower()
                 raw_summary = entry.get('summary', '') or entry.get('description', '')
                 summary_lower = raw_summary.lower()
                 full_text_check = title_lower + " " + summary_lower
 
-                if url in REGIONAL_FEEDS:
-                    keyword_pattern = REGIONAL_KEYWORDS
-                elif url in NATIONAL_FEEDS:
-                    keyword_pattern = NATIONAL_KEYWORDS
-                else:
-                    keyword_pattern = INTERNATIONAL_KEYWORDS
+                if url in REGIONAL_FEEDS: keyword_pattern = REGIONAL_KEYWORDS
+                elif url in NATIONAL_FEEDS: keyword_pattern = NATIONAL_KEYWORDS
+                else: keyword_pattern = INTERNATIONAL_KEYWORDS
 
-                if not re.search(keyword_pattern, title_lower):
-                    continue
-
+                if not re.search(keyword_pattern, title_lower): continue
                 if re.search(EXCLUDED_KEYWORDS, full_text_check):
                     print(f"🗑️ REMOVED (Excluded content): {entry.title[:40]}...")
                     continue
 
                 original_link = entry.link
                 final_link = resolve_final_article_url(original_link)
-
-                # Fetch the image
                 image_url = extract_first_image_url(entry, final_link)
                 
-                # 🌟 THE FIX: Check if we have already used this exact image for a previous story
                 if image_url in seen_image_urls:
                     print(f"🚫 BLOCKED: Image already used by a previous article (Sidebar Hijack). Setting to null.")
                     image_url = None
-                
-                # If it's a valid new image, add it to our record so it can't be used again
-                if image_url:
-                    seen_image_urls.add(image_url)
+                if image_url: seen_image_urls.add(image_url)
 
                 summary = sanitize_html_content(raw_summary)
                 title = re.sub(r'<[^>]+>', '', entry.title)
-
-                news.append({
-                    'title': title,
-                    'link': final_link,
-                    'source': feed.feed.get('title', 'Space News'),
-                    'summary': summary,
-                    'image': image_url,
-                    'ai_label': None
-                })
+                news.append({ 'title': title, 'link': final_link, 'source': feed.feed.get('title', 'Space News'), 'summary': summary, 'image': image_url, 'ai_label': None })
 
                 print(f"✅ NEW (24h): {title[:60]}...")
                 print(f"🔗 Final link: {final_link}")
                 print(f"🖼️ Image assigned: {image_url}")
-
-                if len(news) >= max_articles:
-                    break
-
-            if len(news) >= max_articles:
-                break
-
-        except Exception as e:
-            print(f"⚠️ Skip {url}: {e}")
-
+                if len(news) >= max_articles: break
+            if len(news) >= max_articles: break
+        except Exception as e: print(f"⚠️ Skip {url}: {e}")
     return news
 
 def get_ist_today():
@@ -817,52 +529,26 @@ except FileNotFoundError:
 published_for_date = str(published_state.get("published_for_date", "")).strip()
 is_finalized = (published_for_date == get_ist_today())
 
-
 def make_articles_html(news_list, is_finalized=False):
     html_out = ""
-
     for i, item in enumerate(news_list, 1):
         article_url = resolve_final_article_url(normalize_text(item.get("link", "")))
         safe_url = html.escape(article_url, quote=True)
-
         image_html = ''
         if item.get("image"):
-            image_html = (
-                f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" '
-                f'class="card-image" loading="lazy" '
-                f'onerror="this.style.display=\'none\'">'
-            )
-
+            image_html = f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display=\'none\'">'
+        
         flag_html = ""
         if not is_finalized:
-            flag_html = f'''
-                    <label class="flag-item">
-                        <input type="checkbox" class="flag-checkbox" value="{safe_url}">
-                        Flag this article
-                    </label>
-            '''
-
+            flag_html = f'<label class="flag-item"><input type="checkbox" class="flag-checkbox" value="{safe_url}">Flag this article</label>'
+        
         raw_ai_label = normalize_text(item.get("ai_label", "")).strip()
         ai_label_lower = raw_ai_label.lower()
+        if "high" in ai_label_lower: ai_class, ai_label = "ai-high", "Highly Relevant"
+        elif "medium" in ai_label_lower: ai_class, ai_label = "ai-medium", "Medium Relevant"
+        else: ai_class, ai_label = "ai-low", "Not Relevant"
 
-        if "high" in ai_label_lower:
-            ai_class = "ai-high"
-            ai_label = "Highly Relevant"
-        elif "medium" in ai_label_lower:
-            ai_class = "ai-medium"
-            ai_label = "Medium Relevant"
-        elif "not" in ai_label_lower or "low" in ai_label_lower:
-            ai_class = "ai-low"
-            ai_label = "Not Relevant"
-        else:
-            ai_class = "ai-low"
-            ai_label = "Not Relevant"
-
-        ai_html = f'''
-                        <div class="ai-relevance-box hidden-ai">
-                            <span class="ai-relevance-pill {ai_class}">{html.escape(ai_label)}</span>
-                        </div>
-        '''
+        ai_html = f'<div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill {ai_class}">{html.escape(ai_label)}</span></div>'
 
         html_out += f'''
             <div class="news-card">
@@ -871,21 +557,13 @@ def make_articles_html(news_list, is_finalized=False):
                     <div class="card-title">
                         <a href="{safe_url}" target="_blank" rel="noopener noreferrer">{i}. {item["title"]}</a>
                     </div>
-                    
                     <div class="card-summary">{item["summary"]}</div>
-
-                                        <div class="card-actions">
+                    <div class="card-actions">
                         <div class="card-action-left">
                             <a class="read-more" href="{safe_url}" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
                         </div>
-
-                        <div class="card-action-center">
-                            {ai_html}
-                        </div>
-
-                        <div class="card-action-right">
-                            {flag_html}
-                        </div>
+                        <div class="card-action-center">{ai_html}</div>
+                        <div class="card-action-right">{flag_html}</div>
                     </div>
                 </div>
             </div>
@@ -894,51 +572,37 @@ def make_articles_html(news_list, is_finalized=False):
     if not is_finalized:
         html_out += '''
             <div class="bottom-actions">
-                <button type="button" class="flag-submit-btn" onclick="submitFlags()">
-                    Submit Flagged Articles
-                </button>
-
-                <button type="button" class="publish-btn" onclick="publishCurrentList()">
-                    Publish
-                </button>
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">Submit Flagged Articles</button>
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">Publish</button>
             </div>
         '''
-
     return html_out
 
 # =========================
 # DOCX Helpers
 # =========================
-
 def add_bottom_border(paragraph):
-    p = paragraph._p
-    pPr = p.get_or_add_pPr()
+    p, pPr = paragraph._p, paragraph._p.get_or_add_pPr()
     pbdr = OxmlElement('w:pBdr')
     bottom = OxmlElement('w:bottom')
     bottom.set(qn('w:val'), 'single')
     bottom.set(qn('w:sz'), '6')
     bottom.set(qn('w:space'), '6')
     bottom.set(qn('w:color'), 'A6A6A6')
-    pbdr.append(bottom)
-    pPr.append(pbdr)
-
+    pbdr.append(bottom); pPr.append(pbdr)
 
 def add_top_border(paragraph, color="D9D9D9", size="6", space="4"):
-    p = paragraph._p
-    pPr = p.get_or_add_pPr()
+    p, pPr = paragraph._p, paragraph._p.get_or_add_pPr()
     pbdr = OxmlElement('w:pBdr')
     top = OxmlElement('w:top')
     top.set(qn('w:val'), 'single')
     top.set(qn('w:sz'), size)
     top.set(qn('w:space'), space)
     top.set(qn('w:color'), color)
-    pbdr.append(top)
-    pPr.append(pbdr)
-
+    pbdr.append(top); pPr.append(pbdr)
 
 def add_box_border(paragraph, color="808080", size="8", space="8"):
-    p = paragraph._p
-    pPr = p.get_or_add_pPr()
+    p, pPr = paragraph._p, paragraph._p.get_or_add_pPr()
     pbdr = OxmlElement('w:pBdr')
     for side_name in ['top', 'left', 'bottom', 'right']:
         side = OxmlElement(f'w:{side_name}')
@@ -949,262 +613,128 @@ def add_box_border(paragraph, color="808080", size="8", space="8"):
         pbdr.append(side)
     pPr.append(pbdr)
 
-
 def add_hyperlink(paragraph, text, url, color="0000FF", underline=True):
-    part = paragraph.part
-    r_id = part.relate_to(url, RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
-
+    r_id = paragraph.part.relate_to(url, RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
     hyperlink = OxmlElement("w:hyperlink")
     hyperlink.set(qn("r:id"), r_id)
-
-    new_run = OxmlElement("w:r")
-    rPr = OxmlElement("w:rPr")
-
-    if color:
-        c = OxmlElement("w:color")
-        c.set(qn("w:val"), color)
-        rPr.append(c)
-
-    u = OxmlElement("w:u")
-    u.set(qn("w:val"), "single" if underline else "none")
-    rPr.append(u)
-
+    new_run, rPr = OxmlElement("w:r"), OxmlElement("w:rPr")
+    if color: c = OxmlElement("w:color"); c.set(qn("w:val"), color); rPr.append(c)
+    u = OxmlElement("w:u"); u.set(qn("w:val"), "single" if underline else "none"); rPr.append(u)
     new_run.append(rPr)
-
-    text_elem = OxmlElement("w:t")
-    text_elem.text = text
-    new_run.append(text_elem)
-
-    hyperlink.append(new_run)
-    paragraph._p.append(hyperlink)
-
+    text_elem = OxmlElement("w:t"); text_elem.text = text; new_run.append(text_elem)
+    hyperlink.append(new_run); paragraph._p.append(hyperlink)
     return hyperlink
-
 
 def set_section_columns(section, num_cols=1, space=360):
     sectPr = section._sectPr
     cols = sectPr.xpath('./w:cols')
-    if cols:
-        cols = cols[0]
-    else:
-        cols = OxmlElement('w:cols')
-        sectPr.append(cols)
-
-    cols.set(qn('w:num'), str(num_cols))
-    cols.set(qn('w:space'), str(space))
-
-def add_page_number(run):
-    fld_char_begin = OxmlElement('w:fldChar')
-    fld_char_begin.set(qn('w:fldCharType'), 'begin')
-
-    instr_text = OxmlElement('w:instrText')
-    instr_text.set(qn('xml:space'), 'preserve')
-    instr_text.text = " PAGE "
-
-    fld_char_end = OxmlElement('w:fldChar')
-    fld_char_end.set(qn('w:fldCharType'), 'end')
-
-    run._r.append(fld_char_begin)
-    run._r.append(instr_text)
-    run._r.append(fld_char_end)
-
+    if cols: cols = cols[0]
+    else: cols = OxmlElement('w:cols'); sectPr.append(cols)
+    cols.set(qn('w:num'), str(num_cols)); cols.set(qn('w:space'), str(space))
 
 def add_footer_to_section(section):
     footer = section.footer
     paragraph = footer.paragraphs[0] if footer.paragraphs else footer.add_paragraph()
     paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
     paragraph.paragraph_format.space_before = Pt(6)
-
     if paragraph.runs:
-        for run in paragraph.runs:
-            run.text = ""
-
+        for run in paragraph.runs: run.text = ""
     add_top_border(paragraph, color="D9D9D9", size="6", space="4")
-
     run1 = paragraph.add_run("पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं")
-    run1.font.name = "Mangal"
-    run1.font.size = Pt(9)
-
+    run1.font.name, run1.font.size = "Mangal", Pt(9)
     run1.add_break()
-
     run2 = paragraph.add_run("Compiled by Library and Information Resource Division, IIRS")
-    run2.font.name = "Times New Roman"
-    run2.font.size = Pt(9)
+    run2.font.name, run2.font.size = "Times New Roman", Pt(9)
 
 def apply_footer_to_all_sections(doc):
-    for section in doc.sections:
-        add_footer_to_section(section)
-
+    for section in doc.sections: add_footer_to_section(section)
 
 def fetch_full_article_text(url, fallback_summary="", title=""):
     fallback_summary = clean_body_text(fallback_summary, title=title)
-
-    if not url or url == '#':
-        return fallback_summary
-
+    if not url or url == '#': return fallback_summary
     url = resolve_final_article_url(url)
-
     try:
-        config = Config()
-        config.browser_user_agent = 'Mozilla/5.0'
-        config.request_timeout = 20
-
-        article = Article(url, config=config)
-        article.download()
-        article.parse()
-
+        config = Config(); config.browser_user_agent = 'Mozilla/5.0'; config.request_timeout = 20
+        article = Article(url, config=config); article.download(); article.parse()
         text = clean_body_text(article.text or '', title=title)
-        if len(text) >= 300:
-            return text
-    except Exception:
-        pass
+        if len(text) >= 300: return text
+    except: pass
 
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
         response = requests.get(url, headers=headers, timeout=20)
         response.raise_for_status()
         raw_html = response.text
-
         raw_html = re.sub(r'<script.*?>.*?</script>', ' ', raw_html, flags=re.I | re.S)
         raw_html = re.sub(r'<style.*?>.*?</style>', ' ', raw_html, flags=re.I | re.S)
-
-        patterns = [
-            r'<article[^>]*>(.*?)</article>',
-            r'<main[^>]*>(.*?)</main>',
-            r'<div[^>]+class=["\'][^"\']*(?:article|story|content|main-content|post-content|entry-content|td-post-content|news-detail|story-detail)[^"\']*["\'][^>]*>(.*?)</div>'
-        ]
-
+        patterns = [ r'<article[^>]*>(.*?)</article>', r'<main[^>]*>(.*?)</main>', r'<div[^>]+class=["\'][^"\']*(?:article|story|content|main-content|post-content|entry-content|td-post-content|news-detail|story-detail)[^"\']*["\'][^>]*>(.*?)</div>' ]
         extracted = ''
         for pattern in patterns:
             matches = re.findall(pattern, raw_html, flags=re.I | re.S)
             if matches:
                 flat = []
                 for m in matches[:2]:
-                    if isinstance(m, tuple):
-                        flat.extend([x for x in m if x])
-                    else:
-                        flat.append(m)
-                extracted = ' '.join(flat)
-                break
-
-        if not extracted:
-            extracted = raw_html
-
+                    if isinstance(m, tuple): flat.extend([x for x in m if x])
+                    else: flat.append(m)
+                extracted = ' '.join(flat); break
+        if not extracted: extracted = raw_html
         extracted = re.sub(r'</p>|<br\s*/?>|</div>|</section>|</article>|</li>|</h[1-6]>', '\n', extracted, flags=re.I)
         extracted = re.sub(r'<li[^>]*>', '- ', extracted, flags=re.I)
         extracted = re.sub(r'<[^>]+>', ' ', extracted)
-
         extracted = clean_body_text(extracted, title=title)
-
-        if len(extracted) >= 300:
-            return extracted
-    except Exception:
-        pass
-
+        if len(extracted) >= 300: return extracted
+    except: pass
     return fallback_summary
 
-
 def add_article_body_single_column(doc, paragraphs):
-    if not paragraphs:
-        paragraphs = ['Summary not available.']
-
+    if not paragraphs: paragraphs = ['Summary not available.']
     for para in paragraphs:
         p = doc.add_paragraph()
-        p.paragraph_format.space_after = Pt(6)
-        p.paragraph_format.line_spacing = 1.15
-        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-
+        p.paragraph_format.space_after, p.paragraph_format.line_spacing, p.alignment = Pt(6), 1.15, WD_ALIGN_PARAGRAPH.JUSTIFY
         para = re.sub(r'\s+', ' ', para).strip()
-
         run = p.add_run(para)
-        run.font.name = 'Times New Roman'
-        run.font.size = Pt(12)
-
-def add_first_page_isro_logo(section, logo_path):
-    section.different_first_page_header_footer = True
-    header = section.first_page_header
-
-    paragraph = header.paragraphs[0] if header.paragraphs else header.add_paragraph()
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    paragraph.paragraph_format.space_after = Pt(0)
-
-    if paragraph.runs:
-        for run in paragraph.runs:
-            run.text = ""
-
-    if logo_path and os.path.exists(logo_path):
-        run = paragraph.add_run()
-        run.add_picture(logo_path, width=Inches(0.73))
+        run.font.name, run.font.size = 'Times New Roman', Pt(12)
 
 def generate_docx(news_items, output_path, digest_date_str):
     doc = Document()
-
     section = doc.sections[0]
-    section.top_margin = Inches(0.6)
-    section.bottom_margin = Inches(0.6)
-    section.left_margin = Inches(0.7)
-    section.right_margin = Inches(0.7)
+    section.top_margin, section.bottom_margin = Inches(0.6), Inches(0.6)
+    section.left_margin, section.right_margin = Inches(0.7), Inches(0.7)
     set_section_columns(section, num_cols=1)
-
+    
     styles = doc.styles
-    styles['Normal'].font.name = 'Times New Roman'
-    styles['Normal'].font.size = Pt(11)
-
+    styles['Normal'].font.name, styles['Normal'].font.size = 'Times New Roman', Pt(11)
     add_footer_to_section(section)
 
-    iirs_logo_path = "./assets/iirs.png"
-    isro_logo_path = "./assets/isro-logo-png_seeklogo-304812.png"
-
-    logo_table = doc.add_table(rows=1, cols=3)
-    logo_table.autofit = False
-
+    logo_table = doc.add_table(rows=1, cols=3); logo_table.autofit = False
     cells = logo_table.rows[0].cells
-    cells[0].width = Inches(1.2)
-    cells[1].width = Inches(4.8)
-    cells[2].width = Inches(1.2)
-
-    left_p = cells[0].paragraphs[0]
-    left_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    if os.path.exists(iirs_logo_path):
-      try:
-          left_run = left_p.add_run()
-          left_run.add_picture(iirs_logo_path, width=Inches(0.55))
-      except Exception as e:
-          print(f"IIRS logo error: {e}")
-
-    middle_p = cells[1].paragraphs[0]
-    middle_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
-    right_p = cells[2].paragraphs[0]
-    right_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    if os.path.exists(isro_logo_path):
-      try:
-          right_run = right_p.add_run()
-          right_run.add_picture(isro_logo_path, width=Inches(0.55))
-      except Exception as e:
-          print(f"ISRO logo error: {e}")
+    cells[0].width, cells[1].width, cells[2].width = Inches(1.2), Inches(4.8), Inches(1.2)
+    
+    left_p = cells[0].paragraphs[0]; left_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    try: left_p.add_run().add_picture("./assets/iirs.png", width=Inches(0.55))
+    except: pass
+    
+    cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    right_p = cells[2].paragraphs[0]; right_p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    try: right_p.add_run().add_picture("./assets/isro-logo-png_seeklogo-304812.png", width=Inches(0.55))
+    except: pass
 
     doc.add_paragraph()
-
     header_box = doc.add_paragraph()
-    header_box.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    header_box.paragraph_format.space_before = Pt(3)
-    header_box.paragraph_format.space_after = Pt(10)
-
+    header_box.alignment, header_box.paragraph_format.space_before, header_box.paragraph_format.space_after = WD_ALIGN_PARAGRAPH.CENTER, Pt(3), Pt(10)
+    
     title_run = header_box.add_run("🌌 अंतरिक्ष समाचार | Space News")
-    title_run.bold = True
-    title_run.font.name = "Times New Roman"
-    title_run.font.size = Pt(13)
-
+    title_run.bold, title_run.font.name, title_run.font.size = True, "Times New Roman", Pt(13)
     title_run.add_break()
-
+    
     date_run = header_box.add_run(digest_date_str)
-    date_run.bold = False
-    date_run.font.name = "Times New Roman"
-    date_run.font.size = Pt(10)
-
+    date_run.bold, date_run.font.name, date_run.font.size = False, "Times New Roman", Pt(10)
     add_box_border(header_box, color="808080", size="8", space="8")
     doc.add_paragraph()
+
+    from PIL import Image
+    import io
 
     for idx, item in enumerate(news_items, start=1):
         title = normalize_text(item.get('title', 'Untitled'))
@@ -1212,17 +742,12 @@ def generate_docx(news_items, output_path, digest_date_str):
         summary = normalize_text(item.get('summary', ''))
         image_url = item.get('image')
 
-        p = doc.add_paragraph()
-        p.paragraph_format.space_after = Pt(3)
+        p = doc.add_paragraph(); p.paragraph_format.space_after = Pt(3)
         run = p.add_run(f'{idx}. {title}')
-        run.bold = True
-        run.font.name = 'Times New Roman'
-        run.font.size = Pt(13)
+        run.bold, run.font.name, run.font.size = True, 'Times New Roman', Pt(13)
 
         if link and link != '#':
-            link_p = doc.add_paragraph()
-            link_p.paragraph_format.space_after = Pt(4)
-            link_p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            link_p = doc.add_paragraph(); link_p.paragraph_format.space_after, link_p.alignment = Pt(4), WD_ALIGN_PARAGRAPH.LEFT
             add_hyperlink(link_p, "Read more", link)
 
             image_stream = try_download_image(image_url)
@@ -1232,42 +757,22 @@ def generate_docx(news_items, output_path, digest_date_str):
                     image_stream.seek(0)
                     img = Image.open(image_stream)
                     img.load()
-
-                    if img.mode in ("RGBA", "P"):
-                        img = img.convert("RGB")
-
-                    clean_stream = io.BytesIO()
-                    img.save(clean_stream, format="PNG")
-                    clean_stream.seek(0)
-
-                    img_p = doc.add_paragraph()
-                    img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    img_run = img_p.add_run()
-                    img_run.add_picture(clean_stream, width=Inches(4.8))
-                    img_p.paragraph_format.space_after = Pt(6)
-                    inserted = True
-
-                except Exception as e:
-                    print(f"Clean image conversion failed for {image_url}: {e}")
+                    if img.mode in ("RGBA", "P"): img = img.convert("RGB")
+                    clean_stream = io.BytesIO(); img.save(clean_stream, format="PNG"); clean_stream.seek(0)
+                    img_p = doc.add_paragraph(); img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    img_p.add_run().add_picture(clean_stream, width=Inches(4.8))
+                    img_p.paragraph_format.space_after = Pt(6); inserted = True
+                except Exception as e: print(f"Clean image conversion failed: {e}")
 
                 if not inserted:
                     try:
                         image_stream.seek(0)
-                        img_p = doc.add_paragraph()
-                        img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                        img_run = img_p.add_run()
-                        img_run.add_picture(image_stream, width=Inches(4.8))
+                        img_p = doc.add_paragraph(); img_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                        img_p.add_run().add_picture(image_stream, width=Inches(4.8))
                         img_p.paragraph_format.space_after = Pt(6)
-                        inserted = True
-                    except Exception as e:
-                        print(f"Original image insert failed for {image_url}: {e}")
+                    except Exception as e: print(f"Original image insert failed: {e}")
 
-        body_text = fetch_full_article_text(
-            url=link,
-            fallback_summary=summary,
-            title=title
-        )
-
+        body_text = fetch_full_article_text(url=link, fallback_summary=summary, title=title)
         body_text = clean_body_text(body_text, title=title)
         body_paragraphs = split_into_paragraphs(body_text)
 
@@ -1278,523 +783,224 @@ def generate_docx(news_items, output_path, digest_date_str):
         add_article_body_single_column(doc, body_paragraphs)
 
         if idx != len(news_items):
-            sep = doc.add_paragraph()
-            add_bottom_border(sep)
-            doc.add_paragraph('')
+            sep = doc.add_paragraph(); add_bottom_border(sep); doc.add_paragraph('')
 
     apply_footer_to_all_sections(doc)
     doc.save(output_path)
     print(f'DOCX saved: {output_path}')
 
 
-
 FLAG_FILE = "flagged_urls.json"
 
 def load_flagged_urls():
-    if not os.path.exists(FLAG_FILE):
-        return set()
-
+    if not os.path.exists(FLAG_FILE): return set()
     try:
-        with open(FLAG_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        if isinstance(data, list):
-            return {url for url in data if url}
-
-        if isinstance(data, dict):
-            return {url for url in data.get("flagged_urls", []) if url}
-
+        with open(FLAG_FILE, "r", encoding="utf-8") as f: data = json.load(f)
+        if isinstance(data, list): return {url for url in data if url}
+        if isinstance(data, dict): return {url for url in data.get("flagged_urls", []) if url}
         return set()
     except Exception as e:
         print(f"⚠️ Failed to load flagged URLs: {e}")
         return set()
 
-
-
 def normalize_url_for_compare(url):
-    if not url:
-        return ""
-
+    if not url: return ""
     url = normalize_text(url).strip()
-
-    if not url:
-        return ""
-
-    if not url.startswith(("http://", "https://")):
-        url = "https://" + url
-
+    if not url: return ""
+    if not url.startswith(("http://", "https://")): url = "https://" + url
     try:
         parsed = urlsplit(url)
-
-        scheme = "https"
-        netloc = parsed.netloc.lower().strip()
-
-        if netloc.startswith("www."):
-            netloc = netloc[4:]
-
-        if netloc.endswith(":80"):
-            netloc = netloc[:-3]
-        elif netloc.endswith(":443"):
-            netloc = netloc[:-4]
-
+        scheme, netloc = "https", parsed.netloc.lower().strip()
+        if netloc.startswith("www."): netloc = netloc[4:]
+        if netloc.endswith(":80"): netloc = netloc[:-3]
+        elif netloc.endswith(":443"): netloc = netloc[:-4]
         path = parsed.path or "/"
-        while "//" in path:
-            path = path.replace("//", "/")
-
-        if path != "/" and path.endswith("/"):
-            path = path[:-1]
-
+        while "//" in path: path = path.replace("//", "/")
+        if path != "/" and path.endswith("/"): path = path[:-1]
         query_params = parse_qsl(parsed.query, keep_blank_values=False)
-        filtered_params = [
-            (k, v) for k, v in query_params
-            if not k.lower().startswith("utm_") and k.lower() not in {
-                "fbclid", "gclid", "mc_cid", "mc_eid", "igshid"
-            }
-        ]
-        query = urlencode(filtered_params, doseq=True)
-
-        return urlunsplit((scheme, netloc, path, query, ""))
-    except Exception:
-        return url.strip()
+        filtered_params = [(k, v) for k, v in query_params if not k.lower().startswith("utm_") and k.lower() not in {"fbclid", "gclid", "mc_cid", "mc_eid", "igshid"}]
+        return urlunsplit((scheme, netloc, path, urlencode(filtered_params, doseq=True), ""))
+    except Exception: return url.strip()
 
 def filter_flagged_news(news_items):
     flagged_urls = load_flagged_urls()
-    print("FLAGGED URLS RAW:", flagged_urls)
-
-    if not flagged_urls:
-        return news_items
-
-    normalized_flagged = {
-        normalize_url_for_compare(url) for url in flagged_urls if url
-    }
-    print("FLAGGED URLS NORMALIZED:", normalized_flagged)
-
+    if not flagged_urls: return news_items
+    normalized_flagged = {normalize_url_for_compare(url) for url in flagged_urls if url}
+    
     filtered_news = []
     for item in news_items:
         raw_link = normalize_text(item.get("link", ""))
         final_link = resolve_final_article_url(raw_link)
-        normalized_final_link = normalize_url_for_compare(final_link)
-
-        print("CHECKING:", raw_link, "=>", final_link, "=>", normalized_final_link)
-
-        if normalized_final_link not in normalized_flagged:
+        if normalize_url_for_compare(final_link) not in normalized_flagged:
             item["link"] = final_link
             filtered_news.append(item)
-        else:
-            print(f"🚫 Removed flagged article: {final_link}")
-
+        else: print(f"🚫 Removed flagged article: {final_link}")
     return filtered_news
 
-
-# CODE for SNAPSHOT LOADING and CREATION and DELETION
+# =========================
+# Snapshot Loading & Deletion
+# =========================
 SNAPSHOT_DIR = Path("snapshots")
 SNAPSHOT_DIR.mkdir(exist_ok=True)
-
 TODAY = datetime.now().date()
 TODAY_STR = TODAY.strftime("%Y-%m-%d")
 TODAY_SNAPSHOT_FILE = SNAPSHOT_DIR / f"{TODAY_STR}.json"
 
-
 def cleanup_old_snapshots(keep_days=45):
-    # Cutoff date: If keep_days is 45, it keeps today + previous 44 days.
     cutoff_date = TODAY - timedelta(days=keep_days - 1)
-    print(f"\n--- Running {keep_days}-Day Rolling Window Cleanup ---")
-    print(f"Keeping files from {cutoff_date} to {TODAY}")
-
-    # 1. Clean up JSON Snapshots (Format: YYYY-MM-DD.json)
     for file in SNAPSHOT_DIR.glob("*.json"):
-        # Make sure we don't accidentally delete your state tracker!
-        if file.name == "published_digest_state.json":
-            continue
-            
+        if file.name == "published_digest_state.json": continue
         try:
-            file_date = datetime.strptime(file.stem, "%Y-%m-%d").date()
-            if file_date < cutoff_date:
-                file.unlink()
-                print(f"🗑️ Deleted old snapshot: {file.name}")
-        except ValueError:
-            print(f"⚠️ Skipping non-date snapshot file: {file.name}")
-
-    # 2. Clean up generated HTML and DOCX files (Format: Space_News_DD_MM_YYYY.html/docx)
-    # Adjust Path(".") if you save them in a specific directory instead of the root
+            if datetime.strptime(file.stem, "%Y-%m-%d").date() < cutoff_date: file.unlink()
+        except ValueError: pass
     for file in Path(".").glob("Space_News_*.*"):
-        if file.suffix not in ['.html', '.docx']:
-            continue
-            
+        if file.suffix not in ['.html', '.docx']: continue
         try:
-            # Extract "DD_MM_YYYY" from "Space_News_DD_MM_YYYY"
-            date_str = file.stem.replace("Space_News_", "")
-            file_date = datetime.strptime(date_str, "%d_%m_%Y").date()
-            
-            if file_date < cutoff_date:
-                file.unlink()
-                print(f"🗑️ Deleted old newsletter: {file.name}")
-        except ValueError:
-            print(f"⚠️ Skipping non-date newsletter file: {file.name}")
+            if datetime.strptime(file.stem.replace("Space_News_", ""), "%d_%m_%Y").date() < cutoff_date: file.unlink()
+        except ValueError: pass
 
-    print("--- Cleanup Complete ---\n")
-
-
-# Loading old snapshot
 def load_snapshot_by_date(date_str):
     snapshot_file = SNAPSHOT_DIR / f"{date_str}.json"
     if snapshot_file.exists():
         try:
-            with snapshot_file.open("r", encoding="utf-8") as f:
-                data = json.load(f)
-            print(f"📂 Loaded snapshot by date: {snapshot_file}")
-            return data
-        except Exception as e:
-            print(f"⚠️ Failed to load snapshot {snapshot_file}: {e}")
-            return None
-    print(f"⚠️ Snapshot file not found: {snapshot_file}")
+            with snapshot_file.open("r", encoding="utf-8") as f: return json.load(f)
+        except Exception: pass
     return None
 
 def save_snapshot_by_date(date_str, data):
-    snapshot_file = SNAPSHOT_DIR / f"{date_str}.json"
     try:
-        with snapshot_file.open("w", encoding="utf-8") as f:
+        with (SNAPSHOT_DIR / f"{date_str}.json").open("w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"💾 Saved snapshot for date: {snapshot_file}")
-    except Exception as e:
-        print(f"⚠️ Failed to save snapshot {snapshot_file}: {e}")
-
+    except Exception: pass
 
 def snapshot_needs_ai_labels(news_items):
-    valid_labels = {"Highly Relevant", "Medium Relevant", "Not Relevant"}
-    return any(str(item.get("ai_label", "")).strip() not in valid_labels for item in news_items)
-
+    return any(str(item.get("ai_label", "")).strip() not in {"Highly Relevant", "Medium Relevant", "Not Relevant"} for item in news_items)
 
 def load_today_snapshot():
     if TODAY_SNAPSHOT_FILE.exists():
         try:
-            with TODAY_SNAPSHOT_FILE.open("r", encoding="utf-8") as f:
-                data = json.load(f)
-            print(f"📂 Loaded today's snapshot: {TODAY_SNAPSHOT_FILE}")
-            return data
-        except Exception as e:
-            print(f"⚠️ Failed to load snapshot {TODAY_SNAPSHOT_FILE}: {e}")
-            return None
+            with TODAY_SNAPSHOT_FILE.open("r", encoding="utf-8") as f: return json.load(f)
+        except Exception: pass
     return None
-
 
 def save_today_snapshot(all_news):
     try:
-        with TODAY_SNAPSHOT_FILE.open("w", encoding="utf-8") as f:
-            json.dump(all_news, f, indent=2, ensure_ascii=False)
-        print(f"💾 Saved today's snapshot: {TODAY_SNAPSHOT_FILE}")
-    except Exception as e:
-        print(f"⚠️ Failed to save snapshot {TODAY_SNAPSHOT_FILE}: {e}")
+        with TODAY_SNAPSHOT_FILE.open("w", encoding="utf-8") as f: json.dump(all_news, f, indent=2, ensure_ascii=False)
+    except Exception: pass
 
-
-# AI relevance
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 VALID_AI_LABELS = {"Highly Relevant", "Medium Relevant", "Not Relevant"}
 
-
 def make_article_key(item):
-    raw = " | ".join([
-        normalize_text(item.get("title", "")) or "",
-        normalize_text(item.get("source", "")) or "",
-        normalize_text(item.get("link", "")) or ""
-    ])
-    return hashlib.sha1(raw.encode("utf-8")).hexdigest()[:16]
-
+    return hashlib.sha1(" | ".join([normalize_text(item.get("title", "")) or "", normalize_text(item.get("source", "")) or "", normalize_text(item.get("link", "")) or ""]).encode("utf-8")).hexdigest()[:16]
 
 def build_ai_payload(all_news):
     payload = []
-
     for item in all_news:
-        existing_label = str(item.get("ai_label", "")).strip()
-        if existing_label in VALID_AI_LABELS:
-            continue
-
+        if str(item.get("ai_label", "")).strip() in VALID_AI_LABELS: continue
         ai_key = make_article_key(item)
         item["_ai_key"] = ai_key
-
-        payload.append({
-            "key": ai_key,
-            "title": normalize_text(item.get("title", "")) or "",
-            "source": normalize_text(item.get("source", "")) or "",
-            "summary": normalize_text(item.get("summary", "")) or "",
-            "link": normalize_text(item.get("link", "")) or ""
-        })
-
+        payload.append({"key": ai_key, "title": normalize_text(item.get("title", "")) or "", "source": normalize_text(item.get("source", "")) or "", "summary": normalize_text(item.get("summary", "")) or "", "link": normalize_text(item.get("link", "")) or ""})
     return payload
-
 
 def classify_articles_batch(payload):
     api_key = os.getenv("OPENROUTER_API_KEY")
     model_name = os.getenv("OPENROUTER_MODEL", "openrouter/free")
-
-    if not payload:
-        return []
-
-    if not api_key:
-        print("⚠️ OPENROUTER_API_KEY not set. Defaulting all labels to Medium Relevant.")
-        return [{"key": row["key"], "ai_label": "Medium Relevant"} for row in payload]
+    if not payload: return []
+    if not api_key: return [{"key": row["key"], "ai_label": "Medium Relevant"} for row in payload]
 
     schema = {
         "type": "object",
-        "properties": {
-            "results": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "key": {"type": "string"},
-                        "ai_label": {
-                            "type": "string",
-                            "enum": ["Highly Relevant", "Medium Relevant", "Not Relevant"]
-                        }
-                    },
-                    "required": ["key", "ai_label"],
-                    "additionalProperties": False
-                }
-            }
-        },
-        "required": ["results"],
-        "additionalProperties": False
+        "properties": { "results": { "type": "array", "items": { "type": "object", "properties": { "key": {"type": "string"}, "ai_label": { "type": "string", "enum": ["Highly Relevant", "Medium Relevant", "Not Relevant"] } }, "required": ["key", "ai_label"], "additionalProperties": False } } },
+        "required": ["results"], "additionalProperties": False
     }
-
-    system_prompt = """
-You are classifying news articles for an internal IIRS space-news digest.
-
-Assign exactly one label to each article:
-- Highly Relevant
-- Medium Relevant
-- Not Relevant
-
-Classify from the perspective of IIRS readers interested in:
-IIRS, ISRO, NRSC, remote sensing, GIS, cartography, earth observation, satellite applications, geospatial science, disaster management, environmental monitoring, Indian space missions, launch vehicles, Indian space policy, and major global space developments.
-
-Label definitions:
-
-1. Highly Relevant
-Use only for articles clearly and directly important to the IIRS audience.
-Examples:
-- IIRS, ISRO, NRSC, SAC, NESAC, or Indian space-agency updates
-- Remote sensing, GIS, geospatial science, cartography, satellite imagery, earth observation
-- Indian satellites, launch vehicles, payloads, missions, astronauts, major Indian space policy developments
-- Major international space developments with strong scientific, operational, or policy significance
-
-2. Medium Relevant
-Use for articles that are genuinely useful to the IIRS audience but are not core or top-priority.
-Examples:
-- General space, aerospace, astronomy, NASA, ESA, ISS, launches, science, satellites
-- Local or regional disaster news from Uttarakhand, Delhi, or nearby regions ONLY when there is a meaningful connection to ISRO, NRSC, remote sensing, GIS, satellite monitoring, hazard mapping, earth observation, or disaster-response applications
-
-3. Not Relevant
-Use for articles that are off-topic or not meaningfully useful for the IIRS digest audience.
-This includes:
-- Crime, murder, violence, accidents, celebrity news, unrelated politics, local civic news, business news without space/geospatial value, entertainment, sensational content
-- Local disaster, weather, or regional incident coverage that does NOT have a meaningful ISRO, NRSC, satellite, remote sensing, GIS, mapping, or earth-observation connection
-- Any article where the space or geospatial connection is weak, incidental, or just a keyword match
-
-Decision rules:
-- Be conservative.
-- Do not overuse Highly Relevant.
-- For local Uttarakhand and Delhi stories, do NOT mark them relevant unless there is a clear and meaningful ISRO/geospatial/disaster-monitoring connection.
-- If uncertain between Medium Relevant and Not Relevant, choose Not Relevant unless the article is clearly useful to the IIRS audience.
-- Judge only from the provided title, source, summary, and link context.
-- Return only structured output matching the required schema.
-""".strip()
-
-    user_prompt = (
-        "Classify the following article list. "
-        "For each item, return the same key and one ai_label.\n\n"
-        f"{json.dumps(payload, ensure_ascii=False, indent=2)}"
-    )
+    
+    system_prompt = "You are classifying news articles for an internal IIRS space-news digest.\nAssign exactly one label to each article: Highly Relevant, Medium Relevant, or Not Relevant."
+    user_prompt = f"Classify the following article list.\n\n{json.dumps(payload, ensure_ascii=False, indent=2)}"
 
     try:
         response = requests.post(
-            OPENROUTER_API_URL,
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://iirslibrary.github.io",
-                "X-Title": "IIRS Space News Digest"
-            },
-            json={
-                "model": model_name,
-                "temperature": 0,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "response_format": {
-                    "type": "json_schema",
-                    "json_schema": {
-                        "name": "article_relevance_batch",
-                        "strict": True,
-                        "schema": schema
-                    }
-                }
-            },
+            OPENROUTER_API_URL, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", "HTTP-Referer": "https://iirslibrary.github.io", "X-Title": "IIRS Space News Digest"},
+            json={"model": model_name, "temperature": 0, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}], "response_format": {"type": "json_schema", "json_schema": {"name": "article_relevance", "strict": True, "schema": schema}}},
             timeout=60
         )
         response.raise_for_status()
         data = response.json()
-
-        content = data["choices"][0]["message"]["content"]
-        parsed = json.loads(content)
-        results = parsed.get("results", [])
-
+        parsed = json.loads(data["choices"][0]["message"]["content"])
         cleaned = []
-        for row in results:
-            key = str(row.get("key", "")).strip()
-            label = str(row.get("ai_label", "")).strip()
-
-            if key and label in VALID_AI_LABELS:
-                cleaned.append({
-                    "key": key,
-                    "ai_label": label
-                })
-
+        for row in parsed.get("results", []):
+            if str(row.get("key", "")).strip() and str(row.get("ai_label", "")).strip() in VALID_AI_LABELS:
+                cleaned.append({"key": str(row.get("key", "")).strip(), "ai_label": str(row.get("ai_label", "")).strip()})
         return cleaned
-
-    except Exception as e:
-        print(f"⚠️ OpenRouter batch classification failed: {e}")
-        return [{"key": row["key"], "ai_label": "Medium Relevant"} for row in payload]
-
+    except Exception: return [{"key": row["key"], "ai_label": "Medium Relevant"} for row in payload]
 
 def merge_ai_labels(all_news, ai_results):
-    label_map = {
-        row["key"]: row["ai_label"]
-        for row in ai_results
-        if row.get("key") and row.get("ai_label") in VALID_AI_LABELS
-    }
-
+    label_map = {row["key"]: row["ai_label"] for row in ai_results if row.get("key") and row.get("ai_label") in VALID_AI_LABELS}
     for item in all_news:
-        existing_label = str(item.get("ai_label", "")).strip()
-        if existing_label in VALID_AI_LABELS:
-            item.pop("_ai_key", None)
-            continue
-
+        if str(item.get("ai_label", "")).strip() in VALID_AI_LABELS: item.pop("_ai_key", None); continue
         key = item.get("_ai_key")
         item["ai_label"] = label_map.get(key, "Medium Relevant")
         item.pop("_ai_key", None)
-
     return all_news
-
 
 def enrich_articles_with_ai_relevance(all_news):
-    if not all_news:
-        return all_news
-
+    if not all_news: return all_news
     payload = build_ai_payload(all_news)
-
-    if not payload:
-        print("ℹ️ All articles already have ai_label. Skipping AI enrichment.")
-        return all_news
-
-    print(f"🤖 Classifying {len(payload)} article(s) with OpenRouter...")
+    if not payload: return all_news
     ai_results = classify_articles_batch(payload)
-    all_news = merge_ai_labels(all_news, ai_results)
-
-    labeled_count = sum(
-        1 for item in all_news
-        if str(item.get("ai_label", "")).strip() in VALID_AI_LABELS
-    )
-    print(f"✅ AI labels added for {labeled_count} article(s).")
-
-    return all_news
+    return merge_ai_labels(all_news, ai_results)
 
 # =========================
 # Main Fetch
 # =========================
-
 cleanup_old_snapshots(keep_days=60)
-
 snapshot_override = os.getenv("SNAPSHOT_DATE", "").strip()
 
 if snapshot_override:
-    print(f"🕘 Snapshot override requested: {snapshot_override}")
     all_news = load_snapshot_by_date(snapshot_override)
-    if all_news is None:
-        raise FileNotFoundError(f"Requested snapshot not found: {snapshot_override}")
-else:
-    all_news = load_today_snapshot()
+    if all_news is None: raise FileNotFoundError(f"Requested snapshot not found: {snapshot_override}")
+else: all_news = load_today_snapshot()
 
 if all_news is None:
-    print("🏔️ Fetching REGIONAL...")
     regional_news = fetch_news_from_feeds(REGIONAL_FEEDS, max_articles=5)
-
-    print("🇮🇳 Fetching NATIONAL...")
     national_news = fetch_news_from_feeds(NATIONAL_FEEDS, max_articles=6)
-
-    print("🌌 Fetching INTERNATIONAL...")
     international_news = fetch_news_from_feeds(INTERNATIONAL_FEEDS, max_articles=8)
 
     all_news = []
-    for news_list, category in [
-        (regional_news, "🏔️ Regional Updates"),
-        (national_news, "🇮🇳 National Updates"),
-        (international_news, "🌌 International Updates")
-    ]:
-        for item in news_list:
-            item["category"] = category
-            all_news.append(item)
+    for news_list, category in [(regional_news, "🏔️ Regional Updates"), (national_news, "🇮🇳 National Updates"), (international_news, "🌌 International Updates")]:
+        for item in news_list: item["category"] = category; all_news.append(item)
 
-    if not all_news:
-        all_news.append({
-            "title": "No space news in last 24h",
-            "link": "#",
-            "source": "IIRS Digest",
-            "summary": "Check back tomorrow!",
-            "image": None,
-            "category": "System",
-            "ai_label": "Not Relevant"
-        })
-
+    if not all_news: all_news.append({"title": "No space news in last 24h", "link": "#", "source": "IIRS Digest", "summary": "Check back tomorrow!", "image": None, "category": "System", "ai_label": "Not Relevant"})
     all_news = enrich_articles_with_ai_relevance(all_news)
     save_today_snapshot(all_news)
-
 else:
-    if snapshot_override:
-        print(f"📂 Loaded snapshot for date: {snapshot_override}")
-    else:
-        print("📂 Loaded today's snapshot.")
-
     if snapshot_needs_ai_labels(all_news):
-        print("🤖 Snapshot has missing/invalid AI labels. Enriching now...")
         all_news = enrich_articles_with_ai_relevance(all_news)
-
-        if snapshot_override:
-            save_snapshot_by_date(snapshot_override, all_news)
-        else:
-            save_today_snapshot(all_news)
-    else:
-        print("✅ Snapshot already has AI labels.")
+        if snapshot_override: save_snapshot_by_date(snapshot_override, all_news)
+        else: save_today_snapshot(all_news)
 
 all_news = filter_flagged_news(all_news)
 
+# =========================
+# HTML Output (Staging vs Production setup)
+# =========================
 
-# =========================
-# HTML Output
-# =========================
+# Check if the workflow is running automatically or via manual publish trigger
+run_mode = os.environ.get('WORKFLOW_RUN_MODE', 'draft').lower()
 
 all_articles_html = make_articles_html(all_news, is_finalized=is_finalized)
-
 ist_offset = timezone(timedelta(hours=5, minutes=30))
-
 now_ist = datetime.now(ist_offset)
-
 digit_map = str.maketrans("0123456789", "०१२३४५६७८९")
-
-eng_date = now_ist.strftime("%d-%m-%Y")
-eng_time = now_ist.strftime("%H:%M")
-hindi_date = eng_date.translate(digit_map)
-
+eng_date, eng_time, hindi_date = now_ist.strftime("%d-%m-%Y"), now_ist.strftime("%H:%M"), now_ist.strftime("%d-%m-%Y").translate(digit_map)
 timestamp = f"दिनांक: {hindi_date} • Date: {eng_date} • Time: {eng_time} IST • {len(all_news)} Updates"
 build_version = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
+# Your full interactive HTML Template (for public OR admin use depending on the mode)
 html_body = f"""<!DOCTYPE html>
 <html data-theme="dark">
 <head>
-
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1803,10 +1009,8 @@ html_body = f"""<!DOCTYPE html>
 <meta name="build-version" content="{build_version}">
 <link rel="stylesheet" href="review-styles.css?v={build_version}">
 </head>
-
 <body>
 <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
-
 <div class="scroll-container">
     <div class="page-header">
         <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
@@ -1815,28 +1019,23 @@ html_body = f"""<!DOCTYPE html>
         </div>
         <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
-
     <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
         {timestamp}
     </p>
-
     <div class="auth-panel" id="reviewerAccessBox">
-    <div class="auth-panel-title">Reviewer Access</div>
-
-    <div class="google-btn-row">
-        <div id="googleSignInBtn"></div>
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
     </div>
-
-    <div id="signedInUser" style="display:none;"></div>
-    <div id="authMessage" class="auth-message"></div>
-</div>
     <div class="ai-toggle-wrap" style="display:none;">
         <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
             Show AI Relevance
         </button>
     </div>
     {all_articles_html}
-
     <footer class="footer">
         <div class="footer-text">
             <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
@@ -1844,56 +1043,66 @@ html_body = f"""<!DOCTYPE html>
         </div>
     </footer>
 </div>
-
 <div id="customToast" class="custom-toast">
     <div class="toast-title" id="toastTitle"></div>
     <div class="toast-message" id="toastMessage"></div>
 </div>
-
 <script src="review-actions.js?v={build_version}"></script>
 </body>
 </html>
 """
 
-html_filename = f'Space_News_{datetime.now().strftime("%Y%m%d")}.html'
-with open(html_filename, 'w', encoding='utf-8') as f:
-    f.write(html_body)
+# The safe screen shown to regular employees during Draft Mode
+holding_screen_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space News Digest - Under Review</title>
+    <style>
+        body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }}
+        .card {{ background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }}
+        h1 {{ font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }}
+        p {{ color: #64748b; font-size: 0.95rem; line-height: 1.5; }}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📡 Today's News is Under Review</h1>
+        <p>Our library team is currently reviewing and verifying today's space news digest.</p>
+        <p>Please check back later!</p>
+    </div>
+</body>
+</html>
+"""
 
-print(f"✅ SAVED: {html_filename} with {len(all_news)} items")
+html_filename = f'Space_News_{datetime.now().strftime("%Y%m%d")}.html'
+
+# File generation conditional based on the run mode
+if run_mode == 'publish':
+    # PUBLISH: Save real news to main file for the public
+    with open(html_filename, 'w', encoding='utf-8') as f:
+        f.write(html_body)
+    print(f"✅ [PUBLISH] SAVED official public news: {html_filename} with {len(all_news)} items")
+else:
+    # DRAFT: Hide real news from public, put it in admin-review.html
+    with open(html_filename, 'w', encoding='utf-8') as f:
+        f.write(holding_screen_html)
+    print(f"🔒 [DRAFT] SAVED safe holding screen for the public to {html_filename}")
+    
+    with open("admin-review.html", "w", encoding="utf-8") as f:
+        f.write(html_body)
+    print(f"🛠️ [DRAFT] SAVED review tools and full news to admin-review.html")
 
 
 # =========================
 # DOCX Output
 # =========================
-
-now_ist = datetime.now(ist_offset)
-
-hindi_days = {
-    "Monday": "सोमवार",
-    "Tuesday": "मंगलवार",
-    "Wednesday": "बुधवार",
-    "Thursday": "गुरुवार",
-    "Friday": "शुक्रवार",
-    "Saturday": "शनिवार",
-    "Sunday": "रविवार"
-}
-
-digit_map = str.maketrans("0123456789", "०१२३४५६७८९")
-
-eng_day = now_ist.strftime('%A')
-date_part = now_ist.strftime('%d/%m/%Y')
-
-hindi_day = hindi_days.get(eng_day, "")
-hindi_date_part = date_part.translate(digit_map)
-
+hindi_days = {"Monday": "सोमवार", "Tuesday": "मंगलवार", "Wednesday": "बुधवार", "Thursday": "गुरुवार", "Friday": "शुक्रवार", "Saturday": "शनिवार", "Sunday": "रविवार"}
+eng_day, date_part = now_ist.strftime('%A'), now_ist.strftime('%d/%m/%Y')
+hindi_day, hindi_date_part = hindi_days.get(eng_day, ""), date_part.translate(digit_map)
 digest_date_str = f"{hindi_day}, {hindi_date_part} | {eng_day}, {date_part}"
-
 docx_filename = f"Space_News_{datetime.now(ist_offset).strftime('%d_%m_%Y')}.docx"
 
-generate_docx(
-    news_items=all_news,
-    output_path=docx_filename,
-    digest_date_str=digest_date_str
-)
-
+generate_docx(news_items=all_news, output_path=docx_filename, digest_date_str=digest_date_str)
 print("📱 HTML + DOCX generation complete.")
