@@ -2,7 +2,7 @@ name: 🚀 Space News + Pages Link
 
 on:
   schedule:
-    - cron: '30 4 * * *'
+    - cron: '30 3 * * *'
   workflow_dispatch:
     inputs:
       run_mode:
