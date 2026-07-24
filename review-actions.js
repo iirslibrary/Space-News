@@ -6,10 +6,7 @@ const GOOGLE_CLIENT_ID = "585110924508-lfjo1ma5u0cpqe0qihpj0d3mlb7344sp.apps.goo
 const API_BASE = "https://space-news-sage.vercel.app";
 
 const ALLOWED_EMAILS = [
-    "iirslibrary@gmail.com",
-    "ashshbsht@gmail.com",
-    "maneesha.nano@gmail.com",
-    "isr314@gmail.com"
+    "iirslibrary@gmail.com"
 ].map(email => email.toLowerCase().trim());
 
 function parseJwt(token) {
