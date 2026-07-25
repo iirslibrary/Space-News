@@ -1,22 +1,189 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-07-25T07:27:02">
+<link rel="stylesheet" href="review-styles.css?v=2026-07-25T07:27:02">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation, WE WANT THIS MESSAGE TO DISPLAY</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: २५-०७-२०२६ • Date: 25-07-2026 • Time: 12:57 IST • 8 Updates
+    </p>
+    <div class="auth-panel" id="reviewerAccessBox">
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+    <div class="ai-toggle-wrap" style="display:none;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.isro.gov.in/media_isro/image/index/Latest/lowres-FCC_Coastal_Lagoon_Nagapattinam_Dop_02July2026.jpg.webp" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <div class="card-title">
+                        <a href="https://www.isro.gov.in/ISRO_HINDI/NISARS_Band_SAR_Data_Products_Release.html" target="_blank" rel="noopener noreferrer">1. NISAR S-Band SAR Data Products Release - ISRO</a>
+                    </div>
+                    <div class="card-summary">NISAR S-Band SAR Data Products Release&nbsp;&nbsp;ISRO</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.isro.gov.in/ISRO_HINDI/NISARS_Band_SAR_Data_Products_Release.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    
+                    <div class="card-title">
+                        <a href="https://newsonair.gov.in/govt-says-isro-has-developed-operationalised-wide-range-of-space-based-applications-to-benefit-society/" target="_blank" rel="noopener noreferrer">2. Govt says ISRO has developed & operationalised wide range of space-based applications to benefit society - News On AIR</a>
+                    </div>
+                    <div class="card-summary">Govt says ISRO has developed & operationalised wide range of space-based applications to benefit society&nbsp;&nbsp;News On AIR</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://newsonair.gov.in/govt-says-isro-has-developed-operationalised-wide-range-of-space-based-applications-to-benefit-society/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/EBaFFerS5NjWzK94MM58t6-1280-80.png" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/spacexs-starship-megarocket-makes-the-softest-splashdown-ever-after-launching-next-gen-starlink-satellites-in-flight-13-test-video" target="_blank" rel="noopener noreferrer">3. SpaceX's Starship megarocket makes the 'softest splashdown' ever after launching next-gen Starlink satellites in Flight 13 test (video)</a>
+                    </div>
+                    <div class="card-summary">SpaceX launched Starship, the world's most powerful rocket, on a critical 13th test flight on July 24, a stunning test flight that notched big success and ended with a huge surprise.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/spacexs-starship-megarocket-makes-the-softest-splashdown-ever-after-launching-next-gen-starlink-satellites-in-flight-13-test-video" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/82YwZKput5fnjxrKNnUwnJ-1280-80.jpg" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <div class="card-title">
+                        <a href="https://www.space.com/astronomy/jupiter/juno-probe-reveals-whats-happening-beneath-the-surface-of-jupiters-most-volcanic-moon" target="_blank" rel="noopener noreferrer">4. What lurks beneath the volcanoes of Jupiter's moon Io? NASA's Juno probe just took a peek</a>
+                    </div>
+                    <div class="card-summary">The subsurface findings could transform how scientists study volcanoes across the solar system — including those on Earth.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/astronomy/jupiter/juno-probe-reveals-whats-happening-beneath-the-surface-of-jupiters-most-volcanic-moon" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/Q62EkQQajPiwbTFiuKFWTC-1280-80.jpg" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/epic-photo-captures-lightning-striking-a-chinese-rocket-during-liftoff" target="_blank" rel="noopener noreferrer">5. Lightning strike on Chinese rocket captured in epic launch photo</a>
+                    </div>
+                    <div class="card-summary">Lightning struck a Chinese Long March-3B rocket shortly after liftoff this week, but the launch still successfully placed its satellite payload in orbit.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/epic-photo-captures-lightning-striking-a-chinese-rocket-during-liftoff" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    
+                    <div class="card-title">
+                        <a href="https://spaceflightnow.com/2026/07/25/super-heavy-starship-rocket-chalks-up-mostly-successful-test-flight/" target="_blank" rel="noopener noreferrer">6. Super Heavy-Starship rocket chalks up mostly successful test flight</a>
+                    </div>
+                    <div class="card-summary">Powered by 33 methane-fueled Raptor engines, the 397-foot-tall two-stage rocket blasted off from SpaceX's "Starbase," Texas, launch site at 5:51 p.m. EDT, putting on a spectacular show for area residents and tourists as it climbed away atop some 16 million pounds of thrust.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://spaceflightnow.com/2026/07/25/super-heavy-starship-rocket-chalks-up-mostly-successful-test-flight/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2026/uk-in-pole-position-to.jpg" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display='none'">
+                    <div class="card-title">
+                        <a href="https://phys.org/news/2026-07-uk-pole-position-key-instrument.html" target="_blank" rel="noopener noreferrer">7. UK in pole position to lead key instrument in NASA's hunt for Earth-like worlds</a>
+                    </div>
+                    <div class="card-summary">UK astronomers are a step closer to playing a leading role in NASA's search for alien life in the coming decades as they continue developing one of the core instruments of the Habitable Worlds Observatory (HWO). The exciting mission—the U.S. space agency's next flagship space telescope after the Nancy Grace Roman Space Telescope—is expected to launch in the 2040s.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://phys.org/news/2026-07-uk-pole-position-key-instrument.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    
+                    <div class="card-title">
+                        <a href="https://interestingengineering.com/energy/hydrogen-aviation-fuel-2050-nlr-study" target="_blank" rel="noopener noreferrer">8. Could hydrogen fuel aviation by 2050? NASA-backed study evaluates five alternatives</a>
+                    </div>
+                    <div class="card-summary">NASA-backed researchers have identified five alternative aviation fuels that could help meet rising jet fuel...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://interestingengineering.com/energy/hydrogen-aviation-fuel-2050-nlr-study" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-07-25T07:27:02"></script>
 </body>
 </html>
