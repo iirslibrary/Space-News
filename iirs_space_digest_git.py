@@ -40,7 +40,7 @@ from docx.oxml.ns import qn
 from pathlib import Path
 
 
-print("🚀 Starting Space News - LAST 24 HOURS WINDOW...")
+print("🚀 Starting  - LAST 24 HOURS WINDOW...")
 
 # =========================
 # Filters and Feed Lists
@@ -726,7 +726,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     header_box = doc.add_paragraph()
     header_box.alignment, header_box.paragraph_format.space_before, header_box.paragraph_format.space_after = WD_ALIGN_PARAGRAPH.CENTER, Pt(3), Pt(10)
     
-    title_run = header_box.add_run("🌌 अंतरिक्ष समाचार | Space News")
+    title_run = header_box.add_run("🌌 अंतरिक्ष समाचार | ")
     title_run.bold, title_run.font.name, title_run.font.size = True, "Times New Roman", Pt(13)
     title_run.add_break()
     
@@ -922,7 +922,7 @@ def classify_articles_batch(payload):
 
     try:
         response = requests.post(
-            OPENROUTER_API_URL, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", "HTTP-Referer": "https://iirslibrary.github.io", "X-Title": "IIRS Space News Digest"},
+            OPENROUTER_API_URL, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json", "HTTP-Referer": "https://iirslibrary.github.io", "X-Title": "IIRS  Digest"},
             json={"model": model_name, "temperature": 0, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}], "response_format": {"type": "json_schema", "json_schema": {"name": "article_relevance", "strict": True, "schema": schema}}},
             timeout=60
         )
@@ -972,7 +972,7 @@ if all_news is None:
     for news_list, category in [(regional_news, "🏔️ Regional Updates"), (national_news, "🇮🇳 National Updates"), (international_news, "🌌 International Updates")]:
         for item in news_list: item["category"] = category; all_news.append(item)
 
-    if not all_news: all_news.append({"title": "No space news in last 24h", "link": "#", "source": "IIRS Digest", "summary": "Check back tomorrow!", "image": None, "category": "System", "ai_label": "Not Relevant"})
+    if not all_news: all_news.append({"title": "No  in last 24h", "link": "#", "source": "IIRS Digest", "summary": "Check back tomorrow!", "image": None, "category": "System", "ai_label": "Not Relevant"})
     all_news = enrich_articles_with_ai_relevance(all_news)
     save_today_snapshot(all_news)
 else:
@@ -1017,7 +1017,7 @@ all_news = filter_flagged_news(all_news)
 #     <div class="page-header">
 #         <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
 #         <div class="header-title-wrap">
-            # <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+#             <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
 #         </div>
 #         <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
 #     </div>
@@ -1152,7 +1152,6 @@ html_body = f"""<!DOCTYPE html>
     <div class="page-header">
         <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
         <div class="header-title-wrap">
-            # <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
             <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
         </div>
         <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
