@@ -507,7 +507,7 @@ def fetch_news_from_feeds(feeds, max_articles=6):
 
                 summary = sanitize_html_content(raw_summary)
                 title = re.sub(r'<[^>]+>', '', entry.title)
-                news.append({ 'title': title, 'link': final_link, 'source': feed.feed.get('title', 'Space News'), 'summary': summary, 'image': image_url, 'ai_label': None })
+                news.append({ 'title': title, 'link': final_link, 'source': feed.feed.get('title', ''), 'summary': summary, 'image': image_url, 'ai_label': None })
 
                 print(f"✅ NEW (24h): {title[:60]}...")
                 print(f"🔗 Final link: {final_link}")
@@ -538,7 +538,7 @@ def make_articles_html(news_list, is_finalized=False):
         safe_url = html.escape(article_url, quote=True)
         image_html = ''
         if item.get("image"):
-            image_html = f'<img src="{html.escape(item["image"], quote=True)}" alt="Space news image" class="card-image" loading="lazy" onerror="this.style.display=\'none\'">'
+            image_html = f'<img src="{html.escape(item["image"], quote=True)}" alt=" image" class="card-image" loading="lazy" onerror="this.style.display=\'none\'">'
         
         flag_html = ""
         if not is_finalized:
@@ -1017,7 +1017,8 @@ all_news = filter_flagged_news(all_news)
 #     <div class="page-header">
 #         <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
 #         <div class="header-title-wrap">
-#             <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+            # <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
 #         </div>
 #         <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
 #     </div>
@@ -1152,7 +1153,8 @@ html_body = f"""<!DOCTYPE html>
     <div class="page-header">
         <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
         <div class="header-title-wrap">
-            <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+            # <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
         </div>
         <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
