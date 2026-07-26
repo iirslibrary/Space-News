@@ -636,3 +636,30 @@ h2 {
         animation: none !important;
     }
 }
+/* =========================================
+   Mobile Responsive Fixes
+   ========================================= */
+@media (max-width: 600px) {
+    /* Shrink the side logos slightly to give text more room */
+    .top-logo {
+        max-width: 45px;
+        height: auto;
+    }
+
+    /* Hide the awkward pipe separator on mobile */
+    .title-separator {
+        display: none;
+    }
+
+    /* Stack the Hindi and English text cleanly */
+    .header-title-wrap h2 {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        line-height: 1.2;
+        margin: 0;
+        gap: 2px;
+    }
+}
