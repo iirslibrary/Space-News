@@ -1150,7 +1150,7 @@ all_news = filter_flagged_news(all_news)
 #     <div class="card">
 #         <h1>📡 Today's news is coming shortly!</h1>
 #         <p>Please check back later!</p>
-#         <p class="highlight-msg">Thanks for cooperation, WE WANT THIS MESSAGE TO DISPLAY</p>
+#         <p class="highlight-msg">Thanks for cooperation</p>
 #     </div>
 # </body>
 # </html>
@@ -1275,7 +1275,7 @@ holding_screen_html = f"""<!DOCTYPE html>
     <div class="card">
         <h1>📡 Today's news is coming shortly!</h1>
         <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation, WE WANT THIS MESSAGE TO DISPLAY</p>
+        <p class="highlight-msg">Thanks for cooperation</p>
     </div>
 </body>
 </html>
