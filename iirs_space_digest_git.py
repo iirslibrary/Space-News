@@ -1068,24 +1068,6 @@ all_news = filter_flagged_news(all_news)
 run_mode = os.environ.get('WORKFLOW_RUN_MODE', 'draft').lower()
 
 # 🌟 NEW LOGIC: Only generate the Reviewer Login and AI Toggle if it is NOT publish mode
-# admin_controls = ""
-# if run_mode != 'publish':
-#     admin_controls = """
-#     <div class="auth-panel" id="reviewerAccessBox">
-#         <div class="auth-panel-title">Reviewer Access</div>
-#         <div class="google-btn-row">
-#             <div id="googleSignInBtn"></div>
-#         </div>
-#         <div id="signedInUser" style="display:none;"></div>
-#         <div id="authMessage" class="auth-message"></div>
-#     </div>
-#     <div class="ai-toggle-wrap" style="display:none;">
-#         <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
-#             Show AI Relevance
-#         </button>
-#     </div>
-#     """
-
 admin_controls = """
 <div class="auth-panel" id="reviewerAccessBox">
     <div class="auth-panel-title">Reviewer Access</div>
