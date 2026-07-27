@@ -803,7 +803,7 @@ def generate_docx(news_items, output_path, digest_date_str):
     header_box = doc.add_paragraph()
     header_box.alignment, header_box.paragraph_format.space_before, header_box.paragraph_format.space_after = WD_ALIGN_PARAGRAPH.CENTER, Pt(3), Pt(10)
     
-    title_run = header_box.add_run("🌌 अंतरिक्ष समाचार | ")
+    title_run = header_box.add_run("🌌 अंतरिक्ष समाचार | Space News ")
     title_run.bold, title_run.font.name, title_run.font.size = True, "Times New Roman", Pt(13)
     title_run.add_break()
     
