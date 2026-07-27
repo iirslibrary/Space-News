@@ -1060,47 +1060,17 @@ else:
 
 all_news = filter_flagged_news(all_news)
 
-# # =========================
-# # HTML Output (Staging vs Production setup)
-# # =========================
+# =========================
+# HTML Output (Staging vs Production setup)
+# =========================
 
-# # Check if the workflow is running automatically or via manual publish trigger
-# run_mode = os.environ.get('WORKFLOW_RUN_MODE', 'draft').lower()
+# Check if the workflow is running automatically or via manual publish trigger
+run_mode = os.environ.get('WORKFLOW_RUN_MODE', 'draft').lower()
 
-# all_articles_html = make_articles_html(all_news, is_finalized=is_finalized)
-# ist_offset = timezone(timedelta(hours=5, minutes=30))
-# now_ist = datetime.now(ist_offset)
-# digit_map = str.maketrans("0123456789", "०१२३४५६७८९")
-# eng_date, eng_time, hindi_date = now_ist.strftime("%d-%m-%Y"), now_ist.strftime("%H:%M"), now_ist.strftime("%d-%m-%Y").translate(digit_map)
-# timestamp = f"दिनांक: {hindi_date} • Date: {eng_date} • Time: {eng_time} IST • {len(all_news)} Updates"
-# build_version = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-
-# # Your full interactive HTML Template (for public OR admin use depending on the mode)
-# html_body = f"""<!DOCTYPE html>
-# <html data-theme="dark">
-# <head>
-# <script src="https://accounts.google.com/gsi/client" async defer></script>
-# <meta charset="UTF-8">
-# <meta name="viewport" content="width=device-width, initial-scale=1.0">
-# <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-# <meta http-equiv="Pragma" content="no-cache">
-# <meta http-equiv="Expires" content="0">
-# <meta name="build-version" content="{build_version}">
-# <link rel="stylesheet" href="review-styles.css?v={build_version}">
-# </head>
-# <body>
-# <button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
-# <div class="scroll-container">
-#     <div class="page-header">
-#         <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
-#         <div class="header-title-wrap">
-#             <h2>🌌 अंतरिक्ष समाचार | Space News</h2>
-#         </div>
-#         <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
-#     </div>
-#     <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
-#         {timestamp}
-#     </p>
+# 🌟 NEW LOGIC: Only generate the Reviewer Login and AI Toggle if it is NOT publish mode
+# admin_controls = ""
+# if run_mode != 'publish':
+#     admin_controls = """
 #     <div class="auth-panel" id="reviewerAccessBox">
 #         <div class="auth-panel-title">Reviewer Access</div>
 #         <div class="google-btn-row">
@@ -1114,93 +1084,27 @@ all_news = filter_flagged_news(all_news)
 #             Show AI Relevance
 #         </button>
 #     </div>
-#     {all_articles_html}
-#     <footer class="footer">
-#         <div class="footer-text">
-#             <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
-#             <div>Compiled by Library and Information Resource Division, IIRS</div>
-#         </div>
-#     </footer>
-# </div>
-# <div id="customToast" class="custom-toast">
-#     <div class="toast-title" id="toastTitle"></div>
-#     <div class="toast-message" id="toastMessage"></div>
-# </div>
-# <script src="review-actions.js?v={build_version}"></script>
-# </body>
-# </html>
-# """
+#     """
 
-# # The safe screen shown to regular employees during Draft Mode
-# holding_screen_html = f"""<!DOCTYPE html>
-# <html lang="en">
-# <head>
-#     <meta charset="UTF-8">
-#     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-#     <title>Space News Digest - Coming Shortly</title>
-#     <style>
-#         body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }}
-#         .card {{ background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }}
-#         h1 {{ font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }}
-#         p {{ color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }}
-#         .highlight-msg {{ font-weight: bold; color: #1e293b; margin-top: 20px; }}
-#     </style>
-# </head>
-# <body>
-#     <div class="card">
-#         <h1>📡 Today's news is coming shortly!</h1>
-#         <p>Please check back later!</p>
-#         <p class="highlight-msg">Thanks for cooperation</p>
-#     </div>
-# </body>
-# </html>
-# """
-
-# html_filename = f'Space_News_{datetime.now().strftime("%Y%m%d")}.html'
-
-# # File generation conditional based on the run mode
-# if run_mode == 'publish':
-#     # PUBLISH: Save real news to main file for the public
-#     with open(html_filename, 'w', encoding='utf-8') as f:
-#         f.write(html_body)
-#     print(f"✅ [PUBLISH] SAVED official public news: {html_filename} with {len(all_news)} items")
-# else:
-#     # DRAFT: Hide real news from public, put it in admin-review.html
-#     with open(html_filename, 'w', encoding='utf-8') as f:
-#         f.write(holding_screen_html)
-#     print(f"🔒 [DRAFT] SAVED safe holding screen for the public to {html_filename}")
-    
-#     with open("admin-review.html", "w", encoding="utf-8") as f:
-#         f.write(html_body)
-#     print(f"🛠️ [DRAFT] SAVED review tools and full news to admin-review.html")
-
-
-
-# =========================
-# HTML Output (Staging vs Production setup)
-# =========================
-
-# Check if the workflow is running automatically or via manual publish trigger
-run_mode = os.environ.get('WORKFLOW_RUN_MODE', 'draft').lower()
-
-# 🌟 NEW LOGIC: Only generate the Reviewer Login and AI Toggle if it is NOT publish mode
-admin_controls = ""
-if run_mode != 'publish':
-    admin_controls = """
-    <div class="auth-panel" id="reviewerAccessBox">
-        <div class="auth-panel-title">Reviewer Access</div>
-        <div class="google-btn-row">
-            <div id="googleSignInBtn"></div>
-        </div>
-        <div id="signedInUser" style="display:none;"></div>
-        <div id="authMessage" class="auth-message"></div>
+admin_controls = """
+<div class="auth-panel" id="reviewerAccessBox">
+    <div class="auth-panel-title">Reviewer Access</div>
+    <div class="google-btn-row">
+        <div id="googleSignInBtn"></div>
     </div>
-    <div class="ai-toggle-wrap" style="display:none;">
-        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
-            Show AI Relevance
-        </button>
-    </div>
-    """
+    <div id="signedInUser" style="display:none;"></div>
+    <div id="authMessage" class="auth-message"></div>
+</div>
+
+<!-- AI Relevance is now outside the sign-in box and always visible -->
+<div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+    <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+        Show AI Relevance
+    </button>
+</div>
+"""
+
+
 
 all_articles_html = make_articles_html(all_news, is_finalized=is_finalized)
 ist_offset = timezone(timedelta(hours=5, minutes=30))
