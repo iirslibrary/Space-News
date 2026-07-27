@@ -1068,23 +1068,33 @@ all_news = filter_flagged_news(all_news)
 run_mode = os.environ.get('WORKFLOW_RUN_MODE', 'draft').lower()
 
 # 🌟 NEW LOGIC: Only generate the Reviewer Login and AI Toggle if it is NOT publish mode
-admin_controls = """
-<div class="auth-panel" id="reviewerAccessBox">
-    <div class="auth-panel-title">Reviewer Access</div>
-    <div class="google-btn-row">
-        <div id="googleSignInBtn"></div>
+if is_finalized:
+    # IF PUBLISHED: Only show the AI Relevance button (No login box)
+    admin_controls = """
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
     </div>
-    <div id="signedInUser" style="display:none;"></div>
-    <div id="authMessage" class="auth-message"></div>
-</div>
+    """
+else:
+    # IF NOT PUBLISHED: Show the Login box AND the AI Relevance button
+    admin_controls = """
+    <div class="auth-panel" id="reviewerAccessBox">
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
 
-<!-- AI Relevance is now outside the sign-in box and always visible -->
-<div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
-    <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
-        Show AI Relevance
-    </button>
-</div>
-"""
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    """
 
 
 
