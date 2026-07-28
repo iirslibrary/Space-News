@@ -48,12 +48,38 @@ function setActionButtonsVisible(visible) {
     });
 }
 
-function setAIControlsVisible(visible) {
-    // document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
-    //     el.style.display = visible ? "block" : "none";
-    // });
+// function setAIControlsVisible(visible) {
+//     // document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
+//     //     el.style.display = visible ? "block" : "none";
+//     // });
 
-    if (!visible) {
+//     if (!visible) {
+//         document.querySelectorAll(".ai-relevance-box").forEach(el => {
+//             el.classList.add("hidden-ai");
+//         });
+
+//         document.querySelectorAll(".ai-toggle-btn").forEach(btn => {
+//             btn.textContent = "Show AI Relevance";
+//         });
+//     }
+// }
+
+function setAIControlsVisible(visible) {
+    // Check if the current page is the Admin Review page
+    const isAdminPage = window.location.pathname.includes("admin-review");
+
+    document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
+        if (isAdminPage) {
+            // Permanently show the AI toggle button wrap on Admin Review page
+            el.style.display = "block";
+        } else {
+            // Permanently hide the AI toggle button wrap on Public Space News page
+            el.style.display = "none";
+        }
+    });
+
+    // Reset badges and button text if requested OR if on public page
+    if (!visible || !isAdminPage) {
         document.querySelectorAll(".ai-relevance-box").forEach(el => {
             el.classList.add("hidden-ai");
         });
@@ -63,6 +89,8 @@ function setAIControlsVisible(visible) {
         });
     }
 }
+
+
 
 function toggleAIRelevance() {
     const badges = document.querySelectorAll(".ai-relevance-box");
