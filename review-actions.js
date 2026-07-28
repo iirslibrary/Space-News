@@ -48,16 +48,10 @@ function setActionButtonsVisible(visible) {
     });
 }
 
-// function setAIControlsVisible(visible) {
-//     document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
-//         el.style.display = visible ? "flex" : "none";
-//     });
-// }
-
 function setAIControlsVisible(visible) {
-    document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
-        el.style.display = visible ? "block" : "none";
-    });
+    // document.querySelectorAll(".ai-toggle-wrap").forEach(el => {
+    //     el.style.display = visible ? "block" : "none";
+    // });
 
     if (!visible) {
         document.querySelectorAll(".ai-relevance-box").forEach(el => {
