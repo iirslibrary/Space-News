@@ -150,7 +150,7 @@ jobs:
           password: ${{ secrets.GMAIL_PASS }}
           subject: ${{ steps.email_content.outputs.subject }}
           body: ${{ steps.email_content.outputs.body }}
-          to: <${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
+          to: <${{ secrets.GMAIL_USER }}>,<${{ secrets.GMAIL_USER2 }}>,<${{ secrets.GMAIL_USER3 }}>,<${{ secrets.GMAIL_USER4 }}>
           from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
 
   deploy:
