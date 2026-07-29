@@ -3,7 +3,7 @@ import sys
 import re
 import shutil
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from zipfile import ZipFile
 from copy import deepcopy
 
@@ -33,13 +33,9 @@ THEME = {
 }
 
 # GH Actions working directory is usually the repo root.
-# We use a local temp folder instead of Colab's /content
 BASE_DIR = Path(".")
 TEMP_DIR = BASE_DIR / "temp_build"
 OUTPUT_DIR = BASE_DIR
-
-current_date_str = datetime.now().strftime("%d%m%Y")
-OUTPUT_FILE = OUTPUT_DIR / f"SANKALAN_Weekly_Compilation_{current_date_str}.docx"
 
 
 # ==========================================
@@ -337,7 +333,7 @@ def get_docx_files(folder, from_date, to_date):
     files = [
         p for p in folder.glob("*.docx")
         if not p.name.startswith("~$")
-        and p.name != OUTPUT_FILE.name
+        and not p.name.startswith("SANKALAN_")
     ]
     valid_files = []
     date_pattern = re.compile(r"Space_News_(\d{2}_\d{2}_\d{4})\.docx", re.IGNORECASE)
@@ -597,12 +593,6 @@ def delete_table(table):
     tbl.getparent().remove(tbl)
     table._tbl = table._element = None
 
-def delete_block(block):
-    el = block._element
-    parent = el.getparent()
-    if parent is not None:
-        parent.remove(el)
-
 def is_probable_news_start(block):
     if hasattr(block, "text"):
         txt = block.text.strip()
@@ -825,7 +815,6 @@ def merge_with_cover(docx_files, output_file):
     if not docx_files:
         raise ValueError("No DOCX files found for the given dates.")
 
-    # Create temporary directories for processing
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
     cleaned_dir = TEMP_DIR / "cleaned_docx"
     cleaned_dir.mkdir(exist_ok=True)
@@ -834,7 +823,6 @@ def merge_with_cover(docx_files, output_file):
 
     processed_files = []
 
-    # 1. Clean front matter from all except first
     for i, file_path in enumerate(docx_files):
         if i == 0:
             processed_files.append(file_path)
@@ -843,8 +831,7 @@ def merge_with_cover(docx_files, output_file):
             clean_front_matter_for_later_docx(file_path, cleaned_path)
             processed_files.append(cleaned_path)
 
-    # 2. Merge body documents
-    print(f"Creating temporary merged body...")
+    print("Creating temporary merged body...")
     master = Document(str(processed_files[0]))
     composer = Composer(master)
     for file_path in processed_files[1:]:
@@ -853,7 +840,6 @@ def merge_with_cover(docx_files, output_file):
         composer.append(subdoc)
     composer.save(str(temp_body_file))
 
-    # 3. Apply formatting, emoji fixes, and numbering
     fix_galaxy_emoji_font(str(temp_body_file))
     renumber_first_level_headings(str(temp_body_file))
     rebuild_toc_links_and_bookmarks(str(temp_body_file))
@@ -861,14 +847,12 @@ def merge_with_cover(docx_files, output_file):
     apply_dynamic_newspaper_columns(str(temp_body_file))
     shutil.copy(str(temp_body_file), str(temp_final_body_file))
 
-    # 4. Generate Cover & TOC
     filtered_body_docx_files = [temp_final_body_file]
     image_paths = collect_top_nine_images(filtered_body_docx_files)
     toc_items = extract_titles_and_images_from_docx(filtered_body_docx_files)
     cover_doc = create_cover_doc(image_paths, docx_files)
     add_toc_page(cover_doc, toc_items)
 
-    # 5. Final Assembly
     final_composer = Composer(cover_doc)
     filtered_body_doc = Document(str(temp_final_body_file))
     final_composer.append(filtered_body_doc)
@@ -883,11 +867,23 @@ def merge_with_cover(docx_files, output_file):
 # ==========================================
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate Weekly Space News Compilation")
-    parser.add_argument('--from-date', type=str, required=True, help="Start date in YYYY-MM-DD format")
-    parser.add_argument('--to-date', type=str, required=True, help="End date in YYYY-MM-DD format")
+    parser.add_argument('--from-date', type=str, default="", help="Start date in YYYY-MM-DD format")
+    parser.add_argument('--to-date', type=str, default="", help="End date in YYYY-MM-DD format")
     
     args = parser.parse_args()
-    
+
+    # Intelligent fallback handler for empty/missing dates (7-day rolling window)
+    if not args.to_date or args.to_date.strip() == "":
+        args.to_date = datetime.now().strftime("%Y-%m-%d")
+
+    if not args.from_date or args.from_date.strip() == "":
+        try:
+            to_dt_obj = datetime.strptime(args.to_date, "%Y-%m-%d")
+        except ValueError:
+            to_dt_obj = datetime.now()
+        from_dt_obj = to_dt_obj - timedelta(days=7)
+        args.from_date = from_dt_obj.strftime("%Y-%m-%d")
+
     try:
         start_dt = datetime.strptime(args.from_date, "%Y-%m-%d")
         end_dt = datetime.strptime(args.to_date, "%Y-%m-%d")
@@ -901,17 +897,18 @@ if __name__ == "__main__":
 
     print(f"📅 Scanning for files between {args.from_date} and {args.to_date}...")
     
-    # Fetch all valid docx files from the repository directory
     docx_files = get_docx_files(BASE_DIR, start_dt, end_dt)
     
     if not docx_files:
         print(f"❌ No Space_News_*.docx files found in that date range.")
         sys.exit(1)
 
+    # 100% Predictable filename using the exact active date range
+    OUTPUT_FILE = OUTPUT_DIR / f"SANKALAN_{args.from_date}_to_{args.to_date}.docx"
+
     print("📄 Files selected for compilation:")
     for f in docx_files:
         dt = parse_date_from_filename(f.name)
         print(f" - {f.name} | {dt.strftime('%d-%m-%Y') if dt else 'No date parsed'}")
 
-    # Generate the compilation
     merge_with_cover(docx_files, output_file=OUTPUT_FILE)
