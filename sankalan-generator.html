@@ -22,7 +22,7 @@
 <body>
     <div class="container">
         <h2 style="margin-bottom: 8px; color: #1F4E78;">📚 Generate Weekly Sankalan</h2>
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 20px;">Select a date range to compile the weekly document (Max 7 days range, up to 1 month old).</p>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 20px;">Select a date range (Max 7 days range, up to 1 month old).</p>
         
         <div class="date-group">
             <div class="date-field">
@@ -74,7 +74,7 @@
                 return;
             }
 
-            // Validation 2: Check if 'From' date is after 'To' date or difference > 7 days
+            // Validation 2: Check date order and maximum 7-day span
             const diffTime = toDate - fromDate;
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
@@ -98,9 +98,25 @@
             }
 
             downloadBox.style.display = "block";
-            statusMsg.textContent = "🚀 Triggering build... Please wait (~60 seconds).";
-            statusMsg.style.color = "#2e7d32";
             downloadLink.style.display = "none";
+            
+            // Start 60-second countdown timer to allow GitHub Actions workflow time to complete
+            let timeLeft = 60;
+            statusMsg.style.color = "#2e7d32";
+            
+            const countdownInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    statusMsg.textContent = `🚀 Build triggered! Compiling on GitHub... Please wait (${timeLeft}s remaining)`;
+                    timeLeft--;
+                } else {
+                    clearInterval(countdownInterval);
+                    statusMsg.textContent = "✅ Compilation finished! You can now download your file:";
+                    
+                    const filename = `SANKALAN_${fromDateStr}_to_${toDateStr}.docx`;
+                    downloadLink.href = filename;
+                    downloadLink.style.display = "inline-block";
+                }
+            }, 1000);
 
             try {
                 const response = await fetch(`${API_BASE}/api/generate-sankalan`, {
@@ -115,14 +131,11 @@
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || "Failed to trigger build.");
 
-                statusMsg.textContent = "✅ Build started! Once GitHub finishes, click below to download:";
-                
-                const filename = `SANKALAN_${fromDateStr}_to_${toDateStr}.docx`;
-                downloadLink.href = filename;
-                downloadLink.style.display = "inline-block";
             } catch (err) {
+                clearInterval(countdownInterval);
                 statusMsg.textContent = "❌ Error: " + err.message;
                 statusMsg.style.color = "red";
+                downloadBox.style.display = "block";
             }
         }
     </script>
