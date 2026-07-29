@@ -1,0 +1,46 @@
+name: 📚 Weekly Sankalan Generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: 'Start Date (YYYY-MM-DD)'
+        required: true
+        type: string
+      to_date:
+        description: 'End Date (YYYY-MM-DD)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  generate-sankalan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-docx docxcompose pillow lxml
+
+      - name: 📚 Run Sankalan Generator Script
+        run: |
+          python generate_sankalan.py --from-date "${{ github.event.inputs.from_date }}" --to-date "${{ github.event.inputs.to_date }}"
+
+      - name: 💾 Commit and push generated compilation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add SANKALAN_*.docx
+          git diff --cached --quiet || git commit -m "Add Weekly Sankalan Compilation (${{ github.event.inputs.from_date }} to ${{ github.event.inputs.to_date }})"
+          git pull --rebase origin main || (git rebase --abort && git pull --rebase origin main)
+          git push
