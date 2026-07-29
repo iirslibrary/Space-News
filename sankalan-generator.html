@@ -46,7 +46,7 @@
     </div>
 
     <script>
-        const API_BASE = "https://space-news-sage.vercel.app"; // Replace with your actual Vercel URL
+        const API_BASE = "https://space-news-sage.vercel.app";
 
         async function triggerSankalanBuild() {
             const fromDate = document.getElementById("sankalanFrom").value;
@@ -57,22 +57,35 @@
 
             if (!fromDate || !toDate) { alert("Please select both dates."); return; }
 
+            // Retrieve authentication token saved during admin login
+            const token = localStorage.getItem("google_token") || localStorage.getItem("id_token") || sessionStorage.getItem("google_token");
+            
+            if (!token) {
+                alert("Authentication token missing. Please log in on the Admin Review page first.");
+                window.location.href = "admin-review.html";
+                return;
+            }
+
             downloadBox.style.display = "block";
             statusMsg.textContent = "🚀 Triggering build... Please wait (~60 seconds).";
+            statusMsg.style.color = "#2e7d32";
             downloadLink.style.display = "none";
 
             try {
                 const response = await fetch(`${API_BASE}/api/generate-sankalan`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
                     body: JSON.stringify({ fromDate, toDate })
                 });
+                
                 const result = await response.json();
                 if (!response.ok) throw new Error(result.error || "Failed to trigger build.");
 
                 statusMsg.textContent = "✅ Build started! Once GitHub finishes, click below to download:";
                 
-                // Direct link to the generated document file name
                 const filename = `SANKALAN_${fromDate}_to_${toDate}.docx`;
                 downloadLink.href = filename;
                 downloadLink.style.display = "inline-block";
