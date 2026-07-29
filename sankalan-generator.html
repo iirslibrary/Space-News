@@ -17,29 +17,46 @@
         .download-box { margin-top: 25px; padding: 15px; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 6px; display: none; }
         .download-btn { display: inline-block; background-color: #2e7d32; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px; }
         .nav-link { margin-top: 25px; display: block; color: #666; text-decoration: none; font-size: 0.9em; }
+        #authSection { margin: 20px 0; display: flex; flex-direction: column; align-items: center; }
+        #generatorSection { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2 style="margin-bottom: 8px; color: #1F4E78;">📚 Generate Weekly Sankalan</h2>
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 20px;">Select a date range (Max 7 days range, up to 1 month old).</p>
         
-        <div class="date-group">
-            <div class="date-field">
-                <label for="sankalanFrom">From:</label>
-                <input type="date" id="sankalanFrom">
+        <!-- Google Sign-In Section (Shown if not logged in) -->
+        <div id="authSection">
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Please sign in with your authorized Google account to continue.</p>
+            <div id="g_id_onload"
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
             </div>
-            <div class="date-field">
-                <label for="sankalanTo">To:</label>
-                <input type="date" id="sankalanTo">
-            </div>
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
         </div>
-        
-        <button type="button" class="action-btn" onclick="triggerSankalanBuild()">Start Compilation Pipeline</button>
 
-        <div id="downloadBox" class="download-box">
-            <p id="statusMessage" style="margin: 0; font-size: 0.9em; color: #2e7d32; font-weight: bold;"></p>
-            <a id="downloadLink" href="#" class="download-btn" target="_blank" style="display:none;">⬇️ Download Compiled .docx</a>
+        <!-- Generator Section (Shown after logging in) -->
+        <div id="generatorSection">
+            <p style="font-size: 0.85em; color: #666; margin-bottom: 20px;">Select a date range (Max 7 days range, up to 1 month old).</p>
+            
+            <div class="date-group">
+                <div class="date-field">
+                    <label for="sankalanFrom">From:</label>
+                    <input type="date" id="sankalanFrom">
+                </div>
+                <div class="date-field">
+                    <label for="sankalanTo">To:</label>
+                    <input type="date" id="sankalanTo">
+                </div>
+            </div>
+            
+            <button type="button" class="action-btn" onclick="triggerSankalanBuild()">Start Compilation Pipeline</button>
+
+            <div id="downloadBox" class="download-box">
+                <p id="statusMessage" style="margin: 0; font-size: 0.9em; color: #2e7d32; font-weight: bold;"></p>
+                <a id="downloadLink" href="#" class="download-btn" target="_blank" style="display:none;">⬇️ Download Compiled .docx</a>
+            </div>
         </div>
 
         <a href="admin-review.html" class="nav-link">← Back to Daily Admin Review</a>
@@ -47,6 +64,26 @@
 
     <script>
         const API_BASE = "https://space-news-sage.vercel.app";
+
+        // Check login state on page load
+        window.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("google_token") || localStorage.getItem("id_token") || sessionStorage.getItem("google_token");
+            if (token) {
+                document.getElementById("generatorSection").style.display = "block";
+                document.getElementById("authSection").style.display = "none";
+            } else {
+                document.getElementById("authSection").style.display = "flex";
+                document.getElementById("generatorSection").style.display = "none";
+            }
+        });
+
+        // Handle Google Sign-In response
+        function handleCredentialResponse(response) {
+            const token = response.credential;
+            localStorage.setItem("google_token", token);
+            document.getElementById("authSection").style.display = "none";
+            document.getElementById("generatorSection").style.display = "block";
+        }
 
         async function triggerSankalanBuild() {
             const fromDateStr = document.getElementById("sankalanFrom").value;
@@ -88,19 +125,19 @@
                 return;
             }
 
-            // Retrieve authentication token saved during admin login
+            // Retrieve authentication token
             const token = localStorage.getItem("google_token") || localStorage.getItem("id_token") || sessionStorage.getItem("google_token");
             
             if (!token) {
-                alert("Authentication token missing. Please log in on the Admin Review page first.");
-                window.location.href = "admin-review.html";
+                alert("Authentication token missing. Please sign in.");
+                location.reload();
                 return;
             }
 
             downloadBox.style.display = "block";
             downloadLink.style.display = "none";
             
-            // Start 60-second countdown timer to allow GitHub Actions workflow time to complete
+            // Start 60-second countdown timer
             let timeLeft = 60;
             statusMsg.style.color = "#2e7d32";
             
