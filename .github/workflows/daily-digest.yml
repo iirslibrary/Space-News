@@ -18,16 +18,6 @@ on:
         required: false
         default: ''
         type: string
-      from_date:
-        description: 'Start Date (YYYY-MM-DD) for Weekly Sankalan'
-        required: false
-        default: ''
-        type: string
-      to_date:
-        description: 'End Date (YYYY-MM-DD) for Weekly Sankalan'
-        required: false
-        default: ''
-        type: string
 
 permissions:
   contents: write
@@ -54,15 +44,9 @@ jobs:
       - name: 📦 Install all dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests docxcompose pillow lxml
-
-      - name: 📚 Generate Weekly Sankalan DOCX
-        if: github.event.inputs.from_date != '' && github.event.inputs.from_date != null
-        run: |
-          python generate_sankalan.py --from-date "${{ github.event.inputs.from_date }}" --to-date "${{ github.event.inputs.to_date }}"
+          pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests
 
       - name: 📰 Generate HTML + DOCX daily newsletter
-        if: github.event.inputs.from_date == '' || github.event.inputs.from_date == null
         env:
           WORKFLOW_RUN_MODE: ${{ github.event_name == 'schedule' && 'draft' || inputs.run_mode }}
         run: python iirs_space_digest_git.py
@@ -70,15 +54,14 @@ jobs:
       - name: 📂 Show generated files
         run: |
           ls -lah
-          echo "---- SANKALAN Files ----"
-          ls -lah SANKALAN_Weekly_Compilation_*.docx || true
           echo "---- Matching HTML files ----"
           ls -lah Space_News_*.html || true
           echo "---- Admin Review File ----"
           ls -lah admin-review.html || true
+          echo "---- Matching DOCX files ----"
+          ls -lah Space_News_*.docx || true
 
-      - name: 📋 Copy latest HTML to index.html for hosting (Daily only)
-        if: github.event.inputs.from_date == '' || github.event.inputs.from_date == null
+      - name: 📋 Copy latest HTML to index.html for hosting
         shell: bash
         run: |
           shopt -s nullglob
@@ -98,16 +81,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Update outputs (Digest or Sankalan compilation)"
-          git pull --rebase origin main
+          git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs"
+          git pull --rebase origin main || (git rebase --abort && git pull --rebase origin main)
           git push
 
-      - name: ⚙️ Configure GitHub Pages (Daily only)
-        if: github.event.inputs.from_date == '' || github.event.inputs.from_date == null
+      - name: ⚙️ Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: 📤 Upload Pages artifact (Daily only)
-        if: github.event.inputs.from_date == '' || github.event.inputs.from_date == null
+      - name: 📤 Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
@@ -116,19 +97,7 @@ jobs:
         id: email_content
         shell: bash
         run: |
-          if [ "${{ github.event.inputs.from_date }}" != "" ] && [ "${{ github.event.inputs.from_date }}" != null ]; then
-            echo "subject=📚 Weekly Sankalan Ready (${{ github.event.inputs.from_date }} to ${{ github.event.inputs.to_date }})" >> "$GITHUB_OUTPUT"
-            {
-              echo "body<<EOF"
-              echo "✅ Your requested Weekly Sankalan compilation has been successfully generated."
-              echo
-              echo "The file has been saved directly to your repository:"
-              echo "SANKALAN_Weekly_Compilation_*.docx"
-              echo
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
-
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.run_mode }}" = "publish" ]; then
             echo "subject=Today's Space News compiled and published by LIRD" >> "$GITHUB_OUTPUT"
             {
               echo "body<<EOF"
@@ -176,7 +145,6 @@ jobs:
           from: 'IIRS Library <${{ secrets.GMAIL_USER }}>'
 
   deploy:
-    if: github.event.inputs.from_date == '' || github.event.inputs.from_date == null
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
