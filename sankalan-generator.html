@@ -22,7 +22,7 @@
 <body>
     <div class="container">
         <h2 style="margin-bottom: 8px; color: #1F4E78;">📚 Generate Weekly Sankalan</h2>
-        <p style="font-size: 0.85em; color: #666; margin-bottom: 20px;">Select a date range to compile the weekly document.</p>
+        <p style="font-size: 0.85em; color: #666; margin-bottom: 20px;">Select a date range to compile the weekly document (Max 7 days range, up to 1 month old).</p>
         
         <div class="date-group">
             <div class="date-field">
@@ -49,13 +49,44 @@
         const API_BASE = "https://space-news-sage.vercel.app";
 
         async function triggerSankalanBuild() {
-            const fromDate = document.getElementById("sankalanFrom").value;
-            const toDate = document.getElementById("sankalanTo").value;
+            const fromDateStr = document.getElementById("sankalanFrom").value;
+            const toDateStr = document.getElementById("sankalanTo").value;
             const statusMsg = document.getElementById("statusMessage");
             const downloadBox = document.getElementById("downloadBox");
             const downloadLink = document.getElementById("downloadLink");
 
-            if (!fromDate || !toDate) { alert("Please select both dates."); return; }
+            if (!fromDateStr || !toDateStr) { 
+                alert("Please select both dates."); 
+                return; 
+            }
+
+            const fromDate = new Date(fromDateStr);
+            const toDate = new Date(toDateStr);
+            const today = new Date();
+            
+            // Calculate date one month older than today
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(today.getMonth() - 1);
+
+            // Validation 1: Check if dates are older than one month
+            if (fromDate < oneMonthAgo || toDate < oneMonthAgo) {
+                alert("Validation Error: Dates cannot be older than one month.");
+                return;
+            }
+
+            // Validation 2: Check if 'From' date is after 'To' date or difference > 7 days
+            const diffTime = toDate - fromDate;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+            if (diffDays < 0) {
+                alert("Validation Error: 'From' date cannot be after 'To' date.");
+                return;
+            }
+
+            if (diffDays > 7) {
+                alert("Validation Error: The date difference cannot be more than 7 days.");
+                return;
+            }
 
             // Retrieve authentication token saved during admin login
             const token = localStorage.getItem("google_token") || localStorage.getItem("id_token") || sessionStorage.getItem("google_token");
@@ -78,7 +109,7 @@
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ fromDate, toDate })
+                    body: JSON.stringify({ fromDate: fromDateStr, toDate: toDateStr })
                 });
                 
                 const result = await response.json();
@@ -86,7 +117,7 @@
 
                 statusMsg.textContent = "✅ Build started! Once GitHub finishes, click below to download:";
                 
-                const filename = `SANKALAN_${fromDate}_to_${toDate}.docx`;
+                const filename = `SANKALAN_${fromDateStr}_to_${toDateStr}.docx`;
                 downloadLink.href = filename;
                 downloadLink.style.display = "inline-block";
             } catch (err) {
