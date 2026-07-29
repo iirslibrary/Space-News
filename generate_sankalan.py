@@ -354,8 +354,49 @@ def get_docx_files(folder, from_date, to_date):
 
 
 # ==========================================
-# IMAGE EXTRACTION & COVER
+# IMAGE EXTRACTION & COMPRESSION
 # ==========================================
+def optimize_docx_images(docx_path):
+    """Compresses and downscales images inside the .docx archive to keep file size well under GitHub's 100MB limit."""
+    print("⚡ Optimizing and compressing document images...")
+    temp_zip_dir = TEMP_DIR / "docx_zip_decompressed"
+    if temp_zip_dir.exists():
+        shutil.rmtree(temp_zip_dir)
+    temp_zip_dir.mkdir(parents=True, exist_ok=True)
+
+    with ZipFile(docx_path, 'r') as zip_ref:
+        zip_ref.extractall(temp_zip_dir)
+
+    media_dir = temp_zip_dir / "word" / "media"
+    if media_dir.exists():
+        for img_file in media_dir.iterdir():
+            if img_file.suffix.lower() in ['.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.webp']:
+                try:
+                    with Image.open(img_file) as im:
+                        if im.mode in ("RGBA", "P"):
+                            im = im.convert("RGB")
+                        
+                        max_width = 1200
+                        if im.width > max_width:
+                            ratio = max_width / im.width
+                            new_height = int(im.height * ratio)
+                            im = im.resize((max_width, new_height), Image.Resampling.LANCZOS)
+                        
+                        im.save(img_file, "JPEG", quality=75, optimize=True)
+                except Exception as e:
+                    print(f"Skipping compression for {img_file.name}: {e}")
+
+    backup_path = docx_path.with_name(docx_path.name + ".bak")
+    shutil.move(docx_path, backup_path)
+    
+    with ZipFile(docx_path, 'w') as zip_out:
+        for item in temp_zip_dir.rglob('*'):
+            if item.is_file():
+                zip_out.write(item, item.relative_to(temp_zip_dir))
+    
+    backup_path.unlink()
+    print("⚡ Image optimization complete!")
+
 def extract_images_from_docx(docx_path, temp_dir):
     images = []
     out_dir = temp_dir / docx_path.stem
@@ -859,6 +900,9 @@ def merge_with_cover(docx_files, output_file):
     final_composer.save(str(output_file))
     add_disclaimer_page(str(output_file))
 
+    # Compress and squeeze images to stay safely below GitHub's 100MB limit
+    optimize_docx_images(output_file)
+
     print(f"\n✅ Saved merged file to: {output_file}")
 
 
@@ -888,9 +932,11 @@ if __name__ == "__main__":
         start_dt = datetime.strptime(args.from_date, "%Y-%m-%d")
         end_dt = datetime.strptime(args.to_date, "%Y-%m-%d")
         
+        # Auto-swap if dates are entered in reverse order
         if end_dt < start_dt:
-            print("❌ Error: 'To' date cannot be earlier than 'From' date.")
-            sys.exit(1)
+            print("ℹ️ Note: 'To' date is earlier than 'From' date. Automatically swapping them...")
+            start_dt, end_dt = end_dt, start_dt
+            args.from_date, args.to_date = args.to_date, args.from_date
     except ValueError:
         print("❌ Error: Dates must be in YYYY-MM-DD format.")
         sys.exit(1)
