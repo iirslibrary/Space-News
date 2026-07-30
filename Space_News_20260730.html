@@ -1,22 +1,236 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-07-30T05:12:04">
+<link rel="stylesheet" href="review-styles.css?v=2026-07-30T05:12:04">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: ३०-०७-२०२६ • Date: 30-07-2026 • Time: 10:42 IST • 11 Updates
+    </p>
+    
+    
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.isro.gov.in/media_isro/image/index/Latest/START_Workshop_1.jpg.webp" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.isro.gov.in/ISRO_Conducts_START_Capacity_Building_Workshop.html" target="_blank" rel="noopener noreferrer">1. ISRO Conducts START Capacity Building Workshop-2026 at IIRS, Dehradun - ISRO</a>
+                    </div>
+                    <div class="card-summary">ISRO Conducts START Capacity Building Workshop-2026 at IIRS, Dehradun&nbsp;&nbsp;ISRO</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.isro.gov.in/ISRO_Conducts_START_Capacity_Building_Workshop.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://static.pw.live/5eb393ee95fab7468a79d189/3e5d29af-7cb0-42b7-b4ba-6c0a0cb6737e.webp" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.pw.live/news/isro-recruitment-2026-244-posts-assistant-jpa-udc-stenographer-apply-online-last-date-august-16" target="_blank" rel="noopener noreferrer">2. ISRO Recruitment 2026: 244 Posts, Apply Online by August 16 - PW</a>
+                    </div>
+                    <div class="card-summary">ISRO Recruitment 2026: 244 Posts, Apply Online by August 16&nbsp;&nbsp;PW</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.pw.live/news/isro-recruitment-2026-244-posts-assistant-jpa-udc-stenographer-apply-online-last-date-august-16" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://img-cdn.publive.online/fit-in/1200x675/greater-kashmir/media/media_files/2026/07/30/screenshot-2026-07-30-055614-2026-07-30-05-56-52.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.greaterkashmir.com/kashmir/isro-maps-over-2000-glaciers-3219-glacial-lakes-in-ladakh-centre-12210322" target="_blank" rel="noopener noreferrer">3. ISRO maps over 2,000 glaciers, 3,219 glacial lakes in Ladakh: Centre - Greater Kashmir</a>
+                    </div>
+                    <div class="card-summary">ISRO maps over 2,000 glaciers, 3,219 glacial lakes in Ladakh: Centre&nbsp;&nbsp;Greater Kashmir</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.greaterkashmir.com/kashmir/isro-maps-over-2000-glaciers-3219-glacial-lakes-in-ladakh-centre-12210322" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.educationtoday.co/blog/wp-content/uploads/2026/07/Untitled-design-21-2-1024x542.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.educationtoday.co/blog/isro-recruitment-2026-notification-released-for-244-administrative-posts-applications-open-for-assistant-jpa-udc-and-stenographer-roles/" target="_blank" rel="noopener noreferrer">4. ISRO Recruitment 2026: 244 Administrative Posts Announced - Education Today</a>
+                    </div>
+                    <div class="card-summary">ISRO Recruitment 2026: 244 Administrative Posts Announced&nbsp;&nbsp;Education Today</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.educationtoday.co/blog/isro-recruitment-2026-notification-released-for-244-administrative-posts-applications-open-for-assistant-jpa-udc-and-stenographer-roles/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/missions/rst/KSC-20260720-PH-SER01_0001.jpg?w=1024" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/news-release/nasa-awards-2026-innovative-technology-concepts/" target="_blank" rel="noopener noreferrer">5. NASA Awards 2026 Innovative Technology Concepts</a>
+                    </div>
+                    <div class="card-summary">The NASA Innovative Advanced Concepts (NIAC) program has created 18 new awards to support visionary ideas to improve aerospace technologies in areas ranging from the exploration of the solar system to understanding the universe. The 18 NIAC Phase I awards total $3.2 million. Each award provides up to $175,000 for a nine-month initial investigation. The [&#8230;]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/news-release/nasa-awards-2026-innovative-technology-concepts/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.nasa.gov/wp-content/uploads/2026/07/eclipse-coverage-advisory-july-29.jpg?resize=2000,2000" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/news-release/nasa-sets-coverage-for-august-northern-hemisphere-total-solar-eclipse/" target="_blank" rel="noopener noreferrer">6. NASA Sets Coverage for August Northern Hemisphere Total Solar Eclipse</a>
+                    </div>
+                    <div class="card-summary">On Wednesday, Aug. 12, a total solar eclipse will be visible in parts of Greenland, Iceland, northern Russia, the Atlantic Ocean, Spain, and a small corner of Portugal. NASA will stream the eclipse live with views across the path and interviews with subject matter experts through a variety of platforms. Learn where to watch online: [&#8230;]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/news-release/nasa-sets-coverage-for-august-northern-hemisphere-total-solar-eclipse/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia26/pia26730/PIA26730.png/jcr:content/renditions/cq5dam.web.1280.1280.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://science.nasa.gov/photojournal/nasas-curiosity-views-a-sand-capped-butte/" target="_blank" rel="noopener noreferrer">7. NASA’s Curiosity Views a Sand-Capped Butte</a>
+                    </div>
+                    <div class="card-summary">Description NASA’s Curiosity Mars rover captured this sand-capped butte, nicknamed “Miraflores,” estimated to be about 20 feet (6 meters) tall, with its Mast Camera, or Mastcam, on June 11, 2026, the 4,923rd Martian day, or sol, of the mission. The butte was left behind as surrounding rock eroded away over time, deepening the broad valley […]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://science.nasa.gov/photojournal/nasas-curiosity-views-a-sand-capped-butte/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia26/pia26729/PIA26729.png/jcr:content/renditions/cq5dam.web.1280.1280.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://science.nasa.gov/photojournal/nasas-curiosity-discovers-a-field-of-martian-polygons/" target="_blank" rel="noopener noreferrer">8. NASA’s Curiosity Discovers a Field of Martian Polygons</a>
+                    </div>
+                    <div class="card-summary">Description NASA’s Curiosity Mars rover captured this 360-degree view of an expanse of terrain covered in surface features called polygons on June 19 and 20, 2026, the 4,930th and 4,931st Martian days, or sols, of the mission. The rover has found polygons several times in the past, but never so many in one place. Across […]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://science.nasa.gov/photojournal/nasas-curiosity-discovers-a-field-of-martian-polygons/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.nasa.gov/wp-content/uploads/2026/07/e1-pia26729-curiosity-discovers-a-field-of-martian-polygons-figure-a.png?resize=768,498" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/nasas-curiosity-mars-rover-discovers-field-of-honeycomb-textures/" target="_blank" rel="noopener noreferrer">9. NASA’s Curiosity Mars Rover Discovers Field of Honeycomb Textures</a>
+                    </div>
+                    <div class="card-summary">As NASA’s Curiosity rover recently began climbing up a Martian valley nicknamed “Valle Grande,” it sent back images that were a familiar sight to mission scientists: honeycomb-like textures called polygonal fractures, each one about 1.5 to 3 inches (4 to 8 centimeters) across. The mission has spotted small patches of these geometric shapes several times [&#8230;]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/missions/mars-science-laboratory/curiosity-rover/nasas-curiosity-mars-rover-discovers-field-of-honeycomb-textures/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/content/dam/science/missions/webb/science/2026/07/STScI-01KVTW3MA3BWZ66MW2C9HG0601.png/jcr:content/renditions/cq5dam.web.1280.1280.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://science.nasa.gov/missions/webb/nasa-webb-explores-family-tree-of-newly-discovered-distant-objects/" target="_blank" rel="noopener noreferrer">10. NASA Webb Explores Family Tree of Newly Discovered Distant Objects</a>
+                    </div>
+                    <div class="card-summary">Since their discovery by NASA’s James Webb Space Telescope in 2022, little red dots (LRDs) have been the subject of great interest to astronomers. Understanding the nature of these extremely distant, compact red sources has been a puzzling scientific endeavor. One popular theory is that little red dots are supermassive black holes known as active […]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://science.nasa.gov/missions/webb/nasa-webb-explores-family-tree-of-newly-discovered-distant-objects/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/bDbEXjSMza29Dk4rWNdEof-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/astronomy/its-going-to-do-things-that-currently-are-impossible-the-roman-space-telescope-nasas-next-great-observatory-is-ready-to-launch-aug-30" target="_blank" rel="noopener noreferrer">11. 'It's going to do things that currently are impossible': The Roman Space Telescope, NASA's next great observatory, is ready to launch Aug. 30</a>
+                    </div>
+                    <div class="card-summary">NASA's Roman Space Telescope is ready to launch on a SpaceX Falcon Heavy rocket on Aug. 30. It'll map the entire sky like never before.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/astronomy/its-going-to-do-things-that-currently-are-impossible-the-roman-space-telescope-nasas-next-great-observatory-is-ready-to-launch-aug-30" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-07-30T05:12:04"></script>
 </body>
 </html>
