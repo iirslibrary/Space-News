@@ -1,22 +1,253 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-08-01T08:16:36">
+<link rel="stylesheet" href="review-styles.css?v=2026-08-01T08:16:36">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: ०१-०८-२०२६ • Date: 01-08-2026 • Time: 13:46 IST • 12 Updates
+    </p>
+    
+    
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://pioneeredge.in/wp-content/uploads/2026/07/Youth-can-take-India-to-zenith-of-space-research-Group-captain-Shukla-780x470.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://pioneeredge.in/youth-can-take-india-to-zenith-of-space-research-group-captain-shukla/" target="_blank" rel="noopener noreferrer">1. Youth can take India to zenith of space research: Group captain Shukla</a>
+                    </div>
+                    <div class="card-summary">PIONEER EDGE NEWS SERVICE/ Dehradun Group captain Shubhanshu Shukla known for the &#8216;Gaganyan mission&#8217; has said that India&#8217;s youth have the potential to take the country to new heights in global space research. He was interacting with the students at the All India Institute of Medical Sciences (AIIMS) Rishikesh on Friday. Shukla motivated the students &#8230;</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://pioneeredge.in/youth-can-take-india-to-zenith-of-space-research-group-captain-shukla/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.isro.gov.in/media_isro/image/index/Latest/vlcsnap_2026_07_07_16h40m14s849.png.webp" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.isro.gov.in/Integrated_Main_Parachute_Air_Drop_Test.html" target="_blank" rel="noopener noreferrer">2. ISRO successfully conducts Integrated Main Parachute Air Drop Test (IMAT) for Gaganyaan Programme - ISRO</a>
+                    </div>
+                    <div class="card-summary">ISRO successfully conducts Integrated Main Parachute Air Drop Test (IMAT) for Gaganyaan Programme&nbsp;&nbsp;ISRO</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.isro.gov.in/Integrated_Main_Parachute_Air_Drop_Test.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cf-images.assettype.com/newindianexpress%2F2026-08-01%2F43m77c2h%2FISRO.jpg?rect=193%2C0%2C1048%2C550&amp;w=1200&amp;ar=40%3A21&amp;auto=format%2Ccompress&amp;ogImage=true&amp;mode=crop&amp;enlarge=true&amp;overlay=false&amp;overlay_position=bottom&amp;overlay_width=100" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.newindianexpress.com/amp/story/states/andhra-pradesh/2026/Aug/01/isro-aims-for-space-station-by-2035-moon-mission-by-2040" target="_blank" rel="noopener noreferrer">3. ISRO aims for space station by 2035, Moon Mission by 2040 - The New Indian Express</a>
+                    </div>
+                    <div class="card-summary">ISRO aims for space station by 2035, Moon Mission by 2040&nbsp;&nbsp;The New Indian Express</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.newindianexpress.com/amp/story/states/andhra-pradesh/2026/Aug/01/isro-aims-for-space-station-by-2035-moon-mission-by-2040" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://th-i.thgim.com/public/incoming/w5801g/article71292160.ece/alternates/LANDSCAPE_1200/VSP01_AU.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.thehindu.com/news/national/andhra-pradesh/isro-calls-for-stronger-academia-industry-partnership-to-power-future-space-missions/article71290722.ece" target="_blank" rel="noopener noreferrer">4. ISRO calls for stronger academia-industry partnership to power future space missions - The Hindu</a>
+                    </div>
+                    <div class="card-summary">ISRO calls for stronger academia-industry partnership to power future space missions&nbsp;&nbsp;The Hindu</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.thehindu.com/news/national/andhra-pradesh/isro-calls-for-stronger-academia-industry-partnership-to-power-future-space-missions/article71290722.ece" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/content/dam/science/cds/ciencia/sistema-solar/2026/eclipse%20lunar.jpg/jcr:content/renditions/cq5dam.web.1280.1280.jpeg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://science.nasa.gov/solar-system/whats-up-august-2026-skywatching-tips-from-nasa/" target="_blank" rel="noopener noreferrer">5. What’s Up: August 2026 Skywatching Tips from NASA</a>
+                    </div>
+                    <div class="card-summary">A solar eclipse, the Perseids, bright Venus after sunset, and a deep partial lunar eclipse highlight August’s skywatching. Skywatching Highlights Transcript A solar eclipse, one of the year’s best meteor showers, Venus at its brightest in the evening sky, and a lunar eclipse to close out the month. That’s “What’s Up” for August. On Aug. […]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://science.nasa.gov/solar-system/whats-up-august-2026-skywatching-tips-from-nasa/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/missions/swift-observatory/misc--spacecraft-art/Swift_in_space_05.jpg?w=1024" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/news-release/nasa-to-host-florida-event-celebrating-american-air-space-leadership/" target="_blank" rel="noopener noreferrer">6. NASA to Host Florida Event Celebrating American Air, Space Leadership</a>
+                    </div>
+                    <div class="card-summary">NASA will hold a news conference at 2:30 p.m. EDT, Friday, Aug. 14, live from the agency’s Kennedy Space Center in Florida, and media and digital creators are invited to attend in person. The announcement, held in the XLV Hangar at the Shuttle Landing Facility, will preview a new event at NASA Kennedy later this [&#8230;]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/news-release/nasa-to-host-florida-event-celebrating-american-air-space-leadership/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.nasa.gov/wp-content/uploads/2026/07/acd25-0156-005.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/directorates/esdmd/artemis-campaign-development-division/human-landing-system-program/nasa-spacex-advance-wind-tunnel-tests-for-starship-rocket/" target="_blank" rel="noopener noreferrer">7. NASA, SpaceX Advance Wind Tunnel Tests for Starship Rocket</a>
+                    </div>
+                    <div class="card-summary">NASA and its industry partners are preparing for next year’s Artemis III demonstration mission by completing new wind tunnel tests on SpaceX’s Super Heavy Version 3 rocket booster. The tests, conducted at NASA’s Ames Research Center in California’s Silicon Valley, focused on better understanding the extreme aerodynamic forces the rocket can experience during re-entry. The [&#82...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/directorates/esdmd/artemis-campaign-development-division/human-landing-system-program/nasa-spacex-advance-wind-tunnel-tests-for-starship-rocket/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.nasa.gov/wp-content/uploads/2026/07/langleyjuly31.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/news-release/nasa-opens-new-flight-dynamics-research-facility-in-virginia/" target="_blank" rel="noopener noreferrer">8. NASA Opens New Flight Dynamics Research Facility in Virginia</a>
+                    </div>
+                    <div class="card-summary">NASA opened its newest wind tunnel, the Flight Dynamics Research Facility, Friday, providing a critical resource for the agency and its partners to test the safety and performance of future generations of aircraft, rockets, and space exploration vehicles. Located at NASA&#8217;s Langley Research Center in Hampton, Virginia, the Flight Dynamics Research Facility will support adv...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/news-release/nasa-opens-new-flight-dynamics-research-facility-in-virginia/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://images-assets.nasa.gov/image/KSC-20260727-PH-JMT01_0001/KSC-20260727-PH-JMT01_0001~large.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/image-article/nasas-roman-telescope-to-carry-1-35-million-names-to-deep-space/" target="_blank" rel="noopener noreferrer">9. NASA’s Roman Telescope to Carry 1.35 Million Names to Deep Space</a>
+                    </div>
+                    <div class="card-summary">On July 27, technicians at NASA’s Kennedy Space Center in Florida installed a memory card containing 1,350,144 names as part of a commemorative plaque on the Nancy Grace Roman Space Telescope. The names were submitted by people globally, including astronauts from Artemis II and Artemis III. The memory card will travel with the Roman observatory [&#8230;]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/image-article/nasas-roman-telescope-to-carry-1-35-million-names-to-deep-space/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/YfW6fJCVksruEfLjjTEn4L-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/spacexs-starship-seen-in-space-by-next-gen-starlink-satellite-video" target="_blank" rel="noopener noreferrer">10. SpaceX's Starship seen in space by next-gen Starlink satellite (video)</a>
+                    </div>
+                    <div class="card-summary">We just got an amazing new view of SpaceX's Starship vehicle in space, thanks to one of the company's Starlink V3 broadband satellites.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/spacexs-starship-seen-in-space-by-next-gen-starlink-satellite-video" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/cY23TEv4F9TZCPnYL3uyx3-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/nasa-is-sending-2-probes-to-the-moon-to-test-complex-three-body-orbits" target="_blank" rel="noopener noreferrer">11. NASA is sending 2 probes to the moon to test complex 'three-body orbits'</a>
+                    </div>
+                    <div class="card-summary">NASA is planning to send two maneuverable probes to lunar orbit in order to learn how spacecraft are affected by the complex gravity environment near the moon.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/nasa-is-sending-2-probes-to-the-moon-to-test-complex-three-body-orbits" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/6Y2Us9ZLtEiEHUXmZpvjtX-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/watch-spacexs-starship-land-at-sea-in-these-stunning-new-videos" target="_blank" rel="noopener noreferrer">12. Watch SpaceX's Starship land at sea in these stunning new videos</a>
+                    </div>
+                    <div class="card-summary">SpaceX used drones and a special 'buoy cam' to capture incredible footage of its Starship upper stage making a soft ocean landing after its 13th test flight on July 24.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/watch-spacexs-starship-land-at-sea-in-these-stunning-new-videos" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-08-01T08:16:36"></script>
 </body>
 </html>
