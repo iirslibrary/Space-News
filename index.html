@@ -1,22 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-08-03T05:59:07">
+<link rel="stylesheet" href="review-styles.css?v=2026-08-03T05:59:07">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: ०३-०८-२०२६ • Date: 03-08-2026 • Time: 11:29 IST • 6 Updates
+    </p>
+    
+    
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://static.toiimg.com/photo/111986287.cms" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://timesofindia.indiatimes.com/india/2-strategic-satellites-sit-at-spaceport-as-govt-nod-eludes-isro/articleshow/132817998.cms" target="_blank" rel="noopener noreferrer">1. 2 strategic satellites sit at spaceport as govt nod eludes Isro - The Times of India</a>
+                    </div>
+                    <div class="card-summary">2 strategic satellites sit at spaceport as govt nod eludes Isro&nbsp;&nbsp;The Times of India</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://timesofindia.indiatimes.com/india/2-strategic-satellites-sit-at-spaceport-as-govt-nod-eludes-isro/articleshow/132817998.cms" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="./assets/ISRO_default.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.png';">
+                    <div class="card-title">
+                        <a href="https://newsonair.gov.in/govt-says-isro-has-developed-operationalised-wide-range-of-space-based-applications-to-benefit-society/" target="_blank" rel="noopener noreferrer">2. Govt says ISRO has developed & operationalised wide range of space-based applications to benefit society - News On AIR</a>
+                    </div>
+                    <div class="card-summary">Govt says ISRO has developed & operationalised wide range of space-based applications to benefit society&nbsp;&nbsp;News On AIR</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://newsonair.gov.in/govt-says-isro-has-developed-operationalised-wide-range-of-space-based-applications-to-benefit-society/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://i.cdn.newsbytesapp.com/images/l271_32441785669796.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.newsbytesapp.com/news/science/skyroot-s-next-big-move-independent-launch-pad/story" target="_blank" rel="noopener noreferrer">3. Skyroot to build its own launch pad after historic mission - NewsBytes</a>
+                    </div>
+                    <div class="card-summary">Skyroot to build its own launch pad after historic mission&nbsp;&nbsp;NewsBytes</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.newsbytesapp.com/news/science/skyroot-s-next-big-move-independent-launch-pad/story" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/9YDWnwFfyHHuaAMFPGVka-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/technology/double-digits-air-launched-talon-a-hypersonic-vehicle-notches-big-flight-milestone" target="_blank" rel="noopener noreferrer">4. Double digits! Air-launched 'Talon A' hypersonic vehicle notches big flight milestone</a>
+                    </div>
+                    <div class="card-summary">Stratolaunch has now conducted more than 10 flights with its Talon-A hypersonic vehicle, an autonomous, air-launched craft that can travel five times the speed of sound.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/technology/double-digits-air-launched-talon-a-hypersonic-vehicle-notches-big-flight-milestone" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/oioWKLAiF9EjTCv7RfUzNP-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/rocket-issue-delays-1st-orbital-rocket-launch-from-the-uk" target="_blank" rel="noopener noreferrer">5. Rocket issue delays 1st orbital rocket launch from the UK</a>
+                    </div>
+                    <div class="card-summary">While testing a rocket on the launch pad at the U.K.'s SaxaVord Spaceport, RFA found 'an issue with the vehicle that requires further investigation.'</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/rocket-issue-delays-1st-orbital-rocket-launch-from-the-uk" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/GuNSrqAa9S2LMepCPP5N4L-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/stargazing/skywatching-kit/celestron-moon-mission-100mm-tabletop-dobsonian-review" target="_blank" rel="noopener noreferrer">6. Celestron Moon Mission 100mm tabletop Dobsonian review</a>
+                    </div>
+                    <div class="card-summary">Celestron’s mini-Dobsonian provides affordable, accessible access to the night sky.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/stargazing/skywatching-kit/celestron-moon-mission-100mm-tabletop-dobsonian-review" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"></div>
+                    </div>
+                </div>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-08-03T05:59:07"></script>
 </body>
 </html>
