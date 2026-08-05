@@ -1063,13 +1063,13 @@ html_body = f"""<!DOCTYPE html>
 <html data-theme="dark">
 <head>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag.js?id=G-YOUR_MEASUREMENT_ID"></script>
+<script async src="https://www.googletagmanager.com/gtag.js?id=G-ZWDCVP74JK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){{dataLayer.push(arguments);}}
   gtag('js', new Date());
 
-  gtag('config', 'G-YOUR_MEASUREMENT_ID');
+  gtag('config', 'G-ZWDCVP74JK');
 </script>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1119,13 +1119,13 @@ holding_screen_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag.js?id=G-YOUR_MEASUREMENT_ID"></script>
+<script async src="https://www.googletagmanager.com/gtag.js?id=G-ZWDCVP74JK"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){{dataLayer.push(arguments);}}
   gtag('js', new Date());
 
-  gtag('config', 'G-YOUR_MEASUREMENT_ID');
+  gtag('config', 'G-ZWDCVP74JK');
 </script>
 
     <meta charset="UTF-8">
