@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag.js?id=G-ZWDCVP74JK"></script>
@@ -11,22 +11,284 @@
   gtag('config', 'G-ZWDCVP74JK');
 </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-08-07T05:40:35">
+<link rel="stylesheet" href="review-styles.css?v=2026-08-07T05:40:35">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: ०७-०८-२०२६ • Date: 07-08-2026 • Time: 11:10 IST • 13 Updates
+    </p>
+    
+    
+    <div class="auth-panel" id="reviewerAccessBox">
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://the-ken.com/wp-content/uploads/2026/08/lede-santhom-1024x576.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://the-ken.com/story/indias-space-college-broke-its-bond-with-isro-not-its-dependence/?utm_source=daily_email&amp;utm_medium=email&amp;utm_campaign=daily_main_crossdiscovery" target="_blank" rel="noopener noreferrer">1. India’s space college broke its bond with ISRO. Not its dependence - The Ken</a>
+                    </div>
+                    <div class="card-summary">India’s space college broke its bond with ISRO. Not its dependence&nbsp;&nbsp;The Ken</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://the-ken.com/story/indias-space-college-broke-its-bond-with-isro-not-its-dependence/?utm_source=daily_email&amp;utm_medium=email&amp;utm_campaign=daily_main_crossdiscovery" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://the-ken.com/story/indias-space-college-broke-its-bond-with-isro-not-its-dependence/?utm_source=daily_email&amp;utm_medium=email&amp;utm_campaign=daily_main_crossdiscovery">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.tribuneindia.com/sortd-service/imaginary/v22-01/jpg/large/high?url=dGhldHJpYnVuZS1zb3J0ZC1wcm8tcHJvZC1zb3J0ZC9tZWRpYTk4YWNjZDUwLTkxZDEtMTFmMS1iNmVmLTk1MTQwZTcyYzNlZi5qcGc=" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://www.tribuneindia.com/news/j-k/isro-expands-satellite-based-services-in-jk/" target="_blank" rel="noopener noreferrer">2. ISRO expands satellite-based services in J&K - The Tribune</a>
+                    </div>
+                    <div class="card-summary">ISRO expands satellite-based services in J&amp;K&nbsp;&nbsp;The Tribune</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.tribuneindia.com/news/j-k/isro-expands-satellite-based-services-in-jk/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.tribuneindia.com/news/j-k/isro-expands-satellite-based-services-in-jk/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://thekashmirhorizon.com/wp-content/uploads/ISRO-Scientist-Delivers-a-special-talk-on-768x387.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://thekashmirhorizon.com/2026/08/07/isro-rolled-out-multiple-space-technology-projects-in-jk-over-five-years-centre/" target="_blank" rel="noopener noreferrer">3. ISRO rolled out multiple space technology projects in J&K over five years: Centre - thekashmirhorizon.com</a>
+                    </div>
+                    <div class="card-summary">ISRO rolled out multiple space technology projects in J&amp;K over five years: Centre&nbsp;&nbsp;thekashmirhorizon.com</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://thekashmirhorizon.com/2026/08/07/isro-rolled-out-multiple-space-technology-projects-in-jk-over-five-years-centre/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://thekashmirhorizon.com/2026/08/07/isro-rolled-out-multiple-space-technology-projects-in-jk-over-five-years-centre/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://kashmirlife.net/wp-content/uploads/2018/07/Cable-Network.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://kashmirlife.net/isro-expands-satellite-based-disaster-management-across-jammu-kashmir-446739/" target="_blank" rel="noopener noreferrer">4. ISRO Expands Satellite-Based Disaster Management Across Jammu Kashmir - Kashmir Life</a>
+                    </div>
+                    <div class="card-summary">ISRO Expands Satellite-Based Disaster Management Across Jammu Kashmir&nbsp;&nbsp;Kashmir Life</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://kashmirlife.net/isro-expands-satellite-based-disaster-management-across-jammu-kashmir-446739/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://kashmirlife.net/isro-expands-satellite-based-disaster-management-across-jammu-kashmir-446739/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cf-img-a-in.tosshub.com/lingo/itne/images/story/202608/6a743d0fa3f6e-isro-provided-33-flood-inundation-maps-to-assam-this-monsoon-to-aid-relief-operations-centre-065138418-16x9.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://www.indiatodayne.in/amp/assam/story/isro-provided-33-flood-inundation-maps-to-assam-this-monsoon-to-aid-relief-operations-centre-1434331-2026-08-06" target="_blank" rel="noopener noreferrer">5. ISRO provided 33 flood inundation maps to Assam this monsoon to aid relief operations: Centre - India Today NE</a>
+                    </div>
+                    <div class="card-summary">ISRO provided 33 flood inundation maps to Assam this monsoon to aid relief operations: Centre&nbsp;&nbsp;India Today NE</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.indiatodayne.in/amp/assam/story/isro-provided-33-flood-inundation-maps-to-assam-this-monsoon-to-aid-relief-operations-centre-1434331-2026-08-06" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.indiatodayne.in/amp/assam/story/isro-provided-33-flood-inundation-maps-to-assam-this-monsoon-to-aid-relief-operations-centre-1434331-2026-08-06">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia26/pia26760/PIA26760.jpg/jcr:content/renditions/cq5dam.web.1280.1280.jpeg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://science.nasa.gov/photojournal/nasas-skyfall-helicopters-at-work-artists-concept/" target="_blank" rel="noopener noreferrer">6. NASA’s SkyFall Helicopters at Work (Artist’s Concept)</a>
+                    </div>
+                    <div class="card-summary">Description This artist’s concept depicts NASA’s three SkyFall Mars helicopters collecting data while flying over the surface of the Red Planet. The green frequency waves emanating from the helicopters’ large antennas depict collection of subsurface radar data. The red beams depict collect near-infrared imagery data from regolith (crushed rock and dust) and other surface featur...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://science.nasa.gov/photojournal/nasas-skyfall-helicopters-at-work-artists-concept/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://science.nasa.gov/photojournal/nasas-skyfall-helicopters-at-work-artists-concept/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/content/dam/science/psd/photojournal/pia/pia26/pia26759/PIA26759.jpg/jcr:content/renditions/cq5dam.web.1280.1280.jpeg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://science.nasa.gov/photojournal/antenna-testing-for-nasas-skyfall-mission/" target="_blank" rel="noopener noreferrer">7. Antenna Testing for NASA’s SkyFall Mission</a>
+                    </div>
+                    <div class="card-summary">Description SkyFall ground-penetrating radar engineer Maya Román connects a coaxial cable to a test antenna in the Environmental Test Lab’s electromagnetic interference testing chamber at NASA’s Jet Propulsion Laboratory in Southern California. The antenna was pointed up during test to minimize reflections and interferences with the antenna pattern during the measurement. Equip...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://science.nasa.gov/photojournal/antenna-testing-for-nasas-skyfall-mission/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://science.nasa.gov/photojournal/antenna-testing-for-nasas-skyfall-mission/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://assets.science.nasa.gov/dynamicimage/assets/science/cds/ciencia/sistema-solar/2026/eclipse%20lunar.jpg?w=1024" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/missions/artemis/i-am-artemis/i-am-artemis-tom-percy/" target="_blank" rel="noopener noreferrer">8. I Am Artemis: Tom Percy</a>
+                    </div>
+                    <div class="card-summary">As NASA sets its sights on long-term exploration of the Moon and Mars, the agency is increasing the cadence of its Artemis missions. Helping bring these plans to fruition is Tom Percy, manager of systems engineering and integration for NASA’s Human Landing System Program. Percy serves as a focal point in working with providers SpaceX [&#8230;]</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/missions/artemis/i-am-artemis/i-am-artemis-tom-percy/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.nasa.gov/missions/artemis/i-am-artemis/i-am-artemis-tom-percy/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.nasa.gov/wp-content/uploads/2023/02/gettyimages-1207192222.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.nasa.gov/organizations/ogc/job-opportunities-nasa-office-of-the-general-counsel/" target="_blank" rel="noopener noreferrer">9. JOB OPPORTUNITIES: NASA OFFICE OF THE GENERAL COUNSEL</a>
+                    </div>
+                    <div class="card-summary"></div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.nasa.gov/organizations/ogc/job-opportunities-nasa-office-of-the-general-counsel/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.nasa.gov/organizations/ogc/job-opportunities-nasa-office-of-the-general-counsel/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/intWgzLxHinP4DegP2w3hS-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/international-space-station/1-more-step-nasa-astronauts-conduct-6-5-hour-spacewalk-to-prep-iss-for-solar-array-upgrade" target="_blank" rel="noopener noreferrer">10. 'One more step': NASA astronauts conduct 6.5-hour spacewalk to prep ISS for solar array upgrade</a>
+                    </div>
+                    <div class="card-summary">Jessica Meir and Anil Menon completed a 6.5-hour spacewalk to install solar array mounting hardware outside of the International Space Station on Thursday, Aug. 6, 2026.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/international-space-station/1-more-step-nasa-astronauts-conduct-6-5-hour-spacewalk-to-prep-iss-for-solar-array-upgrade" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/international-space-station/1-more-step-nasa-astronauts-conduct-6-5-hour-spacewalk-to-prep-iss-for-solar-array-upgrade">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/L8gLoNGc6GGoDUBkTvDj27-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/rocket-lab-launches-japanese-earth-observing-satellite-after-5-week-delay-video-photos" target="_blank" rel="noopener noreferrer">11. Rocket Lab launches Japanese Earth-observing satellite after 5-week delay (video, photos)</a>
+                    </div>
+                    <div class="card-summary">Rocket Lab launched its eighth mission for the Japanese Earth-imaging company iQPS on Thursday morning (Aug. 6), five weeks later than originally planned.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/rocket-lab-launches-japanese-earth-observing-satellite-after-5-week-delay-video-photos" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/launches-spacecraft/rocket-lab-launches-japanese-earth-observing-satellite-after-5-week-delay-video-photos">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/EiFsUah8tAvuzZqzwiuaTF-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/astronomy/moon/spacex-rockets-impact-crater-on-the-moon-spied-by-korean-lunar-orbiter-photos" target="_blank" rel="noopener noreferrer">12. SpaceX rocket's impact crater on the moon spied by Korean lunar orbiter (photos)</a>
+                    </div>
+                    <div class="card-summary">South Korea's Danuri lunar orbiter has spied the crater that a SpaceX rocket blasted out when it slammed into the moon on Wednesday morning (Aug. 5).</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/astronomy/moon/spacex-rockets-impact-crater-on-the-moon-spied-by-korean-lunar-orbiter-photos" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/astronomy/moon/spacex-rockets-impact-crater-on-the-moon-spied-by-korean-lunar-orbiter-photos">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/xDe5VhDVboNSqS9DFUN7FZ-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/on-this-day-in-space-august-6-2026" target="_blank" rel="noopener noreferrer">13. On this day in space! Aug. 6, 2012: NASA lands huge Curiosity rover on Mars with a rocket-powered sky crane</a>
+                    </div>
+                    <div class="card-summary">On Aug. 6, 2012, NASA's Curiosity rover successfully touched down on the Martian surface in a way never attempted before: a rocket-powered sky crane. Here's why it mattered.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/on-this-day-in-space-august-6-2026" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/on-this-day-in-space-august-6-2026">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="bottom-actions">
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">Submit Flagged Articles</button>
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">Publish</button>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-08-07T05:40:35"></script>
 </body>
 </html>
