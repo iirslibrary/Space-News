@@ -536,9 +536,9 @@ def make_articles_html(news_list, is_finalized=False):
     html_out = ""
     
     # Define fallback image paths outside the loop for efficiency
-    isro_fallback = "/assets/ISRO_default.png"
-    nasa_fallback = "/assets/NASA_default.png"
-    general_fallback = "/assets/general_default.png"
+    isro_fallback = "./assets/ISRO_default.webp"
+    nasa_fallback = "./assets/NASA_default.jpg"
+    general_fallback = "./assets/general_default.png"
     
     for i, item in enumerate(news_list, 1):
         article_url = resolve_final_article_url(normalize_text(item.get("link", "")))
