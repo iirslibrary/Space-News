@@ -4,7 +4,7 @@
     "link": "https://newsonair.gov.in/isro-successfully-conducts-2nd-integrated-air-drop-test-for-gaganyaan-mission/",
     "source": "\"ISRO OR NRSC OR IIRS after:2026-08-06\" - Google News",
     "summary": "ISRO successfully conducts 2nd integrated air drop test for Gaganyaan mission&nbsp;&nbsp;newsonair.gov.in",
-    "image": null,
+    "image": "./assets/ISRO_default.webp",
     "ai_label": "Highly Relevant",
     "category": "🇮🇳 National Updates"
   },
@@ -40,7 +40,7 @@
     "link": "https://kashmirlife.net/isro-expands-satellite-based-disaster-management-across-jammu-kashmir-446739/",
     "source": "\"ISRO OR NRSC OR IIRS after:2026-08-06\" - Google News",
     "summary": "ISRO Expands Satellite-Based Disaster Management Across Jammu Kashmir&nbsp;&nbsp;Kashmir Life",
-    "image": null,
+    "image": "https://kashmirlife.net/wp-content/uploads/2018/07/Cable-Network.jpg",
     "ai_label": "Highly Relevant",
     "category": "🇮🇳 National Updates"
   },
@@ -85,7 +85,7 @@
     "link": "https://www.nasa.gov/organizations/ogc/job-opportunities-nasa-office-of-the-general-counsel/",
     "source": "NASA",
     "summary": "",
-    "image": null,
+    "image": "https://www.nasa.gov/wp-content/uploads/2023/02/gettyimages-1207192222.jpg",
     "ai_label": "Not Relevant",
     "category": "🌌 International Updates"
   },
