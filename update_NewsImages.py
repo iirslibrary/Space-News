@@ -21,8 +21,8 @@ def update_snapshot_images():
   with open(SNAPSHOT_FILE, "r", encoding="utf-8") as f:
     news_list = json.load(f)
 
-  isro_fallback = "./assets/ISRO_default.png"
-  nasa_fallback = "./assets/NASA_default.png"
+  isro_fallback = "./assets/ISRO_default.webp"
+  nasa_fallback = "./assets/NASA_default.jpg"
   general_fallback = "./assets/general_default.png"
 
   headers = {
