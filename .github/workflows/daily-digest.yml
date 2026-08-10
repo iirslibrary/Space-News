@@ -51,9 +51,6 @@ jobs:
           WORKFLOW_RUN_MODE: ${{ github.event_name == 'schedule' && 'draft' || inputs.run_mode }}
         run: python iirs_space_digest_git.py
 
-      - name: 🖼️ Run Image Updater Script
-        run: python update_NewsImages.py
-
       - name: 📂 Show generated files
         run: |
           ls -lah
@@ -84,7 +81,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs with resolved images"
+          git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs"
           git pull --rebase origin main || (git rebase --abort && git pull --rebase origin main)
           git push
 
