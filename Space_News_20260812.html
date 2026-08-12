@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag.js?id=G-ZWDCVP74JK"></script>
@@ -11,22 +11,216 @@
   gtag('config', 'G-ZWDCVP74JK');
 </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-08-12T04:08:46">
+<link rel="stylesheet" href="review-styles.css?v=2026-08-12T04:08:46">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: १२-०८-२०२६ • Date: 12-08-2026 • Time: 09:38 IST • 9 Updates
+    </p>
+    
+    
+    <div class="auth-panel" id="reviewerAccessBox">
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.hindustantimes.com/static/images/subc-pop-img.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://www.hindustantimes.com/india-news/deepen-india-us-space-partnership-nasa-invites-isro-to-join-moon-base-project-under-artemis-accords-101786495739711.html" target="_blank" rel="noopener noreferrer">1. 'Deepen India-US space partnership': NASA invites ISRO to join Moon Base project under Artemis Accords | India News - Hindustan Times</a>
+                    </div>
+                    <div class="card-summary">'Deepen India-US space partnership': NASA invites ISRO to join Moon Base project under Artemis Accords | India News&nbsp;&nbsp;Hindustan Times</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.hindustantimes.com/india-news/deepen-india-us-space-partnership-nasa-invites-isro-to-join-moon-base-project-under-artemis-accords-101786495739711.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.hindustantimes.com/india-news/deepen-india-us-space-partnership-nasa-invites-isro-to-join-moon-base-project-under-artemis-accords-101786495739711.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/RL9uWCPQLK68orP9ZuNf9E-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/spacex-could-make-usd500-billion-in-2027-elon-musk-says" target="_blank" rel="noopener noreferrer">2. SpaceX could make $500 billion in 2028, Elon Musk says</a>
+                    </div>
+                    <div class="card-summary">SpaceX started out as a launch company, but it has been transitioning into an artificial intelligence outfit —one that's poised to make huge profits in the coming years, Elon Musk says.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/spacex-could-make-usd500-billion-in-2027-elon-musk-says" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/spacex-could-make-usd500-billion-in-2027-elon-musk-says">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/C7CT7UgVTkQECLTTYB9rC3-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-group-10-19-launch-asog" target="_blank" rel="noopener noreferrer">3. SpaceX launches 29 Starlink satellites to orbit from Florida (video, photos)</a>
+                    </div>
+                    <div class="card-summary">SpaceX launched 29 more of its Starlink internet satellites to orbit from Florida's Space Coast today (Aug. 11).</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-group-10-19-launch-asog" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-group-10-19-launch-asog">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/L7Y9cgR3RY6VU2vsUsqSv7-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/stargazing/solar-eclipses/nasa-will-chase-the-aug-12-total-solar-eclipse-with-balloons-and-a-high-altitude-jet" target="_blank" rel="noopener noreferrer">4. NASA will chase the Aug. 12 total solar eclipse with balloons and a high-altitude jet</a>
+                    </div>
+                    <div class="card-summary">"Scientists can study the sun's corona in a way we can't from anywhere else in the solar system."</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/stargazing/solar-eclipses/nasa-will-chase-the-aug-12-total-solar-eclipse-with-balloons-and-a-high-altitude-jet" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/stargazing/solar-eclipses/nasa-will-chase-the-aug-12-total-solar-eclipse-with-balloons-and-a-high-altitude-jet">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/Y2b9XP3PZ2w8rCDW9psmjS-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/spacex-wants-to-put-1-million-ai-satellites-in-orbit-what-would-that-do-to-earths-climate" target="_blank" rel="noopener noreferrer">5. SpaceX wants to put 1 million AI satellites in orbit. What would that do to Earth's climate?</a>
+                    </div>
+                    <div class="card-summary">Operating a million or more data centers in space would mean a massive increase in air pollution from rocket launches and concentrations of toxic ash from reentering satellites.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/spacex-wants-to-put-1-million-ai-satellites-in-orbit-what-would-that-do-to-earths-climate" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/launches-spacecraft/spacex-wants-to-put-1-million-ai-satellites-in-orbit-what-would-that-do-to-earths-climate">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="./assets/general_default.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://spaceflightnow.com/2026/08/11/live-coverage-spacex-to-launch-24-starlink-satellites-on-falcon-9-rocket-from-vandenberg-sfb-14/" target="_blank" rel="noopener noreferrer">6. Live coverage: SpaceX to launch 24 Starlink satellites on Falcon 9 rocket from Vandenberg SFB</a>
+                    </div>
+                    <div class="card-summary">The Starlink 17-49 mission will be the 73rd mission flying SpaceX’s broadband internet satellites to orbit. Liftoff from pad 4E at Vandenberg Space Force Base is scheduled for 9:46 p.m. PDT (12:46 a.m. EDT / 0446 UTC).</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://spaceflightnow.com/2026/08/11/live-coverage-spacex-to-launch-24-starlink-satellites-on-falcon-9-rocket-from-vandenberg-sfb-14/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://spaceflightnow.com/2026/08/11/live-coverage-spacex-to-launch-24-starlink-satellites-on-falcon-9-rocket-from-vandenberg-sfb-14/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2026/the-escape-mission-wil.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://phys.org/news/2026-08-mission-evolution-exoplanet-atmospheres.html" target="_blank" rel="noopener noreferrer">7. The ESCAPE mission will study the evolution of exoplanet atmospheres</a>
+                    </div>
+                    <div class="card-summary">The habitable zone concept is useful for understanding which worlds might, possibly, maybe, be habitable. It highlights exoplanets at the right distances from their stars for liquid water to potentially exist on their surfaces. But that alone can't determine habitability.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://phys.org/news/2026-08-mission-evolution-exoplanet-atmospheres.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://phys.org/news/2026-08-mission-evolution-exoplanet-atmospheres.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2026/a-smarter-way-to-track.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://phys.org/news/2026-08-smarter-track-satellites-earth-orbit.html" target="_blank" rel="noopener noreferrer">8. A smarter way to track satellites beyond Earth's orbit</a>
+                    </div>
+                    <div class="card-summary">Most current space activities operate close to Earth in what is called near–Earth orbit. However, as more satellites and other infrastructure begin to extend beyond that region, maintaining situational awareness of those objects will be crucial.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://phys.org/news/2026-08-smarter-track-satellites-earth-orbit.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://phys.org/news/2026-08-smarter-track-satellites-earth-orbit.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="./assets/general_default.png" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://interestingengineering.com/ai-robotics/nvidia-nemotron-35-lightning-autonomous-agents" target="_blank" rel="noopener noreferrer">9. NVIDIA launches Nemotron 3.5 Lightning to make repetitive agent tasks up to 4x faster</a>
+                    </div>
+                    <div class="card-summary">NVIDIA has launched a smaller open model designed to handle the repetitive, high-volume tasks that...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://interestingengineering.com/ai-robotics/nvidia-nemotron-35-lightning-autonomous-agents" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://interestingengineering.com/ai-robotics/nvidia-nemotron-35-lightning-autonomous-agents">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="bottom-actions">
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">Submit Flagged Articles</button>
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">Publish</button>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-08-12T04:08:46"></script>
 </body>
 </html>
