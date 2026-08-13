@@ -54,28 +54,29 @@ async def main():
 
     updated_count = 0
 
-    for item in news_data:
+    for index, item in enumerate(news_data):
+        article_url = item.get('link')
         current_image = item.get('image')
         
-        # Check if image is missing, null, or empty
-        if not current_image or current_image == "null" or current_image == "":
-            article_url = item.get('link')
+        if article_url:
+            print(f"\n[Agent Working] Inspecting article {index + 1} of {len(news_data)}: {item.get('title')}")
+            print(f"Target Link: {article_url}")
             
-            if article_url:
-                print(f"\n[Agent Working] Inspecting article: {item.get('title')}")
-                print(f"Target Link: {article_url}")
+            try:
+                img_url = await find_image_with_browser_agent(article_url)
                 
-                try:
-                    img_url = await find_image_with_browser_agent(article_url)
-                    
-                    if img_url and img_url.startswith('http'):
+                if img_url and img_url.startswith('http'):
+                    # Update if the image is different or previously null/missing
+                    if current_image != img_url:
                         item['image'] = img_url
                         updated_count += 1
-                        print(f"[Success] Agent extracted image -> {img_url}")
+                        print(f"[Success] Agent extracted/updated image -> {img_url}")
                     else:
-                        print("[Warning] Agent could not locate a clean image link.")
-                except Exception as e:
-                    print(f"[Error] Agent failed: {e}")
+                        print("[Info] Image is already up to date.")
+                else:
+                    print("[Warning] Agent could not locate a clean image link.")
+            except Exception as e:
+                print(f"[Error] Agent failed: {e}")
 
     # Write changes back to the snapshot JSON file
     if updated_count > 0:
@@ -83,7 +84,7 @@ async def main():
             json.dump(news_data, f, indent=2, ensure_ascii=False)
         print(f"\nSuccessfully updated {updated_count} image(s) in {json_path}!")
     else:
-        print("\nNo updates were applied.")
+        print("\nNo updates were applied. All images were already current.")
 
 if __name__ == '__main__':
     asyncio.run(main())
