@@ -26,10 +26,27 @@ async def find_image_with_browser_agent(article_url):
     return None
 
 async def main():
-    json_path = 'news.json'
+    snapshots_dir = 'snapshots'
     
+    if not os.path.exists(snapshots_dir):
+        print("❌ 'snapshots' directory not found.")
+        return
+
+    # Automatically grab the most recently modified JSON file in the snapshots folder or use SNAPSHOT_DATE env
+    snapshot_date = os.environ.get('SNAPSHOT_DATE', '').strip()
+    if snapshot_date:
+        json_path = os.path.join(snapshots_dir, f"{snapshot_date}.json")
+    else:
+        json_files = [os.path.join(snapshots_dir, f) for f in os.listdir(snapshots_dir) if f.endswith('.json')]
+        if not json_files:
+            print("❌ No JSON snapshot files found in the snapshots directory.")
+            return
+        json_path = max(json_files, key=os.path.getmtime)
+
+    print(f"🎯 Targeting snapshot file: {json_path}")
+
     if not os.path.exists(json_path):
-        print("news.json not found.")
+        print(f"❌ Snapshot file {json_path} not found.")
         return
 
     with open(json_path, 'r', encoding='utf-8') as f:
@@ -60,7 +77,7 @@ async def main():
                 except Exception as e:
                     print(f"[Error] Agent failed: {e}")
 
-    # Write changes back to the JSON file
+    # Write changes back to the snapshot JSON file
     if updated_count > 0:
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(news_data, f, indent=2, ensure_ascii=False)
