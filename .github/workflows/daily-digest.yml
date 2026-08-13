@@ -44,12 +44,20 @@ jobs:
       - name: 📦 Install all dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests
+          pip install feedparser python-docx googlenewsdecoder newspaper3k lxml_html_clean beautifulsoup4 requests browser-use langchain-google-genai nest-asyncio
+
+      - name: 🌐 Install Playwright system browsers
+        run: python -m playwright install --with-deps chromium
 
       - name: 📰 Generate HTML + DOCX daily newsletter
         env:
           WORKFLOW_RUN_MODE: ${{ github.event_name == 'schedule' && 'draft' || inputs.run_mode }}
         run: python iirs_space_digest_git.py
+
+      - name: 🤖 Run AI Browser Agent to Fix Missing Images
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python update_NewsImages.py
 
       - name: 📂 Show generated files
         run: |
@@ -81,7 +89,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Update daily snapshot and digest outputs"
+          git diff --cached --quiet || git commit -m "Update daily snapshot, digest outputs, and AI-fixed images"
           git pull --rebase origin main || (git rebase --abort && git pull --rebase origin main)
           git push
 
