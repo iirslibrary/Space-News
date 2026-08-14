@@ -1,6 +1,3 @@
-import { OAuth2Client } from 'google-auth-library';
-const client = new OAuth2Client();
-
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'https://iirslibrary.github.io');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -11,29 +8,12 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const authHeader = req.headers.authorization || '';
-        if (!authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ error: 'Unauthorized: Missing token' });
-        }
-
-        const idToken = authHeader.split(' ')[1];
-        const ticket = await client.verifyIdToken({
-            idToken,
-            audience: process.env.GOOGLE_CLIENT_ID
-        });
-        const payload = ticket.getPayload();
-
-        // Strict Account Enforcement
-        if (!payload || payload.email.toLowerCase() !== 'iirslibrary@gmail.com') {
-            return res.status(403).json({ error: 'Forbidden: Only iirslibrary@gmail.com can execute this.' });
-        }
-
         const { fromDate, toDate } = req.body || {};
         if (!fromDate || !toDate) {
             return res.status(400).json({ error: 'Missing fromDate or toDate' });
         }
 
-        // Trigger GitHub Workflow
+        // Trigger GitHub Workflow directly without authentication validation
         const githubRes = await fetch('https://api.github.com/repos/iirslibrary/Space-News/actions/workflows/sankalan.yml/dispatches', {
             method: 'POST',
             headers: {
