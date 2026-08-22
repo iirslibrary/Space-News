@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag.js?id=G-ZWDCVP74JK"></script>
@@ -11,22 +11,233 @@
   gtag('config', 'G-ZWDCVP74JK');
 </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-08-22T15:22:52">
+<link rel="stylesheet" href="review-styles.css?v=2026-08-22T15:22:52">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: २२-०८-२०२६ • Date: 22-08-2026 • Time: 20:52 IST • 10 Updates
+    </p>
+    
+    
+    <div class="auth-panel" id="reviewerAccessBox">
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202608/lvm-3-cms-03-launch-041804117-16x9.jpg?VersionId=b6.W87iQSmL6Zd8EDiJ3ZqeAgfeK6Toj" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://www.indiatoday.in/science/story/isro-will-not-make-any-launch-vehicle-all-tech-to-be-handed-to-private-sector-2976849-2026-08-21" target="_blank" rel="noopener noreferrer">1. Isro will not make any launch vehicle, all tech to be handed to private sector - India Today</a>
+                    </div>
+                    <div class="card-summary">Isro will not make any launch vehicle, all tech to be handed to private sector&nbsp;&nbsp;India Today</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.indiatoday.in/science/story/isro-will-not-make-any-launch-vehicle-all-tech-to-be-handed-to-private-sector-2976849-2026-08-21" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.indiatoday.in/science/story/isro-will-not-make-any-launch-vehicle-all-tech-to-be-handed-to-private-sector-2976849-2026-08-21">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://img.manoramayearbook.in/content/dam/yearbook/learn/current-affairs/india/images/2026/3/24/rbi-24.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://www.manoramayearbook.in/current-affairs/india/2026/08/21/rbi-central-board-of-directors-somanath.html" target="_blank" rel="noopener noreferrer">2. Former ISRO chairman Somanath appointed to Central Board of Directors of RBI - Manorama Yearbook</a>
+                    </div>
+                    <div class="card-summary">Former ISRO chairman Somanath appointed to Central Board of Directors of RBI&nbsp;&nbsp;Manorama Yearbook</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.manoramayearbook.in/current-affairs/india/2026/08/21/rbi-central-board-of-directors-somanath.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.manoramayearbook.in/current-affairs/india/2026/08/21/rbi-central-board-of-directors-somanath.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://organiser.org/wp-content/uploads/2026/08/untitled-141-750x394.webp" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://organiser.org/2026/08/21/376288/bharat/explainer-isros-ss1-upgrade-set-to-supercharge-indias-small-satellite-launch-vehicle/" target="_blank" rel="noopener noreferrer">3. Explainer: ISRO’s SS1 upgrade set to supercharge India’s small satellite launch vehicle - organiser.org</a>
+                    </div>
+                    <div class="card-summary">Explainer: ISRO’s SS1 upgrade set to supercharge India’s small satellite launch vehicle&nbsp;&nbsp;organiser.org</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://organiser.org/2026/08/21/376288/bharat/explainer-isros-ss1-upgrade-set-to-supercharge-indias-small-satellite-launch-vehicle/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://organiser.org/2026/08/21/376288/bharat/explainer-isros-ss1-upgrade-set-to-supercharge-indias-small-satellite-launch-vehicle/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/P75y7FqGqB9aSePBGFZqJH-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/trump-signs-new-national-space-policy-to-enable-1-000-us-rocket-launches-per-year" target="_blank" rel="noopener noreferrer">4. Trump signs new national space policy to enable 1,000 US rocket launches per year</a>
+                    </div>
+                    <div class="card-summary">The United States is updating its approach to managing spaceflights and reentries, with the goal of expanding the nation's capabilities to support more than 1,000 rocket launches per year by 2030.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/trump-signs-new-national-space-policy-to-enable-1-000-us-rocket-launches-per-year" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/trump-signs-new-national-space-policy-to-enable-1-000-us-rocket-launches-per-year">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/PaSCzFdpMCcU4U2mw6DXhU-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/artemis/trump-to-award-nasas-artemis-ii-astronauts-the-congressional-space-medal-of-honor" target="_blank" rel="noopener noreferrer">5. Trump to award NASA's Artemis II astronauts the Congressional Space Medal of Honor</a>
+                    </div>
+                    <div class="card-summary">The NASA astronauts who flew around the moon on the Artemis II mission will receive the Congressional Space Medal of Honor next Friday (Aug. 28).</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/artemis/trump-to-award-nasas-artemis-ii-astronauts-the-congressional-space-medal-of-honor" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/artemis/trump-to-award-nasas-artemis-ii-astronauts-the-congressional-space-medal-of-honor">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/ftDXUJyfR54cZnfALyAP6b-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/astronomy/mars/japan-unveils-mars-moon-sample-return-spacecraft-ahead-of-oct-19-launch-photos" target="_blank" rel="noopener noreferrer">6. Japan unveils Mars moon sample-return spacecraft ahead of Oct. 19 launch (photos)</a>
+                    </div>
+                    <div class="card-summary">Japan recently gave the world a look at the spacecraft of its MMX mission, which will launch on Oct. 19 to grab pieces of the Mars moon Phobos and haul them back to Earth.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/astronomy/mars/japan-unveils-mars-moon-sample-return-spacecraft-ahead-of-oct-19-launch-photos" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/astronomy/mars/japan-unveils-mars-moon-sample-return-spacecraft-ahead-of-oct-19-launch-photos">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/Y8CYyMQEBcvCKfC3NsiPyZ-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-launch-group-10-39-falcon-9-asog" target="_blank" rel="noopener noreferrer">7. SpaceX launches 29 Starlink satellites, lands rocket on ship at sea (video, photos)</a>
+                    </div>
+                    <div class="card-summary">SpaceX launched yet another Starlink mission today (Aug. 21), sending 29 more of the broadband satellites to orbit from Florida's Space Coast.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-launch-group-10-39-falcon-9-asog" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-launch-group-10-39-falcon-9-asog">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://spaceflightnow.com/wp-content/uploads/2026/04/20260414-Falcon-9-File.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://spaceflightnow.com/2026/08/21/live-coverage-spacex-to-launch-100th-orbital-mission-of-2026/" target="_blank" rel="noopener noreferrer">8. Live coverage: SpaceX to launch 100th orbital mission of 2026</a>
+                    </div>
+                    <div class="card-summary">The Starlink 15-20 mission represents the 99th Falcon 9 rocket launch of the year. Liftoff from pad 4 East is scheduled for 12:25 a.m. PDT (3:25 a.m. EDT / 0725 UTC).</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://spaceflightnow.com/2026/08/21/live-coverage-spacex-to-launch-100th-orbital-mission-of-2026/" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://spaceflightnow.com/2026/08/21/live-coverage-spacex-to-launch-100th-orbital-mission-of-2026/">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2026/interplanetary-spacecr-1.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://phys.org/news/2026-08-interplanetary-spacecraft-capture-coronal-mass.html" target="_blank" rel="noopener noreferrer">9. Interplanetary spacecraft capture a coronal mass ejection component hidden from Earth</a>
+                    </div>
+                    <div class="card-summary">During a coronal mass ejection (CME), the sun hurls billions of tons of magnetized plasma into space. These eruptions are among the most powerful events in the solar system, and when they are aimed toward Earth, they can seriously threaten the satellites and power grids we depend on. For now, it remains notoriously difficult to predict how these eruptions evolve over time—and, ...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://phys.org/news/2026-08-interplanetary-spacecraft-capture-coronal-mass.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://phys.org/news/2026-08-interplanetary-spacecraft-capture-coronal-mass.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://scx1.b-cdn.net/csz/news/tmb/2026/china-is-launching-a-m.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://phys.org/news/2026-08-china-moon-mission-ice.html" target="_blank" rel="noopener noreferrer">10. China is launching a moon mission to find water ice</a>
+                    </div>
+                    <div class="card-summary">We've known for nearly two decades that some form of water exists on the moon. What we still don't know is exactly how much accessible water ice lies inside permanently shadowed craters, how deeply it is buried or what form it takes.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://phys.org/news/2026-08-china-moon-mission-ice.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-low">Not Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://phys.org/news/2026-08-china-moon-mission-ice.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="bottom-actions">
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">Submit Flagged Articles</button>
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">Publish</button>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-08-22T15:22:52"></script>
 </body>
 </html>
