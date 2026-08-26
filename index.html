@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark">
 <head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag.js?id=G-ZWDCVP74JK"></script>
@@ -11,22 +11,250 @@
   gtag('config', 'G-ZWDCVP74JK');
 </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space News Digest - Coming Shortly</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f8fafc; color: #334155; text-align: center; }
-        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); max-width: 480px; border-top: 4px solid #3b82f6; }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a; }
-        p { color: #64748b; font-size: 1rem; line-height: 1.6; margin-top: 15px; }
-        .highlight-msg { font-weight: bold; color: #1e293b; margin-top: 20px; }
-    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="build-version" content="2026-08-26T05:16:07">
+<link rel="stylesheet" href="review-styles.css?v=2026-08-26T05:16:07">
 </head>
 <body>
-    <div class="card">
-        <h1>📡 Today's news is coming shortly!</h1>
-        <p>Please check back later!</p>
-        <p class="highlight-msg">Thanks for cooperation</p>
+<button class="theme-toggle" id="themeToggle" title="Toggle Theme">☀️</button>
+<div class="scroll-container">
+    <div class="page-header">
+        <img src="./assets/iirs.png" alt="IIRS Logo" class="top-logo left-logo">
+        <div class="header-title-wrap">
+            <h2>🌌 अंतरिक्ष समाचार <span class="title-separator">|</span> <span class="title-eng">Space News</span></h2>
+        </div>
+        <img src="./assets/ISRO-Color.svg" alt="ISRO Logo" class="top-logo right-logo">
     </div>
+    <p style="text-align:center; color:var(--text-secondary); margin-top:12px; margin-bottom:40px;">
+        दिनांक: २६-०८-२०२६ • Date: 26-08-2026 • Time: 10:46 IST • 11 Updates
+    </p>
+    
+    
+    <div class="auth-panel" id="reviewerAccessBox">
+        <div class="auth-panel-title">Reviewer Access</div>
+        <div class="google-btn-row">
+            <div id="googleSignInBtn"></div>
+        </div>
+        <div id="signedInUser" style="display:none;"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+
+    <div class="ai-toggle-wrap" style="margin-top: 15px; text-align: center;">
+        <button type="button" class="ai-toggle-btn" onclick="toggleAIRelevance()">
+            Show AI Relevance
+        </button>
+    </div>
+    
+    
+    
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://developingtelecoms.com/images/stories/Places/800x600/800x600/Delhi_Akshardham_600.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://developingtelecoms.com/telecom-technology/satellite-communications-networks/20729-isro-changes-tack-on-launch-vehicle-manufacture.html" target="_blank" rel="noopener noreferrer">1. ISRO changes tack on launch vehicle manufacture - Developing Telecoms</a>
+                    </div>
+                    <div class="card-summary">ISRO changes tack on launch vehicle manufacture&nbsp;&nbsp;Developing Telecoms</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://developingtelecoms.com/telecom-technology/satellite-communications-networks/20729-isro-changes-tack-on-launch-vehicle-manufacture.html" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://developingtelecoms.com/telecom-technology/satellite-communications-networks/20729-isro-changes-tack-on-launch-vehicle-manufacture.html">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://d3lzcn6mbbadaf.cloudfront.net/media/details/ANI-20260825093105.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://www.aninews.in/news/business/after-centre-rejig-anand-mahindra-and-former-isro-chair-appointed-to-rbi-board20260825150606" target="_blank" rel="noopener noreferrer">2. After Centre rejig, Anand Mahindra and former ISRO chair appointed to RBI board - ANI News</a>
+                    </div>
+                    <div class="card-summary">After Centre rejig, Anand Mahindra and former ISRO chair appointed to RBI board&nbsp;&nbsp;ANI News</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.aninews.in/news/business/after-centre-rejig-anand-mahindra-and-former-isro-chair-appointed-to-rbi-board20260825150606" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-medium">Medium Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.aninews.in/news/business/after-centre-rejig-anand-mahindra-and-former-isro-chair-appointed-to-rbi-board20260825150606">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://thefederal.com/h-upload/2026/08/25/629684-qp-isro.webp" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/ISRO_default.webp';">
+                    <div class="card-title">
+                        <a href="https://thefederal.com/shorts-video/private-players-might-take-over-isros-rockets-254666" target="_blank" rel="noopener noreferrer">3. Private Players Might Take Over ISRO's Rockets - The Federal</a>
+                    </div>
+                    <div class="card-summary">Private Players Might Take Over ISRO's Rockets&nbsp;&nbsp;The Federal</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://thefederal.com/shorts-video/private-players-might-take-over-isros-rockets-254666" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://thefederal.com/shorts-video/private-players-might-take-over-isros-rockets-254666">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://www.esa.int/var/esa/storage/images/esa_multimedia/images/2023/02/the_roman_spacecraft/24727075-1-eng-GB/The_Roman_spacecraft_pillars.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.esa.int/Science_Exploration/Space_Science/Cutting-edge_infrared_space_telescope_Roman_set_to_launch" target="_blank" rel="noopener noreferrer">4. Cutting-edge infrared space telescope Roman set to launch</a>
+                    </div>
+                    <div class="card-summary"> The NASA-led Nancy Grace Roman Space Telescope is set to launch on 30 August 2026 at 07:26 EDT / 12:26 BST / 13:26 CEST from NASA’s Kennedy Space Center in Florida, USA.With its wide field of view and advanced optical design, the Roman telescope will conduct detailed scans of the sky in visible to near-infrared light. In doing so, Roman will help reveal the nature of dark ener...</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.esa.int/Science_Exploration/Space_Science/Cutting-edge_infrared_space_telescope_Roman_set_to_launch" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.esa.int/Science_Exploration/Space_Science/Cutting-edge_infrared_space_telescope_Roman_set_to_launch">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/iVzqA5rWsKrkbNBXgRqKNP-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/international-space-station/you-just-saved-the-video-dish-two-astronauts-complete-spacewalk-to-replace-iss-antenna" target="_blank" rel="noopener noreferrer">5. 'You just saved the video dish': Two astronauts complete spacewalk to replace ISS antenna</a>
+                    </div>
+                    <div class="card-summary">Astronauts Anil Menon and Sophie Adenot completed a 6.5-hour spacewalk on Tuesday, (Aug. 25), installing a replacement Space-to-Ground antenna on the outside of the International Space Station.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/international-space-station/you-just-saved-the-video-dish-two-astronauts-complete-spacewalk-to-replace-iss-antenna" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/international-space-station/you-just-saved-the-video-dish-two-astronauts-complete-spacewalk-to-replace-iss-antenna">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/9Bevg3vpHBwtcUVNSDdbAZ-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/private-spaceflight/spacex-announces-enormous-usd100-billion-starbase-louisiana-starship-launch-site" target="_blank" rel="noopener noreferrer">6. Starbase Louisiana: SpaceX announces enormous $100 billion Starbase launch site</a>
+                    </div>
+                    <div class="card-summary">A new spaceport will bring 10 launch pads to Louisiana's Gulf Coast and support thousands of Starship launches per year.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/private-spaceflight/spacex-announces-enormous-usd100-billion-starbase-louisiana-starship-launch-site" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/private-spaceflight/spacex-announces-enormous-usd100-billion-starbase-louisiana-starship-launch-site">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/LNeeHiwvdKvCBp6jySQRbN-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/astronomy/the-roman-space-telescope-will-reveal-the-universe-in-a-way-the-jwst-and-hubble-cannot" target="_blank" rel="noopener noreferrer">7. NASA's Roman Space Telescope will reveal the universe in a way the JWST and Hubble cannot</a>
+                    </div>
+                    <div class="card-summary">"The images it captures will be so large there is not a screen in existence large enough to show them."</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/astronomy/the-roman-space-telescope-will-reveal-the-universe-in-a-way-the-jwst-and-hubble-cannot" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/astronomy/the-roman-space-telescope-will-reveal-the-universe-in-a-way-the-jwst-and-hubble-cannot">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/vjC6b6z5he2WVa5o4ZP7md-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/human-spaceflight/astronauts-make-history-repairing-the-iss-space-photo-of-the-day-for-aug-25-2026" target="_blank" rel="noopener noreferrer">8. Astronauts make history repairing the ISS | Space photo of the day for Aug. 25, 2026</a>
+                    </div>
+                    <div class="card-summary">ESA astronaut Sophie Adenot and NASA astronaut Anil Menon complete a spacewalk on Aug. 18, 2026.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/human-spaceflight/astronauts-make-history-repairing-the-iss-space-photo-of-the-day-for-aug-25-2026" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/human-spaceflight/astronauts-make-history-repairing-the-iss-space-photo-of-the-day-for-aug-25-2026">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/WCkKfXWieLCYYZn6q4SCWV-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/on-this-day-in-space-august-25-2026" target="_blank" rel="noopener noreferrer">9. On this day in space! Aug. 25, 1997: NASA launches Advanced Composition Explorer to track solar wind and so much more</a>
+                    </div>
+                    <div class="card-summary">On Aug. 25, 1997, NASA launched the Advanced Composition Explorer, or ACE satellite to study energetic particles traveling through space, including solar wind and space weather. Here's why it mattered.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/on-this-day-in-space-august-25-2026" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/on-this-day-in-space-august-25-2026">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/Q5dyKFbzt6nWVMH397mhsb-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/general_default.png';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/satellites/satellite-defense-ares-shield-contract-lonestar-data-holdings" target="_blank" rel="noopener noreferrer">10. Polish startup Ares Shield hired to protect data center satellites with high-power microwave weapons</a>
+                    </div>
+                    <div class="card-summary">Florida-based Lonestar Data Holdings has contracted Polish startup Ares Shield to provide protection for its off-Earth data centers, in a deal worth up to $6 million.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/satellites/satellite-defense-ares-shield-contract-lonestar-data-holdings" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/satellites/satellite-defense-ares-shield-contract-lonestar-data-holdings">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="news-card">
+                <div class="card-content">
+                    <img src="https://cdn.mos.cms.futurecdn.net/Utc8PJw6H4wuarQvRhJiWV-1280-80.jpg" alt="image" class="card-image" loading="lazy" onerror="this.onerror=null; this.src='./assets/NASA_default.jpg';">
+                    <div class="card-title">
+                        <a href="https://www.space.com/space-exploration/satellites/nasa-satellites-ace-worlds-1st-lost-in-space-gps-free-navigation-experiment" target="_blank" rel="noopener noreferrer">11. NASA satellites ace world's 1st 'lost-in-space' GPS-free navigation experiment</a>
+                    </div>
+                    <div class="card-summary">No GPS? No problem. A team of NASA satellites are extending their stay in space after successfully proving out navigation by other means.</div>
+                    <div class="card-actions">
+                        <div class="card-action-left">
+                            <a class="read-more" href="https://www.space.com/space-exploration/satellites/nasa-satellites-ace-worlds-1st-lost-in-space-gps-free-navigation-experiment" target="_blank" rel="noopener noreferrer">Read Full Article →</a>
+                        </div>
+                        <div class="card-action-center"><div class="ai-relevance-box hidden-ai"><span class="ai-relevance-pill ai-high">Highly Relevant</span></div></div>
+                        <div class="card-action-right"><label class="flag-item"><input type="checkbox" class="flag-checkbox" value="https://www.space.com/space-exploration/satellites/nasa-satellites-ace-worlds-1st-lost-in-space-gps-free-navigation-experiment">Flag this article</label></div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="bottom-actions">
+                <button type="button" class="flag-submit-btn" onclick="submitFlags()">Submit Flagged Articles</button>
+                <button type="button" class="publish-btn" onclick="publishCurrentList()">Publish</button>
+            </div>
+        
+    <footer class="footer">
+        <div class="footer-text">
+            <div>पुस्तकालय एवं सूचना संसाधन प्रभाग द्वारा संकलित, भा.सु.सं.सं</div>
+            <div>Compiled by Library and Information Resource Division, IIRS</div>
+        </div>
+    </footer>
+</div>
+<div id="customToast" class="custom-toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+</div>
+<script src="review-actions.js?v=2026-08-26T05:16:07"></script>
 </body>
 </html>
