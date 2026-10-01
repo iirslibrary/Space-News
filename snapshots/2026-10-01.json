@@ -22,7 +22,7 @@
     "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNR1NNa0lzWFpCaHVaeGFhVldRa0RPVUhWOEphUGxjeFg3MzVLWmZ0QnJ1X2I1dEtCYmE5Z3luQmI0dFB2N0x4cVZsZjlzVVdKZk1PNHN1TE1idzVXQTJIT0FTYkVydkdlM19Hbkp0Mk1fRDE2czgxOWc3M3hCaTVOZzluZFVuNHY5MWFacUFkQjdoSWtKMkRQckRiellaYTN6NXl0QzBKZ1ZBa03SAa4BQVVfeXFMTnlfNGEzeUlpU29QTzR4dmR4aTFyb0NWZTJ4OHpfTkgzOVQ3N0MtMDJVTXFQQjF0T3hiQ3AzZ0NCVFFFdlVzT0JFcmRnbklVSVFxUS1xeVZIcnBHb0hxLThWTDdBRXlqdW1GT3pSTi1BNFV5azdZVjVBSFZyMk1lNjJJV3pFcTFXbUtYeTJsRXRDS3hZU3ZMRkg5eXJ3aXZFNGFJUF9kS2NUcXZwN19B?oc=5",
     "source": "\"ISRO OR NRSC OR IIRS after:2026-09-30\" - Google News",
     "summary": "ISRO Pensioners Urge Modi To Address Privatisation Concerns&nbsp;&nbsp;Rediff",
-    "image": null,
+    "image": "https://im.rediff.com/news/2026/oct/01isro.jpg?w=830&h=1000",
     "ai_label": "Highly Relevant",
     "category": "🇮🇳 National Updates"
   },
@@ -80,13 +80,4 @@
     "ai_label": "Medium Relevant",
     "category": "🌌 International Updates"
   },
-  {
-    "title": "Humanoid robot fleet decommissioned in wild Terminator-style leap into molten steel",
-    "link": "https://interestingengineering.com/ai-robotics/humanoid-robot-decommissioned-molten-steel",
-    "source": "Interesting Engineering",
-    "summary": "Figure has gone full Terminator with its retired humanoid robots, sending them into a vat...",
-    "image": null,
-    "ai_label": "Not Relevant",
-    "category": "🌌 International Updates"
-  }
 ]
